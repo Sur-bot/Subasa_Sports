@@ -1,0 +1,89 @@
+/* căn giữa toàn màn hình */
+
+
+.login-wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #000;
+}
+
+/* box LOGIN */
+.login-container {
+  background: #111;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 255, 255, 0.4);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  position: relative;
+  padding: 20px;
+  min-width: 220px;
+  min-height: 120px;
+}
+
+/* chữ LOGIN */
+.login-title {
+  color: #fff;
+  margin: 0;
+  font-weight: bold;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+/* form login */
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+}
+
+.login-form input {
+  width: 80%;
+  padding: 10px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 6px;
+  outline: none;
+}
+
+.login-form button {
+  width: 80%;
+  padding: 10px;
+  margin-top: 15px;
+  background: cyan;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.login-form button:hover {
+  background: #00bebe;
+}
+
+.links {
+  width: 80%;
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.links a {
+  font-size: 12px;
+  text-decoration: none;
+  color: #00d9ff;
+  transition: 0.3s;
+}
+
+.links a:hover {
+  color: #fff;
+}
+/* camon */

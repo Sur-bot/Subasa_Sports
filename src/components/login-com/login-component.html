@@ -1,0 +1,27 @@
+<div class="login-wrapper">
+  <div
+    class="login-container"
+    [@boxAnimation]="state"
+    (mouseenter)="activate()"
+    (mouseleave)="deactivate()"
+  >
+    <!-- Title LOGIN -->
+    <h1 [@titleAnimation]="state" class="login-title">LOG IN</h1>
+
+    <!-- Form -->
+    <form
+      class="login-form"
+      [@formAnimation]="state"
+      (ngSubmit)="onSubmit()"
+    >
+      <input type="text" placeholder="Username" required />
+      <input type="password" placeholder="Password" required />
+      <button type="submit">Sign in</button>
+
+      <div class="links">
+        <a href="#">Forgot Password</a>
+        <a href="#">Sign up</a>
+      </div>
+    </form>
+  </div>
+</div>
