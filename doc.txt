@@ -1,0 +1,2 @@
+npm install @angular/core @angular/common @angular/compiler @angular/platform-browser
+npm install swiper

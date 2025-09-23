@@ -1,0 +1,25 @@
+<div class="banner-wrap">
+  <swiper-container
+    #swiperEl
+    slides-per-view="1"
+    autoplay='{"delay":3000,"disableOnInteraction":false}'
+    effect="fade"
+    fade-effect='{"crossFade": true}'
+    speed="800"
+    loop="true"
+  >
+    <swiper-slide>
+      <img src="https://bizweb.dktcdn.net/100/490/431/themes/927074/assets/slider_1.jpg" alt="Banner 1" />
+    </swiper-slide>
+    <swiper-slide>
+      <img src="https://bizweb.dktcdn.net/100/490/431/themes/927074/assets/slider_2.jpg" alt="Banner 2" />
+    </swiper-slide>
+  </swiper-container>
+
+  <!-- custom nav -->
+  <div class="custom-nav" role="navigation" aria-label="Banner navigation">
+    <!-- note: leave button content empty, we render arrow via ::before in CSS -->
+    <button class="prev" (click)="goPrev()" aria-label="Previous slide"></button>
+    <button class="next" (click)="goNext()" aria-label="Next slide"></button>
+  </div>
+</div>
