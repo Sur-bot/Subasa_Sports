@@ -1,2 +1,4 @@
 npm install @angular/core @angular/common @angular/compiler @angular/platform-browser
 npm install swiper
+npm install firebase
+npm install -g firebase-tools
