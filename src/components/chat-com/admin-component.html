@@ -1,11 +1,11 @@
 <div class="admin-dashboard">
 
-    <!-- 🔘 Nút chat nổi -->
+    <!-- Nút chat nổi -->
     <button *ngIf="!isChatOpen" class="floating-chat-btn" (click)="isChatOpen = true">
         💬
     </button>
 
-    <!-- 📦 Chat box -->
+    <!-- Chat box -->
     <div class="chat-box" *ngIf="isChatOpen">
         <div class="chat-header">
             <b *ngIf="selectedUserId">Chat với {{ selectedUserEmail }}</b>
@@ -32,8 +32,6 @@
                     {{ msg.text }}
                 </div>
             </div>
-
-            <!-- 👇 Neo để auto scroll -->
             <div #bottomRef></div>
         </div>
 

@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 export class ChatSupportService {
   constructor(private firestore: Firestore) {}
 
-  // 🔹 Lấy messages trong 1 user chat (đã kèm senderEmail trong mỗi message)
+  // Lấy messages trong 1 user chat (đã kèm senderEmail trong mỗi message)
   getMessages(userId: string): Observable<any[]> {
     const ref = collection(this.firestore, 'chats', userId, 'messages');
     const q = query(ref, orderBy('timestamp', 'asc'));
@@ -15,13 +15,13 @@ export class ChatSupportService {
     return collectionData(q, { idField: 'id' }) as Observable<any[]>;
   }
 
-  // 🔹 Gửi message
+  // Gửi message
   async sendMessage(userId: string, senderId: string, text: string, senderEmail: string) {
     console.log('[ChatService] Chuẩn bị gửi:', { userId, senderId, text, senderEmail });
 
     const userRef = doc(this.firestore, 'chats', userId);
 
-    // ⚡ Không ghi đè email user, chỉ update metadata
+    // Không ghi đè email user, chỉ update metadata
     await setDoc(userRef, {
       userId,
       lastMessage: text,
@@ -44,14 +44,14 @@ export class ChatSupportService {
     }
   }
 
-  // 🔹 Lấy danh sách user đang chat
+  // Lấy danh sách user đang chat
   getActiveUsers(): Observable<any[]> {
     const ref = collection(this.firestore, 'chats');
     console.log('[ChatService] Lấy danh sách user đang chat');
     return collectionData(ref, { idField: 'userId' }) as Observable<any[]>;
   }
 
-  // 🔹 Đăng ký user khi bắt đầu chat
+  // Đăng ký user khi bắt đầu chat
   async registerUser(userId: string, email: string, displayName?: string) {
     const userRef = doc(this.firestore, 'chats', userId);
     await setDoc(userRef, {

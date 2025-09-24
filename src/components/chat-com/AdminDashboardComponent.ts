@@ -53,7 +53,7 @@ export class AdminDashboardComponent implements OnInit, AfterViewChecked {
   toggleChat() {
     this.isChatOpen = !this.isChatOpen;
     if (this.isChatOpen) {
-      setTimeout(() => this.scrollToBottom(), 100); // 🔹 scroll ngay khi bật box
+      setTimeout(() => this.scrollToBottom(), 100); // scroll ngay khi bật box
     }
   }
 

@@ -28,7 +28,7 @@ export class ChatSupportComponent implements OnInit, AfterViewChecked {
   ngOnInit() {
     const currentUser = this.auth.currentUser;
     if (currentUser) {
-      // ✅ đăng ký user với email ngay khi component mount
+      // đăng ký user với email ngay khi component mount
       this.chatService.registerUser(
         currentUser.uid,
         currentUser.email!
@@ -81,7 +81,7 @@ export class ChatSupportComponent implements OnInit, AfterViewChecked {
   toggleChat() {
     this.isOpen = !this.isOpen;
     if (this.isOpen) {
-      setTimeout(() => this.scrollToBottom(), 100); // 🔹 scroll khi bật box chat
+      setTimeout(() => this.scrollToBottom(), 100); // scroll khi bật box chat
     }
   }
 
