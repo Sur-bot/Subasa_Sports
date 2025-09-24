@@ -1,39 +1,57 @@
 <div class="admin-dashboard">
-  <!-- Danh sách User -->
-  <div class="user-list">
-    <h3>Danh sách User</h3>
-    <ul>
-      <li *ngFor="let u of users"
-          [class.active]="u.userId === selectedUserId"
-          (click)="selectUser(u.userId, u.email)">
-        {{ u.email || u.userId }}
-      </li>
-    </ul>
-  </div>
 
-  <!-- Chat box -->
-  <div class="chat-box" *ngIf="selectedUserId">
-    <div class="chat-header">
-      <b>Chat với {{ selectedUserEmail || selectedUserId }}</b>
-    </div>
+    <!-- 🔘 Nút chat nổi -->
+    <button *ngIf="!isChatOpen" class="floating-chat-btn" (click)="isChatOpen = true">
+        💬
+    </button>
 
-    <div class="chat-body">
-      <div *ngFor="let msg of messages" 
-           [ngClass]="{ 'self': isSenderAdmin(msg.sender), 'other': !isSenderAdmin(msg.sender) }">
-        <div class="meta">
-          <b>{{ isSenderAdmin(msg.sender) ? 'Bạn' : (selectedUserEmail || selectedUserId) }}</b>
-          <span class="time">{{ formatTime(msg.timestamp) }}</span>
+    <!-- 📦 Chat box -->
+    <div class="chat-box" *ngIf="isChatOpen">
+        <div class="chat-header">
+            <b *ngIf="selectedUserId">Chat với {{ selectedUserEmail }}</b>
+            <div class="chat-actions">
+                <button class="toggle-users" (click)="showUsers = !showUsers">👥</button>
+                <button class="close-btn" (click)="isChatOpen = false">✖</button>
+            </div>
         </div>
-        <div class="bubble" 
-             [ngClass]="{ 'admin-msg': isSenderAdmin(msg.sender), 'user-msg': !isSenderAdmin(msg.sender) }">
-          {{ msg.text }}
+
+
+        <!-- Chat body -->
+        <div class="chat-body" *ngIf="selectedUserId">
+            <div *ngFor="let msg of messages"
+                [ngClass]="{ 'self': isSenderAdmin(msg.sender), 'other': !isSenderAdmin(msg.sender) }">
+
+                <div class="meta">
+                    <b>{{ isSenderAdmin(msg.sender) ? 'Admin (' + msg.senderEmail + ')' : msg.senderEmail }}</b>
+                    <span class="time">{{ formatTime(msg.timestamp) }}</span>
+                </div>
+
+
+                <div class="bubble"
+                    [ngClass]="{ 'admin-msg': isSenderAdmin(msg.sender), 'user-msg': !isSenderAdmin(msg.sender) }">
+                    {{ msg.text }}
+                </div>
+            </div>
+
+            <!-- 👇 Neo để auto scroll -->
+            <div #bottomRef></div>
         </div>
-      </div>
+
+        <!-- Chat footer -->
+        <div class="chat-footer" *ngIf="selectedUserId">
+            <input [(ngModel)]="text" placeholder="Nhập tin nhắn..." (keyup.enter)="send()">
+            <button (click)="send()">Gửi</button>
+        </div>
     </div>
 
-    <div class="chat-footer">
-      <input [(ngModel)]="text" placeholder="Nhập tin nhắn..." (keyup.enter)="send()">
-      <button (click)="send()">Gửi</button>
+    <!-- Danh sách User -->
+    <div class="user-list-box" *ngIf="showUsers && isChatOpen">
+        <h3>Danh sách User</h3>
+        <ul>
+            <li *ngFor="let u of users" [class.active]="u.userId === selectedUserId"
+                (click)="selectUser(u.userId, u.email)">
+                {{ u.email || u.userId }}
+            </li>
+        </ul>
     </div>
-  </div>
 </div>

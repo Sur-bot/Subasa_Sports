@@ -7,15 +7,20 @@
   </div>
 
   <div class="chat-body">
-    <div *ngFor="let msg of messages" [ngClass]="{ 'self': isSenderMe(msg.sender), 'other': !isSenderMe(msg.sender) }">
+    <div *ngFor="let msg of messages"
+         [ngClass]="{ 'self': isSenderMe(msg.sender), 'other': !isSenderMe(msg.sender) }">
       <div class="meta">
         <b>{{ isSenderMe(msg.sender) ? 'Bạn' : 'Admin' }}</b>
         <span class="time">{{ formatTime(msg.timestamp) }}</span>
       </div>
-      <div class="bubble" [ngClass]="{ 'admin-msg': !isSenderMe(msg.sender), 'user-msg': isSenderMe(msg.sender) }">
+      <div class="bubble"
+           [ngClass]="{ 'admin-msg': !isSenderMe(msg.sender), 'user-msg': isSenderMe(msg.sender) }">
         {{ msg.text }}
       </div>
     </div>
+
+    <!-- 👇 Neo để auto scroll -->
+    <div #bottomRef></div>
   </div>
 
   <div class="chat-footer">
