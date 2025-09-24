@@ -1,7 +1,5 @@
-<!-- Nút chat nổi -->
 <button class="chat-fab" (click)="toggleChat()">💬</button>
 
-<!-- Cửa sổ chat -->
 <div class="chat-window" *ngIf="isOpen">
   <div class="chat-header">
     <b>Hỗ trợ khách hàng</b>
@@ -9,17 +7,19 @@
   </div>
 
   <div class="chat-body">
-    <div *ngFor="let msg of messages" [class.self]="msg.sender === userId">
+    <div *ngFor="let msg of messages" [ngClass]="{ 'self': isSenderMe(msg.sender), 'other': !isSenderMe(msg.sender) }">
       <div class="meta">
-        <b>{{ msg.sender === userId ? 'Bạn' : 'Admin' }}</b>
+        <b>{{ isSenderMe(msg.sender) ? 'Bạn' : 'Admin' }}</b>
         <span class="time">{{ formatTime(msg.timestamp) }}</span>
       </div>
-      <div class="bubble">{{ msg.text }}</div>
+      <div class="bubble" [ngClass]="{ 'admin-msg': !isSenderMe(msg.sender), 'user-msg': isSenderMe(msg.sender) }">
+        {{ msg.text }}
+      </div>
     </div>
   </div>
 
   <div class="chat-footer">
-    <input [(ngModel)]="text" placeholder="Nhập tin nhắn..." (keyup.enter)="send()" />
+    <input [(ngModel)]="text" placeholder="Nhập tin nhắn..." (keyup.enter)="send()">
     <button (click)="send()">Gửi</button>
   </div>
 </div>

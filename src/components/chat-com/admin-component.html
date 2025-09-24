@@ -1,0 +1,39 @@
+<div class="admin-dashboard">
+  <!-- Danh sách User -->
+  <div class="user-list">
+    <h3>Danh sách User</h3>
+    <ul>
+      <li *ngFor="let u of users"
+          [class.active]="u.userId === selectedUserId"
+          (click)="selectUser(u.userId, u.email)">
+        {{ u.email || u.userId }}
+      </li>
+    </ul>
+  </div>
+
+  <!-- Chat box -->
+  <div class="chat-box" *ngIf="selectedUserId">
+    <div class="chat-header">
+      <b>Chat với {{ selectedUserEmail || selectedUserId }}</b>
+    </div>
+
+    <div class="chat-body">
+      <div *ngFor="let msg of messages" 
+           [ngClass]="{ 'self': isSenderAdmin(msg.sender), 'other': !isSenderAdmin(msg.sender) }">
+        <div class="meta">
+          <b>{{ isSenderAdmin(msg.sender) ? 'Bạn' : (selectedUserEmail || selectedUserId) }}</b>
+          <span class="time">{{ formatTime(msg.timestamp) }}</span>
+        </div>
+        <div class="bubble" 
+             [ngClass]="{ 'admin-msg': isSenderAdmin(msg.sender), 'user-msg': !isSenderAdmin(msg.sender) }">
+          {{ msg.text }}
+        </div>
+      </div>
+    </div>
+
+    <div class="chat-footer">
+      <input [(ngModel)]="text" placeholder="Nhập tin nhắn..." (keyup.enter)="send()">
+      <button (click)="send()">Gửi</button>
+    </div>
+  </div>
+</div>
