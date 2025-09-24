@@ -33,7 +33,7 @@ export class ChatSupportService {
     try {
       const docRef = await addDoc(ref, {
         sender: senderId,
-        senderEmail,  // 👈 email của sender
+        senderEmail,  // email của sender
         text,
         timestamp: Date.now()
       });
