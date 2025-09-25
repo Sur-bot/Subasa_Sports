@@ -1,9 +1,10 @@
-<div class="login-wrapper">
+<div class="login-wrapper" >
   <div
     class="login-container"
     [@boxAnimation]="state"
     (mouseenter)="activate()"
     (mouseleave)="deactivate()"
+    (click)="$event.stopPropagation()"
   >
     <!-- Title LOGIN -->
     <h1 [@titleAnimation]="state" class="login-title">LOG IN</h1>
