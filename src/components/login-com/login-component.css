@@ -82,3 +82,26 @@
 .links a:hover {
   color: #fff;
 }
+/* Guest login */
+.guest-login {
+  width: 80%;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.guest-login button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(90deg, #ff9800, #ff5722);
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.guest-login button:hover {
+  background: linear-gradient(90deg, #e68900, #e64a19);
+}

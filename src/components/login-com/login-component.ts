@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Auth, signInWithEmailAndPassword, User } from '@angular/fire/auth';
+import { Auth, signInWithEmailAndPassword, signInAnonymously, User } from '@angular/fire/auth';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -44,6 +44,7 @@ export class LoginComponent {
   activate() { this.state = 'active'; }
   deactivate() { this.state = 'inactive'; }
 
+  //  Login bằng email/password
   onSubmit() {
     if (!this.email || !this.password) {
       alert('Vui lòng nhập đầy đủ email và password!');
@@ -53,14 +54,42 @@ export class LoginComponent {
     signInWithEmailAndPassword(this.auth, this.email, this.password)
       .then(cred => {
         const user: User = cred.user;
-        // Lưu UID vào localStorage để ChatSupportComponent biết user nào
+
+        // Clear session guest cũ (nếu có)
+        localStorage.removeItem('isGuest');
+        localStorage.removeItem('userId');
+
+        // Lưu UID thật
         localStorage.setItem('userId', user.uid);
-        // Chuyển sang trang Home
+
+        console.log('[Login] Đăng nhập thành công:', user.uid);
+
         this.router.navigate(['/home']);
       })
       .catch(err => {
         console.error('Login failed', err);
         alert('Email hoặc password không đúng!');
+      });
+
+  }
+
+  //  Login Guest 
+  loginAsGuest() {
+    signInAnonymously(this.auth)
+      .then(cred => {
+        const user: User = cred.user;
+
+        // Lưu UID của anonymous user vào localStorage
+        localStorage.setItem('userId', user.uid);
+        localStorage.setItem('isGuest', 'true');
+
+        console.log('[Guest] login success:', user.uid);
+
+        this.router.navigate(['/home']);
+      })
+      .catch(err => {
+        console.error('[Guest] Login failed:', err);
+        alert('Không thể login guest!');
       });
   }
 }

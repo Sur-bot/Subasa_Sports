@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Firestore, collection, addDoc, query, orderBy, collectionData, doc, setDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, addDoc, query, orderBy, collectionData, doc, setDoc, deleteDoc, getDocs } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -16,8 +16,10 @@ export class ChatSupportService {
   }
 
   // Gửi message
-  async sendMessage(userId: string, senderId: string, text: string, senderEmail: string) {
-    console.log('[ChatService] Chuẩn bị gửi:', { userId, senderId, text, senderEmail });
+  async sendMessage(userId: string, senderId: string, text: string, senderEmail: string, isGuest = false) {
+    const finalEmail = isGuest ? `guest-${senderId}@chat.local` : senderEmail;
+
+    console.log('[ChatService] Chuẩn bị gửi:', { userId, senderId, text, finalEmail });
 
     const userRef = doc(this.firestore, 'chats', userId);
 
@@ -33,7 +35,7 @@ export class ChatSupportService {
     try {
       const docRef = await addDoc(ref, {
         sender: senderId,
-        senderEmail,  // email của sender
+        senderEmail: finalEmail,  // email của sender (guest hoặc thật)
         text,
         timestamp: Date.now()
       });
@@ -52,15 +54,33 @@ export class ChatSupportService {
   }
 
   // Đăng ký user khi bắt đầu chat
-  async registerUser(userId: string, email: string, displayName?: string) {
-    const userRef = doc(this.firestore, 'chats', userId);
-    await setDoc(userRef, {
-      userId,
-      email,
-      displayName: displayName ?? email.split('@')[0],
-      lastActive: Date.now()
-    }, { merge: true });
+  async registerUser(userId: string, email: string | null, displayName?: string) {
+  const userRef = doc(this.firestore, 'chats', userId);
+  await setDoc(userRef, {
+    userId,
+    email, // với guest thì null
+    displayName: displayName ?? (email ? email.split('@')[0] : 'Guest'),
+    lastActive: Date.now()
+  }, { merge: true });
 
-    console.log('[ChatService] Đã lưu user vào chats:', { userId, email });
+  console.log('[ChatService] Đã lưu user vào chats:', { userId, email });
+}
+
+
+  // Xóa toàn bộ messages + user info
+  async clearUserChat(userId: string) {
+    const userRef = doc(this.firestore, 'chats', userId);
+
+    // Xóa messages con
+    const messagesRef = collection(this.firestore, 'chats', userId, 'messages');
+    const snap = await getDocs(messagesRef);
+    for (const m of snap.docs) {
+      await deleteDoc(m.ref);
+    }
+
+    // Xóa document user chính
+    await deleteDoc(userRef);
+
+    console.log('[ChatService] Đã xóa toàn bộ chat của:', userId);
   }
 }
