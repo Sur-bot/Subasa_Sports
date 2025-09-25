@@ -9,7 +9,7 @@
               <a href="#">Free Shipping on Orders Over $50</a>
             </li>
             <li class="promotion-item">
-              <a href="#">Khuyễn mãi 11/11 Single Day 2025 KHÔNG THỂ BỎ LỠ!!!</a>
+              <a href="#">Khuyến mãi 11/11 Single Day 2025 KHÔNG THỂ BỎ LỠ!!!</a>
             </li>
             <li class="promotion-item">
               <a href="#">[05.09 - 11.10] Càng mua càng giảm, mua 2 giảm 6%, mua 3 giảm 10%</a>
@@ -24,7 +24,13 @@
       <div class="box-header">
         <div class="row align-items-center">
           <div class="header-logo">
-            <div class="menu-icon" aria-label="Menu" title="Menu">
+            <div
+              class="menu-icon"
+              aria-label="Menu"
+              title="Menu"
+              (click)="toggleSidebar()"
+              [class.active]="isOpen"
+            >
               <div class="icon">
                 <span></span>
                 <span></span>
@@ -52,12 +58,24 @@
                   type="text"
                 />
                 <input type="hidden" name="type" value="product" />
-                <button
-                  type="submit"
-                  class="btn icon-fallback-text duration-300"
-                  aria-label="Tìm kiếm"
-                  title="Tìm kiếm"
-                ></button>
+                <button type="submit" class="btn-timkiem" aria-label="Tìm kiếm" title="Tìm kiếm">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    fill="currentColor"
+                    class="bi bi-search"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+                    ></path>
+                    <path
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+                    ></path>
+                  </svg>
+                </button>
+
                 <div class="search-suggest">
                   <div class="seach-recent">
                     <div class="seach-title">
@@ -83,8 +101,8 @@
                         href="/search?query=Gi%C3%A0y%20ch%E1%BA%A1y&amp;type=product"
                         title="Tìm kiếm Giày chạy"
                         class="search-item"
-                        >Giày chạy<span title="Đóng" class="close">Đóng</span></a
-                      >
+                        >Giày chạy<span class="close"></span
+                      ></a>
                     </div>
                   </div>
                   <div class="item-suggest">
@@ -157,8 +175,8 @@
                 <a title="Điện thoại: 1900 6750" href="tel:19006750"></a>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
+                  width="30"
+                  height="30"
                   fill="currentColor"
                   class="bi bi-whatsapp"
                   viewBox="0 0 16 16"
@@ -177,15 +195,15 @@
               <div class="frame-fix">
                 <a href="#" title="Hệ thống cửa hàng"></a>
                 <svg
-                  width="28"
-                  height="28"
+                  width="30"
+                  height="30"
                   viewBox="0 0 28 28"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
                 >
                   <path
                     d="M19 22.52L26 21.174V2H2V25.79L9.095 24.425C9.03237 24.2921 8.99993 24.1469 9 24V16C9 15.7348 9.10536 15.4804 9.29289 15.2929C9.48043 15.1054 9.73478 15 10 15H18C18.2652 15 18.5196 15.1054 18.7071 15.2929C18.8946 15.4804 19 15.7348 19 16V22.52ZM17 22.905V17H11V24C11 24.02 11 24.04 10.998 24.059L17 22.905ZM1 0H27C27.2652 0 27.5196 0.105357 27.7071 0.292893C27.8946 0.48043 28 0.734784 28 1V22C28 22.2324 27.919 22.4576 27.771 22.6368C27.623 22.816 27.4172 22.9381 27.189 22.982L1.189 27.982C1.04431 28.0098 0.89526 28.0054 0.752502 27.9689C0.609744 27.9324 0.476808 27.8649 0.363202 27.7711C0.249597 27.6772 0.158129 27.5595 0.0953412 27.4262C0.0325533 27.2929 -3.37575e-06 27.1473 2.62534e-10 27V1C2.62534e-10 0.734784 0.105357 0.48043 0.292893 0.292893C0.48043 0.105357 0.734784 0 1 0ZM6 7.998V4H22V7.998H6Z"
-                    fill="black"
+                    fill="white"
                   ></path>
                 </svg>
                 <div class="text-box">
@@ -196,34 +214,10 @@
             </div>
             <div class="header-account">
               <div class="frame-fix">
-                <a
-                  href="javascript:;"
-                  class="header-account"
-                  aria-label="Tài khoản"
-                  title="Tài khoản"
-                ></a>
-                <svg aria-hidden="true" class="svg-icon tool-icon" viewBox="0 0 32 32">
-                  <path
-                    d="M7.164 29.986a1 1 0 01-1.148-1.165l2-11A1 1 0 019 17h14a1 1 0 01.97.757l2 8a1 1 0 01-.806 1.23l-18 3zm1.074-2.206l15.53-2.588L22.218 19H9.835l-1.597 8.78zM16 15c-3.314 0-6-2.91-6-6.5S12.686 2 16 2s6 2.91 6 6.5-2.686 6.5-6 6.5zm0-2c2.172 0 4-1.98 4-4.5S18.172 4 16 4c-2.172 0-4 1.98-4 4.5s1.828 4.5 4 4.5z"
-                  ></path>
-                </svg>
+                <a href="#" class="header-account" aria-label="Tài khoản"></a>
                 <div class="text-box">
-                  <span class="acc-text-small">Thông tin</span>
-                  <span class="acc-text">
-                    "Tài khoản"
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      fill="currentColor"
-                      class="bi bi-caret-down-fill"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
-                      ></path>
-                    </svg>
-                  </span>
+                  <span class="acc-text-small">Thông tin </span>
+                  <span class="acc-text">Tài khoản</span>
                 </div>
               </div>
               <ul></ul>
@@ -232,17 +226,21 @@
               <div class="frame-fix">
                 <a class="a-hea" href="#" aria-label="Giỏ hàng" title="Giỏ hàng"></a>
                 <span class="box-icon">
-                  <svg aria-hidden="true" class="svg-icon" viewBox="0 0 32 32">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="30"
+                    height="30"
+                    fill="currentColor"
+                    class="bi bi-cart"
+                    viewBox="0 0 16 16"
+                  >
                     <path
-                      d="M7.873 6.008A1.01 1.01 0 018 6h21a1 1 0 011 1v11a1 1 0 01-.836.986l-18 3a1 1 0 01-1.128-.72L5.318 4.281l-2.002.668a1 1 0 01-.632-1.898l3-1a1 1 0 011.28.681l.91 3.276zM8.427 8l3.296 11.864L28 17.153V8H8.427zM16 29a3 3 0 110-6 3 3 0 010 6zm9 0a3 3 0 110-6 3 3 0 010 6zm0-2a1 1 0 100-2 1 1 0 000 2zm-9 0a1 1 0 100-2 1 1 0 000 2z"
+                      d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"
                     ></path>
                   </svg>
                 </span>
                 <span class="count-item">0</span>
                 <span class="icon-title">Giỏ hàng</span>
-              </div>
-              <div class="cart-content">
-                <div class="CartHeaderContainer"></div>
               </div>
             </div>
           </div>
@@ -250,4 +248,169 @@
       </div>
     </div>
   </div>
+  <!-- SIDE-BAR -->
+  <aside class="sidebar" [class.show]="isOpen">
+    <div class="sb-container">
+      <div class="sb-title">
+        <p class="title-text">DANH MỤC</p>
+        <button class="close-btn" (click)="toggleSidebar()">✕</button>
+      </div>
+      <div class="list-cat">
+        <ul class="menu-list">
+          <li class="list">
+            <div class="cat-title" (click)="toggleCategory('sports')">
+              <img
+                class="img-mtt"
+                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/sports.png?v=1693640338110"
+                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/sports.png?v=1693640338110"
+                alt="Môn Thể Thao"
+                data-was-processed="true"
+              />
+              MÔN THỂ THAO
+              <span class="arrow" [class.open]="openCategory === 'sports'">&#9662;</span>
+            </div>
+            <ul class="sub-menu" *ngIf="openCategory === 'sports'">
+              <li>Bóng đá</li>
+              <li>Bóng chuyền</li>
+              <li>Bóng rổ</li>
+              <li>Cầu lông</li>
+            </ul>
+          </li>
+          <li class="list">
+            <div class="cat-title" (click)="toggleCategory('men')">
+              <img
+                class="img-nam"
+                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/soccer-player.png?v=1693643500123"
+                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/soccer-player.png?v=1693643500123"
+                alt="Nam"
+                data-was-processed="true"
+              />
+              NAM
+              <span class="arrow" [class.open]="openCategory === 'men'">&#9662;</span>
+            </div>
+            <ul class="sub-menu" *ngIf="openCategory === 'men'">
+              <li>Áo thun</li>
+              <li>Quần short</li>
+              <li>Giày thể thao</li>
+            </ul>
+          </li>
+          <li class="list">
+            <div class="cat-title" (click)="toggleCategory('women')">
+              <img
+                class="img-nu"
+                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/playing.png?v=1693643512323"
+                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/playing.png?v=1693643512323"
+                alt="Nữ"
+                data-was-processed="true"
+              />
+              NỮ
+              <span class="arrow" [class.open]="openCategory === 'women'">&#9662;</span>
+            </div>
+            <ul class="sub-menu" *ngIf="openCategory === 'women'">
+              <li>Váy thể thao</li>
+              <li>Áo tập</li>
+              <li>Quần tập</li>
+            </ul>
+          </li>
+          <li class="list">
+            <div class="cat-title" (click)="toggleCategory('kids')">
+              <img
+                class="img-treem"
+                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/games.png?v=1693643587037"
+                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/games.png?v=1693643587037"
+                alt="Trẻ Em"
+                data-was-processed="true"
+              />
+              TRẺ EM
+              <span class="arrow" [class.open]="openCategory === 'kids'">&#9662;</span>
+            </div>
+            <ul class="sub-menu" *ngIf="openCategory === 'kids'">
+              <li>Quần áo trẻ em</li>
+              <li>Giày trẻ em</li>
+            </ul>
+          </li>
+          <li class="list">
+            <div class="cat-title" (click)="toggleCategory('accessories')">
+              <img
+                class="img-phukien"
+                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+                alt="Phụ Kiện"
+                data-was-processed="true"
+              />
+              PHỤ KIỆN
+              <span class="arrow" [class.open]="openCategory === 'accessories'">&#9662;</span>
+            </div>
+            <ul class="sub-menu" *ngIf="openCategory === 'accessories'">
+              <li>Balo</li>
+              <li>Găng tay</li>
+              <li>Bình nước</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+      <div class="info-tab">
+        <ul class="sub-links">
+          <li class="sub-tab">Về Sudes Sport</li>
+          <li class="sub-tab" (click)="toggleCategory('#')">
+            Chính sách mua hàng
+            <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
+            <ul class="sub-menu" *ngIf="openCategory === '#'">
+              <li>Balo</li>
+              <li>Găng tay</li>
+              <li>Bình nước</li>
+            </ul>
+          </li>
+          <li class="sub-tab">
+            Hướng dẫn mua hàng
+            <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
+            <ul class="sub-menu" *ngIf="openCategory === '#'">
+              <li>Balo</li>
+              <li>Găng tay</li>
+              <li>Bình nước</li>
+              <li>Bình nước</li>
+              <li>Bình nước</li>
+            </ul>
+          </li>
+          <li class="sub-tab">
+            Tin tức
+            <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
+            <ul class="sub-menu" *ngIf="openCategory === '#'">
+              <li>Balo</li>
+              <li>Găng tay</li>
+              <li>Bình nước</li>
+            </ul>
+          </li>
+          <li class="sub-tab">Liên hệ chúng tôi</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- footer-menu -->
+    <div class="footer-tab">
+      <div class="hotline">
+        <div class="hotline-content">
+          <a title="Điện thoại: 1900 6750" href="#"></a>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-whatsapp"
+            viewBox="0 0 16 16"
+          >
+            <path
+              d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"
+            ></path>
+          </svg>
+          <div class="hot-text">
+            <span class="hot-text-small">Hotline hỗ trợ:</span>
+            <span class="hot-text">1900 6750</span>
+          </div>
+        </div>
+      </div>
+      <div class="store"></div>
+      <div class="love-list"></div>
+    </div>
+  </aside>
 </div>
