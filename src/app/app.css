@@ -1,3 +1,4 @@
 main{
     padding: 0%;
+    padding-top: 110px; /* bằng height của header */
 }
