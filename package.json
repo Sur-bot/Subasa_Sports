@@ -9,7 +9,6 @@
     "test": "ng test",
     "serve:ssr:Subasa_Sport": "node dist/Subasa_Sport/server/server.mjs",
     "cleanup": "node src/components/cleanup/cleanup-guest.js"
-
   },
   "prettier": {
     "printWidth": 100,
@@ -36,6 +35,7 @@
     "@angular/platform-server": "^20.3.0",
     "@angular/router": "^20.3.0",
     "@angular/ssr": "^20.3.0",
+    "dotenv": "^17.2.2",
     "express": "^5.1.0",
     "firebase": "^11.10.0",
     "firebase-admin": "^13.5.0",
