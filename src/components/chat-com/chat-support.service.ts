@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class ChatSupportService {
-  constructor(private firestore: Firestore) {}
+  constructor(private firestore: Firestore) { }
 
   // Lấy messages trong 1 user chat (đã kèm senderEmail trong mỗi message)
   getMessages(userId: string): Observable<any[]> {
@@ -23,11 +23,12 @@ export class ChatSupportService {
 
     const userRef = doc(this.firestore, 'chats', userId);
 
-    // Không ghi đè email user, chỉ update metadata
+
     await setDoc(userRef, {
       userId,
       lastMessage: text,
-      updatedAt: Date.now()
+      updatedAt: Date.now(),
+      expireAt: isGuest ? new Date(Date.now() + 60 * 60 * 1000) : null
     }, { merge: true });
 
     // Thêm message (luôn có email của sender)
@@ -53,18 +54,22 @@ export class ChatSupportService {
     return collectionData(ref, { idField: 'userId' }) as Observable<any[]>;
   }
 
-  // Đăng ký user khi bắt đầu chat
-  async registerUser(userId: string, email: string | null, displayName?: string) {
-  const userRef = doc(this.firestore, 'chats', userId);
-  await setDoc(userRef, {
-    userId,
-    email, // với guest thì null
-    displayName: displayName ?? (email ? email.split('@')[0] : 'Guest'),
-    lastActive: Date.now()
-  }, { merge: true });
+  async registerUser(userId: string, email: string | null, displayName?: string, isGuest = false) {
+    const userRef = doc(this.firestore, 'chats', userId);
+    await setDoc(userRef, {
+      userId,
+      email, // với guest thì null
+      displayName: displayName ?? (email ? email.split('@')[0] : 'Guest'),
+      isGuest,                       // <--- flag phân biệt
+      lastActive: Date.now(),
+      expireAt: isGuest
+        ? new Date(Date.now() + 60 * 60 * 1000) // TTL 1 tiếng
+        : null
+    }, { merge: true });
 
-  console.log('[ChatService] Đã lưu user vào chats:', { userId, email });
-}
+    console.log('[ChatService] Đã lưu user vào chats:', { userId, email, isGuest });
+  }
+
 
 
   // Xóa toàn bộ messages + user info
