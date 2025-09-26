@@ -26,19 +26,31 @@ export class ChatSupportComponent implements OnInit, AfterViewChecked {
   ) { }
 
   ngOnInit() {
-    const currentUser = this.auth.currentUser;
-    if (currentUser) {
-      this.chatService.registerUser(currentUser.uid, currentUser.email!);
+  const currentUser = this.auth.currentUser;
+
+  if (currentUser) {
+    // 🔑 Luôn sync userId với Firebase UID
+    this.userId = currentUser.uid;
+    localStorage.setItem('userId', this.userId);
+    if (!currentUser.isAnonymous) {
+      localStorage.removeItem('isGuest');
     }
 
-    if (!this.userId) return;
+    this.chatService.registerUser(
+      this.userId,
+      currentUser.email,
+      currentUser.displayName ?? currentUser.email?.split('@')[0] ?? 'User'
+    );
 
+    // Luôn subscribe theo UID thực
     this.chatService.getMessages(this.userId).subscribe(msgs => {
       this.messages = msgs;
       this.cdr.detectChanges();
       this.scrollToBottom();
     });
   }
+}
+
 
   ngAfterViewChecked() {
     this.scrollToBottom();
@@ -51,41 +63,30 @@ export class ChatSupportComponent implements OnInit, AfterViewChecked {
   }
 
   async send() {
-    if (!this.text.trim()) return;
+  if (!this.text.trim()) return;
 
-    let userId: string | null = null;
-
-    if (this.auth.currentUser && !this.auth.currentUser.isAnonymous) {
-      userId = localStorage.getItem('userId');
-    } else {
-      userId = localStorage.getItem('userId');
-      if (!userId || this.auth.currentUser?.uid !== userId) {
-        userId = this.auth.currentUser?.uid || '';
-        if (userId) {
-          localStorage.setItem('userId', userId);
-        }
-      }
-    }
-
-    if (!userId) {
-      console.error('Chưa có userId, không gửi được message');
-      return;
-    }
-
-    try {
-      await this.chatService.sendMessage(
-        userId,
-        userId,
-        this.text,
-        this.auth.currentUser?.email || ''
-      );
-      this.text = '';
-      this.cdr.detectChanges();
-      this.scrollToBottom();
-    } catch (err) {
-      console.error('[UserChat] Lỗi khi gửi:', err);
-    }
+  const currentUser = this.auth.currentUser;
+  if (!currentUser) {
+    console.error('Chưa đăng nhập, không gửi được message');
+    return;
   }
+
+  const userId = currentUser.uid; // 🔑 không lấy từ localStorage
+  try {
+    await this.chatService.sendMessage(
+      userId,
+      userId,
+      this.text,
+      currentUser.email || ''
+    );
+    this.text = '';
+    this.cdr.detectChanges();
+    this.scrollToBottom();
+  } catch (err) {
+    console.error('[UserChat] Lỗi khi gửi:', err);
+  }
+}
+
 
   async toggleChat() {
   this.isOpen = !this.isOpen;
