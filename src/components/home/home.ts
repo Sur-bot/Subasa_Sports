@@ -6,7 +6,7 @@ import { AdminDashboardComponent } from '../chat-com/AdminDashboardComponent';
 import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
+import { NotificationFloatingComponent } from '../notificationfloating-com/notification-floating-component';
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
 @Component({
@@ -17,6 +17,7 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     HeaderComponent,
     ChatSupportComponent,
     AdminDashboardComponent,
+    NotificationFloatingComponent,
     FormsModule,
     CommonModule
   ],

@@ -1,0 +1,134 @@
+/* ========================================================= */
+/* 1. NÚT CHUÔNG KÍCH HOẠT (TRIGGER BUTTON) */
+/* ========================================================= */
+.notification-trigger {
+  position: fixed;
+  bottom: 20px; 
+  left: 20px; 
+  
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #000; /* Màu nền đen */
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  z-index: 1001; /* Rất cao để luôn hiển thị */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.bell-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* ========================================================= */
+/* 2. MODAL NỘI DUNG (POP-UP) */
+/* ========================================================= */
+.feature-modal {
+  position: fixed;
+  bottom: 80px; /* Vị trí pop-up lên trên nút chuông */
+  left: 20px;
+  
+  width: 320px;
+  background-color: #1a3044; /* Màu nền xanh đậm */
+  color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  padding: 15px;
+  z-index: 1000; 
+
+  /* Hiệu ứng Đóng/Mở */
+  opacity: 0;
+  transform: translateY(20px) scale(0.9); /* Bắt đầu dịch và thu nhỏ */
+  pointer-events: none; /* Rất quan trọng: Ngăn chặn click khi modal đóng */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.feature-modal.is-open {
+  opacity: 1;
+  transform: translateY(0) scale(1); /* Hiện ra hoàn toàn */
+  pointer-events: all; /* Cho phép tương tác */
+}
+
+/* ========================================================= */
+/* 3. CÁC PHẦN TỬ TRONG MODAL */
+/* ========================================================= */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  padding: 0;
+}
+
+.x-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.feature-list li {
+  padding: 5px 0;
+  font-size: 0.95em;
+  display: flex;
+  align-items: center;
+}
+
+.chevron-icon {
+  margin-right: 8px;
+  font-size: 1.2em;
+  color: #fff; 
+}
+
+.feature-link {
+  color: #fff;
+  text-decoration: none;
+  border-bottom: 1px dotted rgba(255, 255, 255, 0.5); 
+}
+
+.modal-note {
+  font-size: 0.8em;
+  line-height: 1.4;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ccc;
+}
+
+/* ========================================================= */
+/* 4. LỚP PHỦ NỀN */
+/* ========================================================= */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.1); 
+  z-index: 999;
+}
