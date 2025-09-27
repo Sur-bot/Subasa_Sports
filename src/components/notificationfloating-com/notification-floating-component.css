@@ -132,3 +132,22 @@
   background: rgba(0, 0, 0, 0.1); 
   z-index: 999;
 }
+/* ========================================================= */
+/* 5. Nút admin
+/* ========================================================= */
+.add-btn {
+  display: block;
+  margin: 12px auto 0;
+  padding: 8px 16px;
+  background-color: #2563eb; /* xanh */
+  color: #fff;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.add-btn:hover {
+  background-color: #1d4ed8; /* xanh đậm hơn khi hover */
+}

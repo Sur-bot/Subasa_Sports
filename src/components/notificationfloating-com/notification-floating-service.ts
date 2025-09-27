@@ -5,7 +5,7 @@ import {
   collectionData,
   query,
   CollectionReference,
-  getDoc,doc
+  addDoc
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 
@@ -30,5 +30,9 @@ export class NotificationFloatingService {
     const q = query(this.featuresCollection);
     return collectionData(q, { idField: 'id' });
   }
+  async addFeature(feature: Feature) {
+    return await addDoc(this.featuresCollection, feature);
+  }
+
 
 }
