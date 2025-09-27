@@ -1,17 +1,19 @@
 <div class="modal-wrapper">
-  
+
   <button class="notification-trigger" (click)="toggleModal()">
     <svg class="bell-icon" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2z"/>
+      <path
+        d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2z" />
     </svg>
   </button>
 
   <div class="feature-modal" [class.is-open]="isModalOpen">
-    
+
     <div class="modal-header">
       <h2 class="modal-title">Thông Báo</h2>
       <button class="close-button" (click)="toggleModal()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="x-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" class="x-icon">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
@@ -20,22 +22,23 @@
 
     <ul class="feature-list">
       <li *ngFor="let feature of (features$ | async)">
-        <span class="chevron-icon">&raquo;</span> 
-        <a href="{{ feature.link }}" class="feature-link">{{ feature.name }}</a>
+        <span class="chevron-icon">&raquo;</span>
+        <a [href]="feature.link" class="feature-link">{{ feature.name }}</a>
       </li>
     </ul>
+
 
     <p class="modal-note">
       Lưu ý với các ứng dụng trả phí bạn cần cài đặt và mua ứng dụng này trên App store Sapo để sử dụng ngay
     </p>
   </div>
-  
+
   <div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()"></div>
 </div>
 
-<ul class="feature-list">
-      <li *ngFor="let feature of (features$ | async)"> 
-        <span class="chevron-icon">&raquo;</span> 
-        <a href="{{ feature.link }}" class="feature-link">{{ feature.name }}</a>
-      </li>
-    </ul>
+<!-- <ul class="feature-list">
+  <li *ngFor="let feature of (features$ | async)">
+    <span class="chevron-icon">&raquo;</span>
+    <a href="{{ feature.link }}" class="feature-link">{{ feature.name }}</a>
+  </li>
+</ul> -->
