@@ -2,3 +2,26 @@ main{
     padding: 0%;
     margin: 0%;
 }
+.fab-wrapper {
+  position: fixed;
+  bottom: 80px;
+  right: 15px;
+  z-index: 1000;
+}
+
+.fab-main {
+  background: #007bff;
+  border: none;
+  color: #fff;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  transition: transform 0.2s ease-in-out;
+}
+
+.fab-main:hover {
+  transform: scale(1.1);
+}

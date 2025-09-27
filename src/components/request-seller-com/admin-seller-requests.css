@@ -1,0 +1,116 @@
+/* Floating Action Button */
+.fab-wrapper {
+  position: fixed;
+  bottom: 100px;
+  right: 20px;
+  z-index: 1200;
+}
+
+.fab-main {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: #007bff;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.2s, background 0.3s;
+}
+
+.fab-main:hover {
+  background: #0056b3;
+  transform: scale(1.1);
+}
+
+/* Popup backdrop */
+.popup-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1300;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Popup box */
+.popup {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  padding: 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  animation: fadeIn 0.25s ease;
+  position: relative;
+}
+
+/* Danh sách */
+.popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.popup li {
+  padding: 12px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.popup li:hover {
+  background: #f5f5f5;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.actions button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.actions button:first-child {
+  background: #28a745;
+  color: #fff;
+}
+
+.actions button:first-child:hover {
+  background: #218838;
+}
+
+.actions button:nth-child(2) {
+  background: #dc3545;
+  color: #fff;
+}
+
+.actions button:nth-child(2):hover {
+  background: #c82333;
+}
+
+.actions button:last-child {
+  background: #6c757d;
+  color: #fff;
+}
+
+.actions button:last-child:hover {
+  background: #5a6268;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

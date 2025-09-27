@@ -1,0 +1,42 @@
+<div class="fab-wrapper" *ngIf="role === 'admin'">
+  <button class="fab-main" (click)="togglePopup()">
+    <i class="fas fa-book"></i>
+  </button>
+</div>
+
+<!-- Popup -->
+<div class="popup-backdrop" *ngIf="isOpen">
+  <div class="popup">
+    <h2>Yêu cầu Seller</h2>
+
+    <!-- Danh sách email -->
+    <ul *ngIf="!selectedRequest && requests.length > 0">
+      <li *ngFor="let req of requests" (click)="selectRequest(req)">
+        📧 {{ req.email }}
+      </li>
+    </ul>
+
+    <p *ngIf="!selectedRequest && requests.length === 0">
+      Không có yêu cầu nào đang chờ xử lý.
+    </p>
+
+    <!-- Chi tiết -->
+    <div *ngIf="selectedRequest">
+      <p><b>Họ tên:</b> {{ selectedRequest.fullName }}</p>
+      <p><b>SĐT:</b> {{ selectedRequest.phone }}</p>
+      <p><b>Địa chỉ:</b> {{ selectedRequest.address }}</p>
+      <p><b>Email:</b> {{ selectedRequest.email }}</p>
+      <p><b>Ngân hàng:</b> {{ selectedRequest.bankAccount }}</p>
+
+      <div class="actions">
+        <button (click)="approve(selectedRequest)">✅ Chấp nhận</button>
+        <button (click)="reject(selectedRequest)">❌ Từ chối</button>
+        <button (click)="selectedRequest=null">⬅ Quay lại</button>
+      </div>
+    </div>
+
+    <div class="actions" *ngIf="!selectedRequest">
+      <button (click)="togglePopup()">Đóng</button>
+    </div>
+  </div>
+</div>

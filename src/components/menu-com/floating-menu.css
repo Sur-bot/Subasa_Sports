@@ -1,0 +1,60 @@
+.fab-wrapper {
+  position: fixed;
+  bottom: 100px;   
+  right: 10px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;  
+}
+
+.fab-main {
+  width: 65px;
+  height: 65px;
+  border-radius: 50%;
+  background: #28a745;  
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 2;
+  transition: transform 0.3s ease, background 0.3s;
+}
+
+.fab-main:hover {
+  background: #218838;
+  transform: rotate(90deg);
+}
+
+.fab-action {
+  position: absolute;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  color: #333;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+  cursor: pointer;
+  transform: translate(0,0);
+  transition: transform 0.5s ease, opacity 0.3s;
+  opacity: 0;
+}
+
+.fab-action.open {
+  opacity: 1;
+}
+
+.fab-action i {
+  color: #007bff; 
+}

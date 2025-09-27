@@ -3,3 +3,4 @@ npm install swiper
 npm install firebase
 npm install -g firebase-tools
 npm run cleanup
+npm install @fortawesome/fontawesome-free
