@@ -24,13 +24,7 @@
       <div class="box-header">
         <div class="row align-items-center">
           <div class="header-logo">
-            <div
-              class="menu-icon"
-              aria-label="Menu"
-              title="Menu"
-              (click)="toggleSidebar()"
-              [class.active]="isOpen"
-            >
+            <div class="menu-icon" aria-label="Menu" title="Menu" (click)="toggleSidebar()" [class.active]="isOpen">
               <div class="icon">
                 <span></span>
                 <span></span>
@@ -39,124 +33,74 @@
               <span class="title">Menu</span>
             </div>
             <a href="#" clas="logo-wrapper" title="Subasa_Sport">
-              <img
-                src="https://bizweb.dktcdn.net/100/490/431/themes/927074/assets/logo.png?1758009149569"
-                alt="Subasa_Sport"
-                class="logo-image"
-              />
+              <img src="https://bizweb.dktcdn.net/100/490/431/themes/927074/assets/logo.png?1758009149569"
+                alt="Subasa_Sport" class="logo-image" />
             </a>
           </div>
           <div class="header-mid">
             <div class="header-timKiem">
               <form action="/seach" method="get" class="header-search-form">
-                <input
-                  name="query"
-                  required
-                  class="input-group"
-                  placeholder="Tìm kiếm sản phẩm..."
-                  autocomplete="off"
-                  type="text"
-                />
+                <input name="query" required class="input-group" placeholder="Tìm kiếm sản phẩm..." autocomplete="off"
+                  type="text" />
                 <input type="hidden" name="type" value="product" />
                 <button type="submit" class="btn-timkiem" aria-label="Tìm kiếm" title="Tìm kiếm">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    fill="currentColor"
-                    class="bi bi-search"
-                    viewBox="0 0 16 16"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                    class="bi bi-search" viewBox="0 0 16 16">
                     <path
-                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-                    ></path>
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                    </path>
                     <path
-                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-                    ></path>
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z">
+                    </path>
                   </svg>
                 </button>
 
                 <div class="search-suggest">
                   <div class="seach-recent">
                     <div class="seach-title">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        fill="currentColor"
-                        class="bi bi-clock"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z"
-                        ></path>
-                        <path
-                          d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"
-                        ></path>
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                        class="bi bi-clock" viewBox="0 0 16 16">
+                        <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z">
+                        </path>
+                        <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z"></path>
                       </svg>
                       " Tìm kiếm gần đây "
                     </div>
                     <div class="seach-list">
-                      <a
-                        href="/search?query=Gi%C3%A0y%20ch%E1%BA%A1y&amp;type=product"
-                        title="Tìm kiếm Giày chạy"
-                        class="search-item"
-                        >Giày chạy<span class="close"></span
-                      ></a>
+                      <a href="/search?query=Gi%C3%A0y%20ch%E1%BA%A1y&amp;type=product" title="Tìm kiếm Giày chạy"
+                        class="search-item">Giày chạy<span class="close"></span></a>
                     </div>
                   </div>
                   <div class="item-suggest">
                     <div class="search-title">
-                      <svg
-                        height="20"
-                        viewBox="0 0 512 512"
-                        width="20"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
+                      <svg height="20" viewBox="0 0 512 512" width="20" xmlns="http://www.w3.org/2000/svg">
                         <g data-name="Layer 2">
                           <g id="trend_up">
+                            <path id="background"
+                              d="m256 31a225.07 225.07 0 0 1 87.57 432.33 225.07 225.07 0 0 1 -175.14-414.66 223.45 223.45 0 0 1 87.57-17.67m0-31c-141.38 0-256 114.62-256 256s114.62 256 256 256 256-114.62 256-256-114.62-256-256-256z">
+                            </path>
                             <path
-                              id="background"
-                              d="m256 31a225.07 225.07 0 0 1 87.57 432.33 225.07 225.07 0 0 1 -175.14-414.66 223.45 223.45 0 0 1 87.57-17.67m0-31c-141.38 0-256 114.62-256 256s114.62 256 256 256 256-114.62 256-256-114.62-256-256-256z"
-                            ></path>
-                            <path
-                              d="m133.35 334.73a18.11 18.11 0 0 1 -8-1.9c-6.59-3.23-10.36-10.21-9.17-17a22.45 22.45 0 0 1 5.4-11.46c27.31-27.74 54.67-55 75.46-75.63a18 18 0 0 1 12.75-5.63c4.83 0 9.49 2.1 13.47 6.08l47 47 64-64h-6.46c-8.21 0-19.46-.1-25.91-.16-10.16-.08-17.28-7.16-17.33-17.22a17.52 17.52 0 0 1 4.84-12.53 17.19 17.19 0 0 1 12.31-4.88c13-.05 26-.07 38.52-.07 13.05 0 26.06 0 38.67.07 9.73 0 16.84 7 16.9 16.56.18 26.67.17 53 0 78.22-.06 9.58-7.33 16.54-17.28 16.54h-.2c-9.88-.09-16.89-7.06-17.05-16.94-.12-7.75-.1-15.63-.07-23.24q0-5 0-10v-2c-.25.22-.48.44-.7.66q-32.46 32.6-64.89 65.22l-9 9c-5.4 5.43-10.45 8.07-15.44 8.07s-9.9-2.58-15.16-7.88l-46.26-46.25-3.75 3.81c-4 4-7.82 7.76-11.52 11.48l-17.38 17.49c-10 10.08-20.34 20.51-30.55 30.73a18.58 18.58 0 0 1 -13.2 5.86z"
-                            ></path>
+                              d="m133.35 334.73a18.11 18.11 0 0 1 -8-1.9c-6.59-3.23-10.36-10.21-9.17-17a22.45 22.45 0 0 1 5.4-11.46c27.31-27.74 54.67-55 75.46-75.63a18 18 0 0 1 12.75-5.63c4.83 0 9.49 2.1 13.47 6.08l47 47 64-64h-6.46c-8.21 0-19.46-.1-25.91-.16-10.16-.08-17.28-7.16-17.33-17.22a17.52 17.52 0 0 1 4.84-12.53 17.19 17.19 0 0 1 12.31-4.88c13-.05 26-.07 38.52-.07 13.05 0 26.06 0 38.67.07 9.73 0 16.84 7 16.9 16.56.18 26.67.17 53 0 78.22-.06 9.58-7.33 16.54-17.28 16.54h-.2c-9.88-.09-16.89-7.06-17.05-16.94-.12-7.75-.1-15.63-.07-23.24q0-5 0-10v-2c-.25.22-.48.44-.7.66q-32.46 32.6-64.89 65.22l-9 9c-5.4 5.43-10.45 8.07-15.44 8.07s-9.9-2.58-15.16-7.88l-46.26-46.25-3.75 3.81c-4 4-7.82 7.76-11.52 11.48l-17.38 17.49c-10 10.08-20.34 20.51-30.55 30.73a18.58 18.58 0 0 1 -13.2 5.86z">
+                            </path>
                           </g>
                         </g>
                       </svg>
                       "Đề xuất phổ biến"
                     </div>
                     <div class="search-list">
-                      <a
-                        href="/search?q=Giày%20chạy"
-                        class="search-item"
-                        title="Tìm kiếm Giày chạy"
-                      >
+                      <a href="/search?q=Giày%20chạy" class="search-item" title="Tìm kiếm Giày chạy">
                         Giày chạy
                       </a>
-                      <a
-                        href="/search?q=Áo%20chạy%20bộ"
-                        class="search-item"
-                        title="Tìm kiếm Áo chạy bộ"
-                      >
+                      <a href="/search?q=Áo%20chạy%20bộ" class="search-item" title="Tìm kiếm Áo chạy bộ">
                         Áo chạy bộ
                       </a>
-                      <a
-                        href="/search?q=Áo%20chống%20nắng"
-                        class="search-item"
-                        title="Tìm kiếm Áo chống nắng"
-                      >
+                      <a href="/search?q=Áo%20chống%20nắng" class="search-item" title="Tìm kiếm Áo chống nắng">
                         Áo chống nắng
                       </a>
                       <a href="/search?q=Tất/vớ" class="search-item" title="Tìm kiếm Tất/vớ">
                         Tất/vớ
                       </a>
-                      <a
-                        href="/search?q=Nón%20leo%20núi"
-                        class="search-item"
-                        title="Tìm kiếm Nón leo núi"
-                      >
+                      <a href="/search?q=Nón%20leo%20núi" class="search-item" title="Tìm kiếm Nón leo núi">
                         Nón leo núi
                       </a>
                       <a href="/search?q=Bóng%20rổ" class="search-item" title="Tìm kiếm Bóng rổ">
@@ -173,17 +117,11 @@
             <div class="header-hotline">
               <div class="frame-fix">
                 <a title="Điện thoại: 1900 6750" href="tel:19006750"></a>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="30"
-                  height="30"
-                  fill="currentColor"
-                  class="bi bi-whatsapp"
-                  viewBox="0 0 16 16"
-                >
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                  class="bi bi-whatsapp" viewBox="0 0 16 16">
                   <path
-                    d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"
-                  ></path>
+                    d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z">
+                  </path>
                 </svg>
                 <div class="text-box">
                   <span class="acc-text-small">Hotline hỗ trợ:</span>
@@ -194,17 +132,10 @@
             <div class="header-store">
               <div class="frame-fix">
                 <a href="#" title="Hệ thống cửa hàng"></a>
-                <svg
-                  width="30"
-                  height="30"
-                  viewBox="0 0 28 28"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                <svg width="30" height="30" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path
                     d="M19 22.52L26 21.174V2H2V25.79L9.095 24.425C9.03237 24.2921 8.99993 24.1469 9 24V16C9 15.7348 9.10536 15.4804 9.29289 15.2929C9.48043 15.1054 9.73478 15 10 15H18C18.2652 15 18.5196 15.1054 18.7071 15.2929C18.8946 15.4804 19 15.7348 19 16V22.52ZM17 22.905V17H11V24C11 24.02 11 24.04 10.998 24.059L17 22.905ZM1 0H27C27.2652 0 27.5196 0.105357 27.7071 0.292893C27.8946 0.48043 28 0.734784 28 1V22C28 22.2324 27.919 22.4576 27.771 22.6368C27.623 22.816 27.4172 22.9381 27.189 22.982L1.189 27.982C1.04431 28.0098 0.89526 28.0054 0.752502 27.9689C0.609744 27.9324 0.476808 27.8649 0.363202 27.7711C0.249597 27.6772 0.158129 27.5595 0.0953412 27.4262C0.0325533 27.2929 -3.37575e-06 27.1473 2.62534e-10 27V1C2.62534e-10 0.734784 0.105357 0.48043 0.292893 0.292893C0.48043 0.105357 0.734784 0 1 0ZM6 7.998V4H22V7.998H6Z"
-                    fill="white"
-                  ></path>
+                    fill="white"></path>
                 </svg>
                 <div class="text-box">
                   <span class="acc-text-small">Hệ thống cửa hàng</span>
@@ -218,177 +149,168 @@
                 <!-- <svg></svg> -->
                 <div class="text-box">
                   <span class="acc-text-small">Thông tin </span>
-                  <span class="acc-text">Tài khoản</span>
+                  <span class="acc-text" *ngIf="!isLoggedInEmail" (click)="toggleLogin()">
+                    {{ accountLabel }}
+                  </span>
+                  <span class="acc-text" *ngIf="isLoggedInEmail">
+                    {{ accountLabel }}
+                    <button class="logout-btn" (click)="logout()">Đăng xuất</button>
+                  </span>
+                  <div *ngIf="showLogin" class="overlay" (click)="closeOnOverlay($event)">
+                    <div class="popup" (click)="$event.stopPropagation()">
+                      <app-login (loggedIn)="onLoggedIn($event)" (closed)="closeLogin()"></app-login>
+                    </div>
+                  </div>
                 </div>
               </div>
-              <ul></ul>
             </div>
-            <div class="header-cart">
-              <div class="frame-fix">
-                <a class="a-hea" href="#" aria-label="Giỏ hàng" title="Giỏ hàng"></a>
-                <span class="box-icon">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="30"
-                    height="30"
-                    fill="currentColor"
-                    class="bi bi-cart"
-                    viewBox="0 0 16 16"
-                  >
-                    <path
-                      d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2"
-                    ></path>
-                  </svg>
-                </span>
-                <span class="count-item">0</span>
-                <span class="icon-title">Giỏ hàng</span>
-              </div>
+            <ul></ul>
+          </div>
+          <div class="header-cart">
+            <div class="frame-fix">
+              <a class="a-hea" href="#" aria-label="Giỏ hàng" title="Giỏ hàng"></a>
+              <span class="box-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-cart"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2">
+                  </path>
+                </svg>
+              </span>
+              <span class="count-item">0</span>
+              <span class="icon-title">Giỏ hàng</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <!-- SIDE-BAR -->
-  <aside class="sidebar" [class.show]="isOpen">
-    <div class="sb-container">
-      <div class="sb-title">
-        <p class="title-text">DANH MỤC</p>
-        <button class="close-btn" (click)="toggleSidebar()">✕</button>
-      </div>
-      <div class="list-cat">
-        <ul class="menu-list">
-          <li class="list">
-            <div class="cat-title" (click)="toggleCategory('sports')">
-              <img
-                class="img-mtt"
-                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/sports.png?v=1693640338110"
-                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/sports.png?v=1693640338110"
-                alt="Môn Thể Thao"
-                data-was-processed="true"
-              />
-              MÔN THỂ THAO
-              <span class="arrow" [class.open]="openCategory === 'sports'">&#9662;</span>
-            </div>
-            <ul class="sub-menu" *ngIf="openCategory === 'sports'">
-              <li>Bóng đá</li>
-              <li>Bóng chuyền</li>
-              <li>Bóng rổ</li>
-              <li>Cầu lông</li>
-            </ul>
-          </li>
-          <li class="list">
-            <div class="cat-title" (click)="toggleCategory('men')">
-              <img
-                class="img-nam"
-                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/soccer-player.png?v=1693643500123"
-                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/soccer-player.png?v=1693643500123"
-                alt="Nam"
-                data-was-processed="true"
-              />
-              NAM
-              <span class="arrow" [class.open]="openCategory === 'men'">&#9662;</span>
-            </div>
-            <ul class="sub-menu" *ngIf="openCategory === 'men'">
-              <li>Áo thun</li>
-              <li>Quần short</li>
-              <li>Giày thể thao</li>
-            </ul>
-          </li>
-          <li class="list">
-            <div class="cat-title" (click)="toggleCategory('women')">
-              <img
-                class="img-nu"
-                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/playing.png?v=1693643512323"
-                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/playing.png?v=1693643512323"
-                alt="Nữ"
-                data-was-processed="true"
-              />
-              NỮ
-              <span class="arrow" [class.open]="openCategory === 'women'">&#9662;</span>
-            </div>
-            <ul class="sub-menu" *ngIf="openCategory === 'women'">
-              <li>Váy thể thao</li>
-              <li>Áo tập</li>
-              <li>Quần tập</li>
-            </ul>
-          </li>
-          <li class="list">
-            <div class="cat-title" (click)="toggleCategory('kids')">
-              <img
-                class="img-treem"
-                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/games.png?v=1693643587037"
-                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/games.png?v=1693643587037"
-                alt="Trẻ Em"
-                data-was-processed="true"
-              />
-              TRẺ EM
-              <span class="arrow" [class.open]="openCategory === 'kids'">&#9662;</span>
-            </div>
-            <ul class="sub-menu" *ngIf="openCategory === 'kids'">
-              <li>Quần áo trẻ em</li>
-              <li>Giày trẻ em</li>
-            </ul>
-          </li>
-          <li class="list">
-            <div class="cat-title" (click)="toggleCategory('accessories')">
-              <img
-                class="img-phukien"
-                src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
-                data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
-                alt="Phụ Kiện"
-                data-was-processed="true"
-              />
-              PHỤ KIỆN
-              <span class="arrow" [class.open]="openCategory === 'accessories'">&#9662;</span>
-            </div>
-            <ul class="sub-menu" *ngIf="openCategory === 'accessories'">
-              <li>Balo</li>
-              <li>Găng tay</li>
-              <li>Bình nước</li>
-            </ul>
-          </li>
-        </ul>
-      </div>
-      <div class="info-tab">
-        <ul class="sub-links">
-          <li class="sub-tab">Về Sudes Sport</li>
-          <li class="sub-tab" (click)="toggleCategory('#')">
-            Chính sách mua hàng
-            <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
-            <ul class="sub-menu" *ngIf="openCategory === '#'">
-              <li>Balo</li>
-              <li>Găng tay</li>
-              <li>Bình nước</li>
-            </ul>
-          </li>
-          <li class="sub-tab">
-            Hướng dẫn mua hàng
-            <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
-            <ul class="sub-menu" *ngIf="openCategory === '#'">
-              <li>Balo</li>
-              <li>Găng tay</li>
-              <li>Bình nước</li>
-              <li>Bình nước</li>
-              <li>Bình nước</li>
-            </ul>
-          </li>
-          <li class="sub-tab">
-            Tin tức
-            <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
-            <ul class="sub-menu" *ngIf="openCategory === '#'">
-              <li>Balo</li>
-              <li>Găng tay</li>
-              <li>Bình nước</li>
-            </ul>
-          </li>
-          <li class="sub-tab">Liên hệ chúng tôi</li>
-        </ul>
-      </div>
+</div>
+<!-- SIDE-BAR -->
+<aside class="sidebar" [class.show]="isOpen">
+  <div class="sb-container">
+    <div class="sb-title">
+      <p class="title-text">DANH MỤC</p>
+      <button class="close-btn" (click)="toggleSidebar()">✕</button>
     </div>
+    <div class="list-cat">
+      <ul class="menu-list">
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('sports')">
+            <img class="img-mtt"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/sports.png?v=1693640338110"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/sports.png?v=1693640338110"
+              alt="Môn Thể Thao" data-was-processed="true" />
+            MÔN THỂ THAO
+            <span class="arrow" [class.open]="openCategory === 'sports'">&#9662;</span>
+          </div>
+          <ul class="sub-menu" *ngIf="openCategory === 'sports'">
+            <li>Bóng đá</li>
+            <li>Bóng chuyền</li>
+            <li>Bóng rổ</li>
+            <li>Cầu lông</li>
+          </ul>
+        </li>
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('men')">
+            <img class="img-nam"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/soccer-player.png?v=1693643500123"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/soccer-player.png?v=1693643500123"
+              alt="Nam" data-was-processed="true" />
+            NAM
+            <span class="arrow" [class.open]="openCategory === 'men'">&#9662;</span>
+          </div>
+          <ul class="sub-menu" *ngIf="openCategory === 'men'">
+            <li>Áo thun</li>
+            <li>Quần short</li>
+            <li>Giày thể thao</li>
+          </ul>
+        </li>
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('women')">
+            <img class="img-nu"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/playing.png?v=1693643512323"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/playing.png?v=1693643512323" alt="Nữ"
+              data-was-processed="true" />
+            NỮ
+            <span class="arrow" [class.open]="openCategory === 'women'">&#9662;</span>
+          </div>
+          <ul class="sub-menu" *ngIf="openCategory === 'women'">
+            <li>Váy thể thao</li>
+            <li>Áo tập</li>
+            <li>Quần tập</li>
+          </ul>
+        </li>
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('kids')">
+            <img class="img-treem"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/games.png?v=1693643587037"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/games.png?v=1693643587037" alt="Trẻ Em"
+              data-was-processed="true" />
+            TRẺ EM
+            <span class="arrow" [class.open]="openCategory === 'kids'">&#9662;</span>
+          </div>
+          <ul class="sub-menu" *ngIf="openCategory === 'kids'">
+            <li>Quần áo trẻ em</li>
+            <li>Giày trẻ em</li>
+          </ul>
+        </li>
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('accessories')">
+            <img class="img-phukien"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              alt="Phụ Kiện" data-was-processed="true" />
+            PHỤ KIỆN
+            <span class="arrow" [class.open]="openCategory === 'accessories'">&#9662;</span>
+          </div>
+          <ul class="sub-menu" *ngIf="openCategory === 'accessories'">
+            <li>Balo</li>
+            <li>Găng tay</li>
+            <li>Bình nước</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+    <div class="info-tab">
+      <ul class="sub-links">
+        <li class="sub-tab">Về Sudes Sport</li>
+        <li class="sub-tab" (click)="toggleCategory('#')">
+          Chính sách mua hàng
+          <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
+          <ul class="sub-menu" *ngIf="openCategory === '#'">
+            <li>Balo</li>
+            <li>Găng tay</li>
+            <li>Bình nước</li>
+          </ul>
+        </li>
+        <li class="sub-tab">
+          Hướng dẫn mua hàng
+          <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
+          <ul class="sub-menu" *ngIf="openCategory === '#'">
+            <li>Balo</li>
+            <li>Găng tay</li>
+            <li>Bình nước</li>
+            <li>Bình nước</li>
+            <li>Bình nước</li>
+          </ul>
+        </li>
+        <li class="sub-tab">
+          Tin tức
+          <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
+          <ul class="sub-menu" *ngIf="openCategory === '#'">
+            <li>Balo</li>
+            <li>Găng tay</li>
+            <li>Bình nước</li>
+          </ul>
+        </li>
+        <li class="sub-tab">Liên hệ chúng tôi</li>
+      </ul>
+    </div>
+  </div>
 
-    <!-- footer-menu -->
-    <!-- <div class="footer-tab">
+  <!-- footer-menu -->
+  <!-- <div class="footer-tab">
       <div class="hotline">
         <div class="hotline-content">
           <a title="Điện thoại: 1900 6750" href="#"></a>
@@ -413,5 +335,5 @@
       <div class="store"></div>
       <div class="love-list"></div>
     </div> -->
-  </aside>
-</div>
+  <!-- </aside>
+</div> -->

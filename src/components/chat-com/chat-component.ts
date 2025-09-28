@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ChangeDetectorRef, ElementRef, ViewChild, Aft
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatSupportService } from './chat-support.service';
-import { Auth,signInAnonymously, User } from '@angular/fire/auth';
+import { Auth, signInAnonymously, User, deleteUser } from '@angular/fire/auth';
 
 @Component({
   selector: 'ChatComponent',
@@ -26,19 +26,31 @@ export class ChatSupportComponent implements OnInit, AfterViewChecked {
   ) { }
 
   ngOnInit() {
-    const currentUser = this.auth.currentUser;
-    if (currentUser) {
-      this.chatService.registerUser(currentUser.uid, currentUser.email!);
+  const currentUser = this.auth.currentUser;
+
+  if (currentUser) {
+    // 🔑 Luôn sync userId với Firebase UID
+    this.userId = currentUser.uid;
+    localStorage.setItem('userId', this.userId);
+    if (!currentUser.isAnonymous) {
+      localStorage.removeItem('isGuest');
     }
 
-    if (!this.userId) return;
+    this.chatService.registerUser(
+      this.userId,
+      currentUser.email,
+      currentUser.displayName ?? currentUser.email?.split('@')[0] ?? 'User'
+    );
 
+    // Luôn subscribe theo UID thực
     this.chatService.getMessages(this.userId).subscribe(msgs => {
       this.messages = msgs;
       this.cdr.detectChanges();
       this.scrollToBottom();
     });
   }
+}
+
 
   ngAfterViewChecked() {
     this.scrollToBottom();
@@ -51,49 +63,68 @@ export class ChatSupportComponent implements OnInit, AfterViewChecked {
   }
 
   async send() {
-    if (!this.text.trim()) return;
+  if (!this.text.trim()) return;
 
-    const currentUser = this.auth.currentUser;
-    if (!currentUser) {
-      console.error('Chưa đăng nhập, không gửi được message');
-      return;
-    }
-
-    try {
-      await this.chatService.sendMessage(this.userId, currentUser.uid, this.text, currentUser.email!);
-      this.text = '';
-      this.cdr.detectChanges();
-      this.scrollToBottom();
-    } catch (err) {
-      console.error('[UserChat] Lỗi khi gửi:', err);
-    }
+  const currentUser = this.auth.currentUser;
+  if (!currentUser) {
+    console.error('Chưa đăng nhập, không gửi được message');
+    return;
   }
 
- 
+  const userId = currentUser.uid; // 🔑 không lấy từ localStorage
+  try {
+    await this.chatService.sendMessage(
+      userId,
+      userId,
+      this.text,
+      currentUser.email || ''
+    );
+    this.text = '';
+    this.cdr.detectChanges();
+    this.scrollToBottom();
+  } catch (err) {
+    console.error('[UserChat] Lỗi khi gửi:', err);
+  }
+}
 
-async toggleChat() {
+
+  async toggleChat() {
   this.isOpen = !this.isOpen;
 
   if (!this.isOpen) {
-    // Đóng chat → clear guest
+    // Đóng chat → clear guest ngay
     const isGuest = localStorage.getItem('isGuest') === 'true';
     const userId = localStorage.getItem('userId');
 
     if (isGuest && userId) {
-      this.chatService.clearUserChat(userId)
-        .then(() => {
-          console.log('[Chat] Guest chat đã xoá khi tắt box');
-          localStorage.removeItem('userId');
-          localStorage.removeItem('isGuest');
-        })
-        .catch(err => console.error('[Chat] Lỗi xoá guest chat:', err));
+      // Xoá localStorage ngay lập tức để đảm bảo đóng là mất
+      localStorage.removeItem('userId');
+      localStorage.removeItem('isGuest');
+
+      try {
+        // Xoá dữ liệu chat
+        await this.chatService.clearUserChat(userId);
+        console.log('[Chat] Guest chat đã xoá khi tắt box');
+
+        // Xoá guest account trong Firebase Auth nếu còn tồn tại
+        if (this.auth.currentUser?.isAnonymous && this.auth.currentUser.uid === userId) {
+          try {
+            const user = this.auth.currentUser as User;
+            await deleteUser(user);
+            console.log('[Chat] Guest account đã bị xoá khỏi Firebase Auth');
+          } catch (err) {
+            console.error('[Chat] Lỗi xoá guest account:', err);
+          }
+        }
+      } catch (err) {
+        console.error('[Chat] Lỗi xoá guest chat:', err);
+      }
     }
   } else {
     // Mở chat
     const currentUser = this.auth.currentUser;
 
     if (currentUser) {
-      // Nếu đã đăng nhập thật → dùng UID thật
       this.userId = currentUser.uid;
       localStorage.setItem('userId', currentUser.uid);
       localStorage.removeItem('isGuest');
@@ -106,17 +137,14 @@ async toggleChat() {
 
       console.log('[Chat] Đang dùng tài khoản thật:', this.userId);
     } else {
-      // Nếu chưa đăng nhập → fallback guest
       let userId = localStorage.getItem('userId');
       const isGuest = localStorage.getItem('isGuest') === 'true';
 
       if (isGuest && userId) {
-        // Dùng lại guest cũ
         this.userId = userId;
         await this.chatService.registerUser(userId, null, 'Guest');
         console.log('[Chat] Guest đã được register lại:', userId);
       } else {
-        // Tạo guest mới qua Firebase Auth
         try {
           const cred = await signInAnonymously(this.auth);
           const user = cred.user;
@@ -136,8 +164,6 @@ async toggleChat() {
     setTimeout(() => this.scrollToBottom(), 100);
   }
 }
-
-
 
 
   isSenderMe(senderId: string) {

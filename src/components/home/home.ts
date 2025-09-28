@@ -1,12 +1,20 @@
 import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
+
+import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+//components
 import { HeaderComponent } from '../header-com/header-component';
 import { CategoryComponent } from '../category-com/category-component';
 import { BannerComponent } from '../banner-com/banner-component';
 import { ChatSupportComponent } from '../chat-com/chat-component';
 import { AdminDashboardComponent } from '../chat-com/AdminDashboardComponent';
-import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
-import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { NotificationFloatingComponent } from '../notificationfloating-com/notification-floating-component';
+import { FloatingMenuComponent } from '../menu-com/floating-menu';
+import { RequestSellerComponent } from '../request-seller-com/request-seller';
+import { UserService } from '../menu-com/UserService';
+import {AdminSellerRequestsComponent} from '../request-seller-com/admin-seller-requests'
 
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
@@ -19,6 +27,10 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     CategoryComponent,
     ChatSupportComponent,
     AdminDashboardComponent,
+    NotificationFloatingComponent,
+    FloatingMenuComponent,
+    RequestSellerComponent,
+    AdminSellerRequestsComponent,
     FormsModule,
     CommonModule
   ],
@@ -29,12 +41,18 @@ export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   userId: string = '';
   isAdmin = false;
-
+  showRequestPopup = false;
+  role: string | null = null;
+  
   constructor(
     private auth: Auth,
     private ngZone: NgZone,
-    private cdr: ChangeDetectorRef
-  ) {}
+    private cdr: ChangeDetectorRef,
+    private userService: UserService
+  ) {
+    this.userService.role$.subscribe(r => this.role = r);
+
+  }
 
   ngOnInit() {
     onAuthStateChanged(this.auth, (user) => {

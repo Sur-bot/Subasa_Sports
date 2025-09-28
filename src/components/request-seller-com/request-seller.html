@@ -1,0 +1,39 @@
+<div *ngIf="role === 'user'" class="fab-wrapper">
+  <!-- Nút chính -->
+  <button class="fab-main" (click)="togglePopup()">
+    <i class="fas fa-user-plus"></i>
+  </button>
+</div>
+
+<!-- Popup -->
+<div class="popup-backdrop" *ngIf="isOpen">
+  <div class="popup">
+    <h2>Đăng ký trở thành Seller</h2>
+
+    <form (ngSubmit)="submitForm()" #sellerForm="ngForm">
+      <label>Họ và tên</label>
+      <input type="text" [(ngModel)]="form.fullName" name="fullName" required />
+
+      <label>Số điện thoại</label>
+      <input type="text" [(ngModel)]="form.phone" name="phone" required />
+
+      <label>Địa chỉ</label>
+      <input type="text" [(ngModel)]="form.address" name="address" required />
+
+      <label>Số tài khoản ngân hàng</label>
+      <input type="text" [(ngModel)]="form.bankAccount" name="bankAccount" required />
+
+      <!-- Ảnh CCCD -->
+      <label>Ảnh CCCD (mặt trước)</label>
+      <input type="file" (change)="onFileSelected($event, 'front')" accept="image/*" required />
+
+      <label>Ảnh CCCD (mặt sau)</label>
+      <input type="file" (change)="onFileSelected($event, 'back')" accept="image/*" required />
+
+      <div class="actions">
+        <button type="submit" [disabled]="loading">Gửi yêu cầu</button>
+        <button type="button" (click)="togglePopup()">Hủy</button>
+      </div>
+    </form>
+  </div>
+</div>

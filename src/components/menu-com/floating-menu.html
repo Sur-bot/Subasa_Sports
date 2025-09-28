@@ -1,0 +1,24 @@
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
+<div *ngIf="isSeller" class="fab-wrapper">
+  <!-- Nút chính -->
+  <button class="fab-main" (click)="toggleMenu()">
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Các nút chức năng -->
+  <ng-container *ngFor="let action of actions; let i = index">
+    <button
+      class="fab-action"
+      [ngStyle]="getButtonStyle(i)"
+      [class.open]="isOpen"
+      (click)="action.onClick()"
+      [title]="action.label"
+    >
+      <i [class]="action.icon"></i>
+    </button>
+  </ng-container>
+</div>
+
+<!-- Popup tạo sản phẩm -->
+<app-product *ngIf="showProductModal" (close)="closeProductModal()"></app-product>

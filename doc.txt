@@ -2,3 +2,6 @@ npm install @angular/core @angular/common @angular/compiler @angular/platform-br
 npm install swiper
 npm install firebase
 npm install -g firebase-tools
+npm run cleanup
+npm install @fortawesome/fontawesome-free
+npm install @angular/material  

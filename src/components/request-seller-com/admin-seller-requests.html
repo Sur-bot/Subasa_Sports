@@ -1,0 +1,96 @@
+<div class="fab-wrapper">
+  <button class="fab-main" (click)="togglePopup()">
+    <i class="fas fa-book"></i>
+  </button>
+</div>
+
+<!-- Popup -->
+<div class="popup-backdrop" *ngIf="isOpen">
+  <div class="popup">
+    <h2>Quản lý Admin</h2>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button [class.active]="activeTab==='seller'" (click)="activeTab='seller'">Seller Requests</button>
+      <button [class.active]="activeTab==='product'" (click)="activeTab='product'">Products Pending</button>
+    </div>
+
+    <!-- Seller Requests -->
+    <div *ngIf="activeTab==='seller'">
+      <ul *ngIf="!selectedRequest && requests.length > 0">
+        <li *ngFor="let req of requests" (click)="selectRequest(req)">
+          📧 {{ req.email }}
+        </li>
+      </ul>
+      <p *ngIf="!selectedRequest && requests.length === 0">Không có yêu cầu nào đang chờ xử lý.</p>
+
+      <div *ngIf="selectedRequest">
+        <p><b>Họ tên:</b> {{ selectedRequest.fullName }}</p>
+        <p><b>SĐT:</b> {{ selectedRequest.phone }}</p>
+        <p><b>Địa chỉ:</b> {{ selectedRequest.address }}</p>
+        <p><b>Email:</b> {{ selectedRequest.email }}</p>
+        <p><b>Ngân hàng:</b> {{ selectedRequest.bankAccount }}</p>
+
+        <div class="thumbs">
+          <div class="thumb-item" (click)="previewImage(selectedRequest.cccdFrontUrl)">
+            <img [src]="selectedRequest.cccdFrontUrl" />
+            <p>Mặt trước</p>
+          </div>
+          <div class="thumb-item" (click)="previewImage(selectedRequest.cccdBackUrl)">
+            <img [src]="selectedRequest.cccdBackUrl" />
+            <p>Mặt sau</p>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button (click)="approveSeller(selectedRequest)">✅ Chấp nhận</button>
+          <button (click)="rejectSeller(selectedRequest)">❌ Từ chối</button>
+          <button (click)="selectedRequest=null">⬅ Quay lại</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Products -->
+    <div *ngIf="activeTab==='product'">
+      <ul *ngIf="!selectedProduct && products.length > 0">
+        <li *ngFor="let prod of products" (click)="selectProduct(prod)">
+          📦 {{ prod.productName }} - {{ prod.brand }} - {{ prod.price | number }}
+        </li>
+      </ul>
+      <p *ngIf="!selectedProduct && products.length === 0">Không có sản phẩm pending.</p>
+
+      <div *ngIf="selectedProduct">
+        <p><b>Người đăng:</b> {{ selectedProduct.ownerEmail }}</p>
+        <p><b>Tên:</b> {{ selectedProduct.productName }}</p>
+        <p><b>Mô tả:</b> {{ selectedProduct.description }}</p>
+        <p><b>Giá:</b> {{ selectedProduct.price | number }}đ</p>
+        <p><b>Size:</b> {{ selectedProduct.size }}</p>
+        <p><b>Số lượng:</b> {{ selectedProduct.quantity }}</p>
+        <p><b>Thương hiệu:</b> {{ selectedProduct.brand }}</p>
+        <p><b>Giảm giá:</b> {{ selectedProduct.discount }}%</p>
+        <p><b>Rating:</b> {{ selectedProduct.productRating }}</p>
+
+        <div class="thumbs">
+          <div class="thumb-item" *ngFor="let img of selectedProduct.productImage" (click)="previewImage(img)">
+            <img [src]="img" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button (click)="approveProduct(selectedProduct)">✅ Duyệt</button>
+          <button (click)="rejectProduct(selectedProduct)">❌ Từ chối</button>
+          <button (click)="selectedProduct=null">⬅ Quay lại</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions" *ngIf="!selectedRequest && !selectedProduct">
+      <button (click)="togglePopup()">Đóng</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal preview ảnh lớn -->
+<div class="preview-backdrop" *ngIf="previewUrl" (click)="closePreview()">
+  <img [src]="previewUrl" class="preview-large" />
+</div>

@@ -1,5 +1,7 @@
 <header-component></header-component>
 <BannerComponent></BannerComponent>
+<app-notification-floating></app-notification-floating>
+<FloatingMenuComponent></FloatingMenuComponent>
 <main class="main">
   <div class="content">
     <!-- <h1>Nội dung chính</h1> -->
@@ -15,3 +17,7 @@
 
 <!-- Admin -->
 <AdminChatComponent *ngIf="isAdmin && userId" [adminId]="userId"></AdminChatComponent>
+
+<app-request-seller [role]="role"></app-request-seller>
+
+<app-admin-dashboard *ngIf="isAdmin"></app-admin-dashboard>
