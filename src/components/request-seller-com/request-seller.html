@@ -23,6 +23,13 @@
       <label>Số tài khoản ngân hàng</label>
       <input type="text" [(ngModel)]="form.bankAccount" name="bankAccount" required />
 
+      <!-- Ảnh CCCD -->
+      <label>Ảnh CCCD (mặt trước)</label>
+      <input type="file" (change)="onFileSelected($event, 'front')" accept="image/*" required />
+
+      <label>Ảnh CCCD (mặt sau)</label>
+      <input type="file" (change)="onFileSelected($event, 'back')" accept="image/*" required />
+
       <div class="actions">
         <button type="submit" [disabled]="loading">Gửi yêu cầu</button>
         <button type="button" (click)="togglePopup()">Hủy</button>
