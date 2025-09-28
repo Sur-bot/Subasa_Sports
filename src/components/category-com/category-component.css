@@ -1,0 +1,206 @@
+.cat-view {
+  display: block;
+  width: 100%;
+  height: 350px;
+  padding: 30px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+}
+
+.cat-head {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.container {
+  padding-right: 45px;
+  padding-left: 45px;
+  height: 350px;
+}
+
+.tab-h2 {
+  border-top: 5px solid #a2ff00;
+  width: 80px;
+  height: 5px;
+  background-color: #002d3a;
+  margin: 0px 0px 0px;
+  padding: 0px;
+}
+
+.cate-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: auto;
+  text-decoration: none;
+}
+
+/* khung ảnh */
+.bg-thumb {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f3f3f3;
+  height: 200px;
+  width: 200px;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 30px) 0,
+    100% 20px,
+    100% 100%,
+    20px 100%,
+    0 calc(100% - 20px)
+  );
+}
+
+.concac {
+  width: 130px;
+  height: 130px;
+  object-fit: contain;
+  opacity: 1;
+}
+
+.swipe-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  gap: 7px;
+  z-index: 1;
+  display: flex;
+  transition-property: transform;
+  box-sizing: content-box;
+}
+
+.swiper-slide {
+  flex: 0 0 auto;
+  width: 200px;
+  margin-right: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.cate-content {
+  width: 100%;
+  text-align: center;
+  padding-top: 8px;
+}
+
+h3 {
+  margin: 0 0 8px;
+  text-decoration: none;
+}
+
+.status {
+  position: relative;
+  height: 20px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.total-product {
+  transform: translateY(0);
+  top: 0;
+  width: 200px;
+  justify-content: center;
+  align-items: center;
+}
+
+.cate-item:hover img {
+  transform: scale(1.1);
+  z-index: 2;
+  position: relative;
+}
+
+.cate-item img {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.total-product,
+.view-more {
+  display: block;
+  text-align: center;
+  box-sizing: border-box;
+  transition: transform 0.3s ease;
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.view-more {
+  transform: translateY(100%);
+  top: 0;
+  width: 200px;
+  justify-content: center;
+  align-items: center;
+}
+
+.cate-item:hover .total-product {
+  transform: translateY(-100%);
+}
+
+.cate-item:hover .view-more {
+  transform: translateY(0);
+  color: #a2ff00;
+  text-decoration: underline;
+}
+
+/* nút điều hướng */
+.show-all {
+  display: flex;
+}
+
+.btn-showAll {
+  display: flex;
+  height: 40px;
+  width: 130px;
+  background: linear-gradient(to left, #002d3a 50%, #a2ff00 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  justify-content: center;
+  align-items: center;
+  transform: skew(-20deg);
+  cursor: pointer;
+  font-weight: bold;
+   transition: background-position 0.3s ease-in-out;
+}
+
+.btn-showAll:hover {
+  background-position: left bottom;
+}
+
+.show-all .txt-showAll {
+  transform: skew(20deg);
+  color: #fff;
+  padding: 0;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.btn-showAll:hover .txt-showAll {
+  color: #000000;
+}
+
+/* icon mặc định trắng */
+.btn-showAll .icon-arrow {
+  margin-left: 6px;
+  transform: skew(20deg);
+  fill: #fff;
+  transition: fill 0.3s ease;
+}
+
+/* khi hover vào btn-showAll thì icon thành đen */
+.btn-showAll:hover .icon-arrow {
+  fill: #000;
+}

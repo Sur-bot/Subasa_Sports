@@ -1,5 +1,6 @@
 import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { HeaderComponent } from '../header-com/header-component';
+import { CategoryComponent } from '../category-com/category-component';
 import { BannerComponent } from '../banner-com/banner-component';
 import { ChatSupportComponent } from '../chat-com/chat-component';
 import { AdminDashboardComponent } from '../chat-com/AdminDashboardComponent';
@@ -15,6 +16,7 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
   imports: [
     BannerComponent,
     HeaderComponent,
+    CategoryComponent,
     ChatSupportComponent,
     AdminDashboardComponent,
     FormsModule,

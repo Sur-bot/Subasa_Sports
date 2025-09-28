@@ -205,6 +205,7 @@
 .acc-text-small {
   font-size: 12px;
   color: #ffffff;
+  margin-top: 0px;
 }
 .acc-text {
   font-weight: bold;
