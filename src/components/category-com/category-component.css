@@ -142,7 +142,7 @@ h3 {
 .view-more {
   transform: translateY(100%);
   top: 0;
-  width: 200px;
+  width: 160px;
   justify-content: center;
   align-items: center;
 }
