@@ -1,6 +1,6 @@
   // src/components/product-card/product-card.component.ts
 
-  import { Component, Input } from '@angular/core';
+  import { Component, Input, Output, EventEmitter } from '@angular/core';
   import { CommonModule, DecimalPipe } from '@angular/common';
 
   // ----------------------------------------------------
@@ -22,6 +22,7 @@
     imageUrl: string;
     colors: ProductColor[];
     quantity: number; // Số lượng trong kho
+    size: string | string[] | null | undefined; // Kích cỡ (có thể là mảng hoặc chuỗi)
     productrating: number; // Đánh giá sao
     status: string; // Trạng thái sản phẩm
     soldCount: number;
@@ -35,7 +36,12 @@
     styleUrls: ['./product-card.component.css'] // <-- Dùng CSS
   })
   export class ProductCardComponent {
-    
+    @Output() optionSelected = new EventEmitter<Product>(); 
+
+    onSelectOption() {
+      // Phát ra toàn bộ dữ liệu sản phẩm để component cha có thể hiển thị modal
+      this.optionSelected.emit(this.product);
+    }
     // Input bắt buộc để nhận dữ liệu sản phẩm
     @Input({ required: true }) product!: Product; 
   }

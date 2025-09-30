@@ -43,6 +43,10 @@ export class ProductService {
             const discount = product.discount || 0;
             const salePrice = Math.round(price * (1 - discount / 100));
             const discountAmount = price - salePrice;
+              // ⭐ CẬP NHẬT QUAN TRỌNG: Thêm trường 'size' vào đối tượng Product
+            const rawSize = product.size;
+            // Đảm bảo size luôn là chuỗi, nếu null/undefined thì gán thành chuỗi rỗng
+            const safeSize = typeof rawSize === 'string' ? rawSize : ''; 
 
             return {
               id: product.id,
@@ -58,6 +62,7 @@ export class ProductService {
               quantity: product.quantity || 0,
               productrating: product.productRating || 0,
               status: product.status || 'pending',
+              size: safeSize, 
               soldCount: product.quantity ? Math.round(product.quantity * 0.1) : 0, 
             } as Product;
           });

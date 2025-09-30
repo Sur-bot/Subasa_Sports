@@ -1,0 +1,73 @@
+<div class="modal-overlay" (click)="onClose()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        
+        <button class="close-button" (click)="onClose()">X</button>
+
+        <div class="modal-main-content">
+            
+            <div class="product-image-column">
+                <img [src]="product.imageUrl" [alt]="product.productName" class="modal-main-image">
+            </div>
+
+            <div class="product-options-column">
+                
+                <div class="modal-header-details">
+                    <h3 class="product-name">
+                        SẢN PHẨM {{ product.productName }}
+                    </h3>
+                    <div class="price-details">
+                        <span class="sale-price">{{ salePrice | number:'1.0-0' }}₫</span>
+                        <span class="original-price">{{ originalPrice | number:'1.0-0' }}₫</span>
+                        </div>
+                </div>
+
+                <div class="modal-body-options">
+                    
+                    <div class="option-group color-select">
+                        <h4 class="option-title">Màu sắc:</h4>
+                        <div class="option-list color-options">
+                            @for (color of product.colors; track color.hexCode) {
+                                <div 
+                                    class="color-dot" 
+                                    [style.backgroundColor]="color.hexCode" 
+                                    (click)="selectColor(color.hexCode)" 
+                                    [class.selected]="selectedColor === color.hexCode">
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    
+                    <div class="option-group size-select">
+                        <h4 class="option-title">Kích thước:</h4>
+                        <div class="option-list size-options">
+                            @for (sizeOption of sizeOptions; track sizeOption) {
+                                <button 
+                                    class="size-button" 
+                                    (click)="selectSize(sizeOption)" 
+                                    [class.selected]="selectedSize === sizeOption">
+                                    {{ sizeOption }}
+                                </button>
+                            } 
+                            @empty {
+                                <span class="no-size-available">Hiện tại đã hết hàng cho kích thước này.</span>
+                            }
+                        </div>
+                    </div>
+
+                    <p class="stock-info">Còn lại: {{ maxQuantity }} sản phẩm</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer-controls">
+            <div class="quantity-control-wrapper">
+                <button class="qty-btn" (click)="changeQuantity(-1)" [disabled]="selectedQuantity <= 1 || sizeOptions.length === 0">-</button>
+                <input type="text" [value]="selectedQuantity" readonly class="quantity-input">
+                <button class="qty-btn" (click)="changeQuantity(1)" [disabled]="selectedQuantity >= maxQuantity || sizeOptions.length === 0">+</button>
+            </div>
+            
+            <button class="add-to-cart-button" (click)="addToCart()" [disabled]="sizeOptions.length === 0">Thêm vào giỏ hàng</button>
+        </div>
+
+    </div>
+</div>

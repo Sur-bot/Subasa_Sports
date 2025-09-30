@@ -7,7 +7,10 @@
   <div class="content">
     <!-- <h1>Nội dung chính</h1> -->
     <category-component></category-component>
-    <app-flash-sale-section></app-flash-sale-section>
+    <app-flash-sale-section
+      (onOptionSelect)="handleProductOptionSelected($event)">
+    </app-flash-sale-section>
+    
   </div>
 </main>
 
@@ -20,3 +23,11 @@
 <app-request-seller [role]="role"></app-request-seller>
 
 <app-admin-dashboard *ngIf="isAdmin"></app-admin-dashboard>
+
+<!-- Modal for product options -->
+@if (isModalOpen && selectedProductForModal) {
+    <app-product-options-modal 
+        [product]="selectedProductForModal"
+        (closeModal)="closeModal()">
+    </app-product-options-modal>
+}

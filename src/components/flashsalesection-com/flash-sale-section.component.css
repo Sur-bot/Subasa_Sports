@@ -5,7 +5,7 @@
     /* KHÔNG CẦN background-color HAY background-image Ở ĐÂY */
     color: white; /* Đặt màu chữ mặc định cho sidebar */
     min-height: 480px;
-    font-family: 'Oswald', sans-serif; /* Sửa lỗi cú pháp font-family */
+    font-family: 30px 'Oswald', sans-serif; /* Sửa lỗi cú pháp font-family */
     position: relative; /* Quan trọng để định vị tuyệt đối các phần tử bên trong */
     overflow: hidden; /* Cắt bớt phần transform: scale(1.05) bị tràn ra */
 }
