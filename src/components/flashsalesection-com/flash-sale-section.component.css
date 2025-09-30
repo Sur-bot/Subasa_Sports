@@ -2,13 +2,41 @@
 
 .flash-sale-section {
     display: flex;
-    background-color: #0c334b; 
-    background-image: url('https://maytinhgiaphat.vn/huong-dan-cai-hinh-nen-4k-5k-8k-cho-may-tinh-voi-wallpaper/');
+    /* KHÔNG CẦN background-color HAY background-image Ở ĐÂY */
+    color: white; /* Đặt màu chữ mặc định cho sidebar */
     min-height: 480px;
-    font-family: 25px, 'Oswald', sans-serif;
+    font-family: 'Oswald', sans-serif; /* Sửa lỗi cú pháp font-family */
+    position: relative; /* Quan trọng để định vị tuyệt đối các phần tử bên trong */
+    overflow: hidden; /* Cắt bớt phần transform: scale(1.05) bị tràn ra */
 }
 
-/* --- Sidebar (Phần bên trái) --- */
+/* ------------------------------------------- */
+/* KHỐI CHỨA BACKGROUND IMAGE (Cho hiệu ứng Blur) */
+/* ------------------------------------------- */
+/* Dùng CSS này để tái tạo background image mờ */
+.background-image-wrapper {
+    /* Mở rộng wrapper ra toàn bộ khu vực sidebar */
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 280px; /* Chiều rộng sidebar */
+    height: 100%;
+
+    /* 1. Đặt hình nền. LƯU Ý: URL bạn cung cấp KHÔNG phải là ảnh mà là 1 bài hướng dẫn. */
+    /* TÔI SỬ DỤNG LẠI URL ẢNH MẪU ĐÃ CHIA SẺ TRƯỚC ĐÓ. */
+    background: url('https://d1nymbkeomeoqg.cloudfront.net/photos/28/73/408849_7358_XXXL.webp');;
+    background-size: cover;
+    
+    /* 2. Áp dụng hiệu ứng MỜ (Blur) */
+    filter: blur(4px); 
+    
+    /* 3. Tăng kích thước nhẹ để che các cạnh mờ */
+    transform: scale(1.05); 
+}
+
+/* ------------------------------------------- */
+/* SIDEBAR (Nội dung) - Lớp Phủ và Chứa Nội Dung */
+/* ------------------------------------------- */
 .sidebar-countdown {
     width: 280px;
     padding: 30px 20px 30px 30px;
@@ -16,13 +44,19 @@
     flex-direction: column;
     flex-shrink: 0;
     flex-grow: 0; 
-    justify-content: space-between; /* Đẩy Controls xuống dưới */
+    justify-content: space-between; 
+    
+    /* Đặt lớp phủ màu xanh đậm bán trong suốt */
+    background-color: rgba(12, 51, 75, 0.75); 
+    
+    /* Đảm bảo nó nằm trên background-image-wrapper */
+    position: relative;
+    z-index: 2;
 }
 
+/* Tiêu đề Bão Deal */
 .title-link {
-    /* Đảm bảo link không có gạch chân mặc định */
     text-decoration: none; 
-    /* Đảm bảo link là block để chuột có thể hover dễ dàng hơn */
     display: inline-block; 
 }
 
@@ -31,11 +65,18 @@
     font-size: 30px;
     font-weight: 900;
     margin-bottom: 5px;
+    
+    /* Thêm gạch chân dưới tiêu đề (như trong mẫu) */
+    padding-bottom: 5px;
+    border-bottom: 3px solid #92d050; 
+    
     transition: color 0.3s ease, transform 0.3s ease; 
     animation: pulse-color 2s infinite alternate;
 }
 
-.title-link:hover {
+
+
+.title-link:hover .title { /* Sửa để hover vào link tác động lên title */
     color: #ffaa00; 
     transform: scale(1.05); 
     cursor: pointer;
@@ -44,26 +85,28 @@
 @keyframes pulse-color {
     0% { color: #48a66d; }
     100% { 
-    color: #fafafa; 
-    transform: scale(1.01); 
+        color: #befdd8; /* Dùng màu xanh sáng hơn */
+        transform: scale(1.01); 
     }
 }
-.subtitle {
+
+
+
+/* XÓA: .subtitle - vì bạn không cung cấp phần tử HTML cho nó */
+.subtitle{
+    color: #e7e4ee;
     font-size: 30px;
-    margin-bottom: 50px;
-    color: #ffffff; 
-    font-weight: 500;
-    transition: color 0.3s ease, transform 0.3s ease; 
-    animation: pulse-color 2s infinite alternate;
+    text-align: left;
+    padding-top:  10%;
+
 }
-/* KHỐI CSS ĐẾM NGƯỢC ĐÃ BỊ XÓA */
 
 /* Controls Wrapper */
 .controls-wrapper {
     display: flex;
     flex-direction: column;
     gap: 20px;
-    margin-top: 50px; 
+    margin-top: auto; /* Đẩy Controls xuống dưới cùng */
 }
 
 /* Nút điều hướng */
@@ -72,19 +115,20 @@
     gap: 10px;
 }
 
-
-
 .nav-arrow {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: white;
-    width: 30px;
-    height: 30px;
+    width: 35px; /* Tăng kích thước nút */
+    height: 35px;
     border-radius: 50%;
     cursor: pointer;
     font-size: 18px;
     line-height: 1;
     transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .nav-arrow:hover:not(:disabled) {
@@ -98,19 +142,19 @@
 
 /* Nút Xem tất cả */
 .view-all-button {
-    background-color: white;
+    background-color: #92d050; /* Màu xanh lá nổi bật */
     color: #0c334b;
-    padding: 10px 20px;
-    border-radius: 20px;
+    padding: 10px 1px;
+    border-radius: 4px; /* Dùng góc vuông theo mẫu */
     text-decoration: none;
     font-weight: bold;
     text-align: center;
-    width: fit-content;
+    width: 50%; /* Chiếm toàn bộ chiều rộng */
     transition: background-color 0.2s;
 }
 
 .view-all-button:hover {
-    background-color: #f0f0f0;
+    background-color: #a4e662;
 }
 
 /* --- Products Carousel (Phần bên phải) --- */

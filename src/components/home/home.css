@@ -2,12 +2,6 @@ main{
     padding: 0%;
     margin: 0%;
 }
-<<<<<<< HEAD
-body{
-  padding: 0%;
-    margin: 0%;
-}
-=======
 
 * {
   margin: 0;
@@ -15,7 +9,6 @@ body{
   box-sizing: border-box;
 }
 
->>>>>>> 4c4935d83aea60e71a57d1eb33d9763a72e6c00d
 .fab-wrapper {
   position: fixed;
   bottom: 80px;
