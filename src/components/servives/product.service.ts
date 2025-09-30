@@ -41,9 +41,8 @@ export class ProductService {
             
             const price = product.price || 0;
             const discount = product.discount || 0;
-            
-            const salePrice = price - discount;
-            const discountPercent = price > 0 ? Math.round((discount / price) * 100) : 0;
+            const salePrice = Math.round(price * (1 - discount / 100));
+            const discountAmount = price - salePrice;
 
             return {
               id: product.id,
@@ -52,7 +51,6 @@ export class ProductService {
               originalPrice: price, 
               salePrice: salePrice,
               discount: discount,
-              discountPercent: discountPercent,
               imageUrl: Array.isArray(product.productImage) 
                           ? product.productImage[0] 
                           : product.productImage || '',

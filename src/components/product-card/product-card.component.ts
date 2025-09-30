@@ -15,13 +15,10 @@
     id: string; // Dùng cho trackBy trong @for
     description: string;
     productName: string;
-    discount: number;
     salePrice: number;
     originalPrice: number;
-    discountPercent: number;
+    discount: number;
     brand: string;
-    // hasCoupon: boolean;
-    //  isFreeShip: boolean;
     imageUrl: string;
     colors: ProductColor[];
     quantity: number; // Số lượng trong kho
