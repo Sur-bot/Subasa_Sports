@@ -21,8 +21,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     productName: '',
     description: '',
     price: null,
-    size: '',
-    quantity: null,
+    sizes: [],   // 👉 thay vì size + quantity đơn lẻ, ta dùng mảng
     discount: null,
     brand: '',
     category: '',
@@ -39,6 +38,9 @@ export class ProductFormComponent implements OnInit, OnChanges {
   brands: any[] = [];
   selectedCategory: string = '';
 
+  // 👉 danh sách size từ 36 -> 46
+  availableSizes = Array.from({ length: 11 }, (_, i) => 36 + i);
+
   constructor(
     private firestore: Firestore,
     private auth: Auth,
@@ -46,25 +48,24 @@ export class ProductFormComponent implements OnInit, OnChanges {
     private zone: NgZone
   ) {}
 
-  /** Lifecycle hook chạy khi component được khởi tạo */
   async ngOnInit() {
-    console.log("ngOnInit called ✅");
     await this.loadCategories();
 
     if (this.productData) {
       this.product = { ...this.productData };
       this.selectedCategory = this.product.category || '';
+      if (!this.product.sizes) this.product.sizes = [];
       if (this.selectedCategory) {
         await this.loadBrands();
       }
     }
   }
 
-  /** Lifecycle hook chạy khi @Input thay đổi */
   ngOnChanges(changes: SimpleChanges) {
     if (changes['productData']) {
       if (this.productData) {
         this.product = { ...this.productData };
+        if (!this.product.sizes) this.product.sizes = [];
         this.selectedCategory = this.product.category || '';
         if (this.selectedCategory) {
           this.loadBrands();
@@ -81,8 +82,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
       productName: '',
       description: '',
       price: null,
-      size: '',
-      quantity: null,
+      sizes: [],
       discount: null,
       brand: '',
       category: '',
@@ -116,26 +116,19 @@ export class ProductFormComponent implements OnInit, OnChanges {
     return data.secure_url;
   }
 
-  /** Load categories từ Firestore */
   async loadCategories() {
-  console.log("loadCategories called");
-  const ref = collection(this.firestore, 'category');
-  const snap = await getDocs(ref);
+    const ref = collection(this.firestore, 'category');
+    const snap = await getDocs(ref);
 
-  console.log("Firestore raw docs:", snap.docs.map(d => d.data()));
+    this.zone.run(() => {
+      this.categories = snap.docs.map(d => ({
+        id: d.id,
+        name: d.data()['name'] || d.id
+      }));
+      this.cdr.markForCheck();
+    });
+  }
 
-  this.zone.run(() => {
-    this.categories = snap.docs.map(d => ({
-      id: d.id,
-      name: d.data()['name'] || d.id
-    }));
-    console.log("Categories load:", this.categories);
-    this.cdr.markForCheck();
-  });
-}
-
-
-  /** Load brands theo category */
   async loadBrands() {
     if (!this.selectedCategory) {
       this.brands = [];
@@ -150,12 +143,24 @@ export class ProductFormComponent implements OnInit, OnChanges {
         id: d.id,
         name: d.data()['name'] || d.id
       }));
-      console.log("Brands load:", this.brands);
       this.cdr.markForCheck();
     });
   }
 
-  /** Lưu sản phẩm */
+  /** Toggle chọn/bỏ chọn size */
+  toggleSize(size: number) {
+    const index = this.product.sizes.findIndex((s: any) => s.size === size);
+    if (index > -1) {
+      this.product.sizes.splice(index, 1);
+    } else {
+      this.product.sizes.push({ size, quantity: 0 });
+    }
+  }
+
+  isSelected(size: number): boolean {
+    return this.product.sizes.some((s: any) => s.size === size);
+  }
+
   async saveProduct() {
     try {
       this.loading = true;
@@ -210,6 +215,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     const p = this.productList.find(x => x.id === id);
     if (p) {
       this.product = { ...p };
+      if (!this.product.sizes) this.product.sizes = [];
       this.selectedCategory = this.product.category || '';
       if (this.selectedCategory) {
         this.loadBrands();
