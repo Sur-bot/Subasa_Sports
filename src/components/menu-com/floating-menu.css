@@ -58,3 +58,51 @@
 .fab-action i {
   color: #007bff; 
 }
+/* backdrop mờ nền */
+.modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 998;
+}
+
+.modal {
+  position: fixed;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 10px;
+  padding: 20px;
+  z-index: 999;
+  width: 400px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, -45%); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.modal h3 {
+  margin-top: 0;
+}
+
+.modal ul {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.modal li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.modal li i {
+  margin-right: 8px;
+  color: #007bff;
+}

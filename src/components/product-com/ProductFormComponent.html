@@ -1,0 +1,88 @@
+<div class="modal-backdrop" (click)="close.emit()"></div>
+
+<div class="modal">
+  <h2>{{ product.id ? 'Chỉnh sửa sản phẩm' : 'Tạo sản phẩm mới' }}</h2>
+
+  <form (ngSubmit)="saveProduct()" *ngIf="!loading; else loadingTpl">
+
+    <!-- Dropdown chọn sản phẩm -->
+    <div *ngIf="productList.length > 0" class="form-group">
+      <label>Chọn sản phẩm</label>
+      <select [ngModel]="product.id" (ngModelChange)="selectProduct($event)" name="productSelect">
+        <option value="">-- Tạo sản phẩm mới --</option>
+        <option *ngFor="let p of productList" [value]="p.id">
+          {{ p.productName }} - {{ p.price | currency:'VND':'symbol':'1.0-0' }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Tên sản phẩm -->
+    <div class="form-group">
+      <label>Tên sản phẩm</label>
+      <input type="text" [(ngModel)]="product.productName" name="productName" required />
+    </div>
+
+    <!-- Mô tả -->
+    <div class="form-group">
+      <label>Mô tả</label>
+      <textarea [(ngModel)]="product.description" name="description"></textarea>
+    </div>
+
+    <!-- Giá -->
+    <div class="form-group">
+      <label>Giá</label>
+      <input type="number" [(ngModel)]="product.price" name="price" required />
+    </div>
+
+    <!-- Số lượng -->
+    <div class="form-group">
+      <label>Số lượng</label>
+      <input type="number" [(ngModel)]="product.quantity" name="quantity" required />
+    </div>
+
+    <!-- Size -->
+    <div class="form-group">
+      <label>Size</label>
+      <input type="text" [(ngModel)]="product.size" name="size" />
+    </div>
+
+    <!-- Brand -->
+    <div class="form-group">
+      <label>Thương hiệu</label>
+      <input type="text" [(ngModel)]="product.brand" name="brand" />
+    </div>
+
+    <!-- Giảm giá -->
+    <div class="form-group">
+      <label>Giảm giá (%)</label>
+      <input type="number" [(ngModel)]="product.discount" name="discount" />
+    </div>
+
+    <!-- Upload ảnh -->
+    <div class="form-group">
+      <label>Ảnh sản phẩm</label>
+      <input type="file" multiple (change)="onFileSelected($event)" />
+      <div class="preview">
+        <!-- Preview ảnh mới chọn -->
+        <img *ngFor="let f of selectedFiles" [src]="getPreviewUrl(f)" />
+
+        <!-- Ảnh cũ nếu có -->
+        <ng-container *ngIf="!selectedFiles.length">
+          <img *ngFor="let img of product.productImage" [src]="img" />
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="actions">
+      <button type="submit" [disabled]="loading">
+        {{ product.id ? 'Cập nhật' : 'Tạo mới' }}
+      </button>
+      <button type="button" (click)="close.emit()">Hủy</button>
+    </div>
+  </form>
+
+  <ng-template #loadingTpl>
+    <p>Đang xử lý, vui lòng chờ...</p>
+  </ng-template>
+</div>
