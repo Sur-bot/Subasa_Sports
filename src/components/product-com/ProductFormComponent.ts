@@ -21,7 +21,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
     productName: '',
     description: '',
     price: null,
-    sizes: [],   // 👉 thay vì size + quantity đơn lẻ, ta dùng mảng
+    sizes: [],
+    quantity: 0,
     discount: null,
     brand: '',
     category: '',
@@ -37,8 +38,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
   categories: any[] = [];
   brands: any[] = [];
   selectedCategory: string = '';
+  selectedCategoryObj: any = null;
 
-  // 👉 danh sách size từ 36 -> 46
   availableSizes = Array.from({ length: 11 }, (_, i) => 36 + i);
 
   constructor(
@@ -54,6 +55,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     if (this.productData) {
       this.product = { ...this.productData };
       this.selectedCategory = this.product.category || '';
+      this.selectedCategoryObj = this.categories.find(c => c.id === this.selectedCategory) || null;
       if (!this.product.sizes) this.product.sizes = [];
       if (this.selectedCategory) {
         await this.loadBrands();
@@ -67,6 +69,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
         this.product = { ...this.productData };
         if (!this.product.sizes) this.product.sizes = [];
         this.selectedCategory = this.product.category || '';
+        this.selectedCategoryObj = this.categories.find(c => c.id === this.selectedCategory) || null;
         if (this.selectedCategory) {
           this.loadBrands();
         }
@@ -83,6 +86,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
       description: '',
       price: null,
       sizes: [],
+      quantity: 0,
       discount: null,
       brand: '',
       category: '',
@@ -92,6 +96,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
       ownerEmail: ''
     };
     this.selectedCategory = '';
+    this.selectedCategoryObj = null;
     this.brands = [];
   }
 
@@ -123,7 +128,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
     this.zone.run(() => {
       this.categories = snap.docs.map(d => ({
         id: d.id,
-        name: d.data()['name'] || d.id
+        name: d.data()['name'] || d.id,
+        hasSize: d.data()['hasSize'] ?? true
       }));
       this.cdr.markForCheck();
     });
@@ -147,7 +153,12 @@ export class ProductFormComponent implements OnInit, OnChanges {
     });
   }
 
-  /** Toggle chọn/bỏ chọn size */
+  onCategoryChange(categoryId: string) {
+    this.selectedCategory = categoryId;
+    this.selectedCategoryObj = this.categories.find(c => c.id === categoryId) || null;
+    this.loadBrands();
+  }
+
   toggleSize(size: number) {
     const index = this.product.sizes.findIndex((s: any) => s.size === size);
     if (index > -1) {
@@ -177,7 +188,6 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
       this.product.category = this.selectedCategory;
 
-      // Upload ảnh mới
       if (this.selectedFiles.length > 0) {
         const urls: string[] = [];
         for (const file of this.selectedFiles) {
@@ -217,6 +227,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
       this.product = { ...p };
       if (!this.product.sizes) this.product.sizes = [];
       this.selectedCategory = this.product.category || '';
+      this.selectedCategoryObj = this.categories.find(c => c.id === this.selectedCategory) || null;
       if (this.selectedCategory) {
         this.loadBrands();
       }

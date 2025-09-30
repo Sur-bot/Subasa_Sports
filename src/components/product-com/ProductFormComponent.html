@@ -33,8 +33,8 @@
       <input type="number" [(ngModel)]="product.price" name="price" required />
     </div>
 
-    <!-- Chọn size -->
-    <div class="form-group">
+    <!-- Chọn size (nếu category có size) -->
+    <div class="form-group" *ngIf="selectedCategoryObj?.hasSize">
       <label>Chọn size</label>
       <div class="size-selector">
         <button type="button"
@@ -46,16 +46,24 @@
       </div>
     </div>
 
-    <!-- Input số lượng cho size đã chọn -->
-    <div class="form-group" *ngFor="let s of product.sizes; let i = index">
-      <label>Size {{ s.size }}</label>
-      <input type="number" [(ngModel)]="product.sizes[i].quantity" name="quantity-{{s.size}}" min="0" />
+    <!-- Input số lượng cho size (nếu có size) -->
+    <div class="form-group" *ngIf="selectedCategoryObj?.hasSize">
+      <div *ngFor="let s of product.sizes; let i = index">
+        <label>Size {{ s.size }}</label>
+        <input type="number" [(ngModel)]="product.sizes[i].quantity" name="quantity-{{s.size}}" min="0" />
+      </div>
+    </div>
+
+    <!-- Nếu KHÔNG có size (accessorys, v.v.) -->
+    <div class="form-group" *ngIf="selectedCategoryObj && !selectedCategoryObj.hasSize">
+      <label>Số lượng</label>
+      <input type="number" [(ngModel)]="product.quantity" name="quantity" min="0" />
     </div>
 
     <!-- Category -->
     <div class="form-group">
       <label>Danh mục</label>
-      <select [(ngModel)]="selectedCategory" name="category" (change)="loadBrands()">
+      <select [(ngModel)]="selectedCategory" name="category" (ngModelChange)="onCategoryChange($event)">
         <option value="">-- Chọn danh mục --</option>
         <option *ngFor="let c of categories" [value]="c.id">{{ c.name }}</option>
       </select>
