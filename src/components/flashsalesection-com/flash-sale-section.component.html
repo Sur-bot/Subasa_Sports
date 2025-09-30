@@ -1,0 +1,29 @@
+<section class="flash-sale-section">
+  <div class="sidebar-countdown">
+    <a routerLink="/as" ngClass="title-link">
+    <h2 class="title">BÃO DEAL GIẢM GIÁ</h2>
+    </a>
+    <h3 class="subtitle">Chớp lấy cơ hội!!!!!!!</h3>
+    <div class="controls-wrapper">
+        <div class="navigation-controls">
+            <button class="nav-arrow left-arrow" (click)="scrollLeft()" [disabled]="isStart">&lt;</button>
+            <button class="nav-arrow right-arrow" (click)="scrollRight()" [disabled]="isEnd">&gt;</button>
+        </div>
+
+        <a routerLink="/flash-sale-products" class="view-all-button">Xem tất cả →</a>
+    </div>
+
+  </div>
+
+  <div class="products-carousel-container" #productsContainer (scroll)="checkScrollStatus()">
+    <div class="products-carousel">
+      @for (product of flashSaleProducts$ | async; track product.id) {
+        <app-product-card 
+          [product]="product">
+        </app-product-card>
+      } @empty {
+        <p class="loading-message">Đang tải sản phẩm giảm giá...</p>
+      }
+    </div>
+  </div>
+</section>

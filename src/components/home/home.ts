@@ -14,6 +14,7 @@ import { NotificationFloatingComponent } from '../notificationfloating-com/notif
 import { FloatingMenuComponent } from '../menu-com/floating-menu';
 import { RequestSellerComponent } from '../request-seller-com/request-seller';
 import { UserService } from '../menu-com/UserService';
+import { FlashSaleSectionComponent } from '../flashsalesection-com/flash-sale-section.component';
 import {AdminSellerRequestsComponent} from '../request-seller-com/admin-seller-requests'
 
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
@@ -29,6 +30,7 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     AdminDashboardComponent,
     NotificationFloatingComponent,
     FloatingMenuComponent,
+    FlashSaleSectionComponent,
     RequestSellerComponent,
     AdminSellerRequestsComponent,
     FormsModule,

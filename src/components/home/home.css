@@ -2,6 +2,10 @@ main{
     padding: 0%;
     margin: 0%;
 }
+body{
+  padding: 0%;
+    margin: 0%;
+}
 .fab-wrapper {
   position: fixed;
   bottom: 80px;
