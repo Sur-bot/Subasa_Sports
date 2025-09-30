@@ -7,5 +7,5 @@ export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' }, // route mặc định
   { path: 'login', component: LoginComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'product', component: ProducComponent },
+  { path: 'products', component: ProducComponent },
 ];

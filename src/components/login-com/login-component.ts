@@ -1,6 +1,14 @@
 import { Component, EventEmitter, Output, inject } from '@angular/core';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Auth, signInWithEmailAndPassword, signInAnonymously, createUserWithEmailAndPassword, User } from '@angular/fire/auth';
+import { 
+  Auth, 
+  signInWithEmailAndPassword, 
+  signInAnonymously, 
+  createUserWithEmailAndPassword, 
+  User,
+  browserLocalPersistence,
+  setPersistence
+} from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 
@@ -26,7 +34,6 @@ import { FormsModule } from '@angular/forms';
       state('active', style({ opacity: 1, transform: 'translateY(0)', display: 'flex' })),
       transition('inactive <=> active', animate('0.4s ease-in-out')),
     ]),
-    // 👇 thêm flip
     trigger('flipAnimation', [
       state('login', style({ transform: 'rotateY(0deg)' })),
       state('register', style({ transform: 'rotateY(180deg)' })),
@@ -34,8 +41,6 @@ import { FormsModule } from '@angular/forms';
     ])
   ]
 })
-// ... phần import giữ nguyên
-
 export class LoginComponent {
   @Output() loggedIn = new EventEmitter<{ email?: string; guestId?: string }>();
   @Output() closed = new EventEmitter<void>();
@@ -45,7 +50,7 @@ export class LoginComponent {
 
   email = '';
   password = '';
-  confirmPassword = '';   // 👈 thêm confirm pass
+  confirmPassword = '';
   firstName = '';
   lastName = '';
 
@@ -56,44 +61,44 @@ export class LoginComponent {
   deactivate() { this.state = 'inactive'; }
 
   // ===== LOGIN =====
-  onSubmit() {
+  async onSubmit() {
     if (!this.email || !this.password) {
       alert('Vui lòng nhập đầy đủ email và password!');
       return;
     }
 
-    signInWithEmailAndPassword(this.auth, this.email, this.password)
-      .then(cred => {
-        const user: User = cred.user;
+    try {
+      await setPersistence(this.auth, browserLocalPersistence); // 👈 thêm dòng này
+      const cred = await signInWithEmailAndPassword(this.auth, this.email, this.password);
+      const user: User = cred.user;
 
-        localStorage.removeItem('isGuest');
-        localStorage.setItem('userId', user.uid);
+      localStorage.removeItem('isGuest');
+      localStorage.setItem('userId', user.uid);
 
-        console.log('[Login] Thành công:', user.uid);
-        this.loggedIn.emit({ email: user.email || this.email });
-      })
-      .catch(() => {
-        alert('Email hoặc password không đúng!');
-      });
+      console.log('[Login] Thành công:', user.uid);
+      this.loggedIn.emit({ email: user.email || this.email });
+    } catch (err) {
+      alert('Email hoặc password không đúng!');
+    }
   }
 
-  loginAsGuest() {
-    signInAnonymously(this.auth)
-      .then(cred => {
-        const user: User = cred.user;
-        localStorage.setItem('userId', user.uid);
-        localStorage.setItem('isGuest', 'true');
+  async loginAsGuest() {
+    try {
+      await setPersistence(this.auth, browserLocalPersistence); // 👈 thêm dòng này
+      const cred = await signInAnonymously(this.auth);
+      const user: User = cred.user;
 
-        console.log('[Guest] Thành công:', user.uid);
-        this.loggedIn.emit({ guestId: user.uid });
-      })
-      .catch(() => {
-        alert('Không thể login guest!');
-      });
+      localStorage.setItem('userId', user.uid);
+      localStorage.setItem('isGuest', 'true');
+
+      console.log('[Guest] Thành công:', user.uid);
+      this.loggedIn.emit({ guestId: user.uid });
+    } catch (err) {
+      alert('Không thể login guest!');
+    }
   }
 
   // ===== REGISTER =====
-    // ===== REGISTER =====
   async onRegister() {
     if (!this.email || !this.password || !this.firstName || !this.lastName || !this.confirmPassword) {
       alert('Vui lòng nhập đầy đủ thông tin!');
@@ -106,10 +111,10 @@ export class LoginComponent {
     }
 
     try {
+      await setPersistence(this.auth, browserLocalPersistence); // 👈 thêm dòng này
       const cred = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
       const user: User = cred.user;
 
-      // lưu thông tin mở rộng vào Firestore
       await setDoc(doc(this.firestore, 'users', user.uid), {
         firstName: this.firstName,
         lastName: this.lastName,
@@ -121,11 +126,10 @@ export class LoginComponent {
       console.log('[Register] Thành công:', user.uid);
       this.loggedIn.emit({ email: user.email || this.email });
 
-      this.mode = 'login'; // quay lại login sau khi register
+      this.mode = 'login';
     } catch (err: any) {
       console.error('Lỗi khi đăng ký:', err);
 
-      // bắt lỗi cụ thể từ Firebase
       if (err.code === 'auth/email-already-in-use') {
         alert('Email này đã được sử dụng, vui lòng chọn email khác!');
       } else if (err.code === 'auth/invalid-email') {
@@ -138,14 +142,13 @@ export class LoginComponent {
     }
   }
 
-
   closeLogin() {
     this.closed.emit();
   }
 
   toggleMode(event?: Event) {
     if (event) {
-      event.preventDefault(); // chặn reload khi click <a>
+      event.preventDefault();
     }
     this.mode = this.mode === 'login' ? 'register' : 'login';
   }

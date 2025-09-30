@@ -1,12 +1,23 @@
 <link href="./product-component.css" />
 <header-component></header-component>
+<app-notification-floating></app-notification-floating>
+<FloatingMenuComponent></FloatingMenuComponent>
 <div class="bodywrap">
     <div class="head-path">
         <div class="path-container">
             <div class="path-content">
+                <p>đây là đường dẫn</p>
             </div>
         </div>
     </div>
     <!-- noi dung chinh -->
     <div class="container"></div>
 </div>
+<ChatComponent *ngIf="!isAdmin && userId" [userId]="userId"></ChatComponent>
+
+<!-- Admin -->
+<AdminChatComponent *ngIf="isAdmin && userId" [adminId]="userId"></AdminChatComponent>
+
+<app-request-seller [role]="role"></app-request-seller>
+
+<app-admin-dashboard *ngIf="isAdmin"></app-admin-dashboard>
