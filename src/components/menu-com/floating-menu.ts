@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, ChangeDetectorRef, NgZone } fro
 import { CommonModule } from '@angular/common';
 import { UserService } from './UserService';
 import { Subscription } from 'rxjs';
-import { Firestore, collection, query, where, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, getDocs, doc, deleteDoc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { ProductFormComponent } from '../product-com/ProductFormComponent';
 
@@ -21,6 +21,7 @@ export class FloatingMenuComponent {
   // modal
   showProductModal = false;
   showEditModal = false;
+  showDeleteModal = false;   // modal xoá
   loadingProducts = false;   // trạng thái loading
 
   // dữ liệu sản phẩm
@@ -33,7 +34,7 @@ export class FloatingMenuComponent {
   actions = [
     { icon: 'fas fa-plus', label: 'Tạo sản phẩm', onClick: () => this.openProductModal() },
     { icon: 'fas fa-edit', label: 'Điều chỉnh sản phẩm', onClick: () => this.openEditProducts() },
-    { icon: 'fas fa-trash', label: 'Xóa sản phẩm', onClick: () => alert('Xóa sản phẩm') },
+    { icon: 'fas fa-trash', label: 'Xóa sản phẩm', onClick: () => this.openDeleteProducts() },
     { icon: 'fas fa-coins', label: 'Xem doanh thu', onClick: () => alert('Xem doanh thu') }
   ];
 
@@ -85,40 +86,72 @@ export class FloatingMenuComponent {
     this.showEditModal = false;
   }
 
-  // mở danh sách sản phẩm để chọn
-  async openEditProducts() {
-  this.isOpen = false;
-  this.showEditModal = true;
-  this.loadingProducts = true;
-  this.myProducts = [];
-
-  this.cdr.markForCheck(); // báo Angular có thay đổi
-
-  const currentUser = this.auth.currentUser;
-  if (!currentUser?.email) {
-    alert('Bạn cần đăng nhập bằng email để chỉnh sửa sản phẩm.');
-    this.loadingProducts = false;
-    this.cdr.markForCheck();
-    return;
+  closeDeleteModal() {
+    this.showDeleteModal = false;
   }
 
-  const productRef = collection(this.firestore, 'products');
-  const q = query(productRef, where('ownerEmail', '==', currentUser.email));
-  const snap = await getDocs(q);
+  // mở danh sách sản phẩm để chỉnh sửa
+  async openEditProducts() {
+    await this.loadMyProducts();
+    this.showEditModal = true;
+    this.showDeleteModal = false; // chắc chắn tắt modal xoá
+  }
 
-  this.ngZone.run(() => {
-    this.myProducts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    this.loadingProducts = false;
-    this.cdr.markForCheck(); // ép Angular render lại modal
-  });
-}
+  // mở danh sách sản phẩm để xoá
+  async openDeleteProducts() {
+    this.showEditModal = false;   // chắc chắn tắt modal edit
+    await this.loadMyProducts();
+    this.showDeleteModal = true;
+  }
 
+  // tải danh sách sản phẩm của user
+  private async loadMyProducts() {
+    this.isOpen = false;
+    this.loadingProducts = true;
+    this.myProducts = [];
 
-  // chọn sản phẩm từ modal
+    this.cdr.markForCheck(); // báo Angular có thay đổi
+
+    const currentUser = this.auth.currentUser;
+    if (!currentUser?.email) {
+      alert('Bạn cần đăng nhập bằng email.');
+      this.loadingProducts = false;
+      this.cdr.markForCheck();
+      return;
+    }
+
+    const productRef = collection(this.firestore, 'products');
+    const q = query(productRef, where('ownerEmail', '==', currentUser.email));
+    const snap = await getDocs(q);
+
+    this.ngZone.run(() => {
+      this.myProducts = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      this.loadingProducts = false;
+      this.cdr.markForCheck(); // ép Angular render lại modal
+    });
+  }
+
+  // chọn sản phẩm từ modal edit
   selectProductForEdit(product: any) {
     this.selectedProduct = product;
     this.showEditModal = false;
     this.showProductModal = true;
+  }
+
+  // xoá sản phẩm
+  async deleteProduct(product: any) {
+    if (!confirm(`Bạn có chắc muốn xóa sản phẩm "${product.productName}"?`)) return;
+
+    try {
+      await deleteDoc(doc(this.firestore, 'products', product.id));
+      this.myProducts = this.myProducts.filter(p => p.id !== product.id);
+
+      alert('Xóa thành công!');
+      this.cdr.markForCheck();
+    } catch (err) {
+      console.error('Lỗi khi xóa:', err);
+      alert('Có lỗi xảy ra khi xóa sản phẩm.');
+    }
   }
 
   onProductChange(product: any) {
