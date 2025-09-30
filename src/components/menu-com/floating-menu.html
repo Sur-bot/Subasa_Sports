@@ -20,5 +20,36 @@
   </ng-container>
 </div>
 
-<!-- Popup tạo sản phẩm -->
-<app-product *ngIf="showProductModal" (close)="closeProductModal()"></app-product>
+<!-- Modal backdrop -->
+<div class="modal-backdrop" *ngIf="showEditModal" (click)="closeEditModal()"></div>
+
+<!-- Modal -->
+<div class="modal" *ngIf="showEditModal">
+  <h3>Chọn sản phẩm để chỉnh sửa</h3>
+
+  <!-- Loading state -->
+  <div *ngIf="loadingProducts">Đang tải sản phẩm...</div>
+
+  <!-- Danh sách sản phẩm -->
+  <ul *ngIf="!loadingProducts && myProducts.length > 0">
+    <li *ngFor="let p of myProducts">
+      <i class="fas fa-box"></i> {{ p.productName }} - {{ p.price | currency:'VND' }}
+      <button (click)="selectProductForEdit(p)">Chỉnh sửa</button>
+    </li>
+  </ul>
+
+  <!-- Không có sản phẩm -->
+  <div *ngIf="!loadingProducts && myProducts.length === 0">
+    Bạn chưa có sản phẩm nào.
+  </div>
+
+  <button (click)="closeEditModal()">Đóng</button>
+</div>
+
+<!-- Form popup (tạo + chỉnh sửa) -->
+<app-product-form
+  *ngIf="showProductModal"
+  [productData]="selectedProduct"
+  (productChange)="onProductChange($event)"
+  (close)="closeProductModal()">
+</app-product-form>
