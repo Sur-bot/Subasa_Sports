@@ -1,4 +1,7 @@
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  rel="stylesheet"
+/>
 
 <div *ngIf="isSeller" class="fab-wrapper">
   <!-- Nút chính -->
@@ -20,10 +23,10 @@
   </ng-container>
 </div>
 
-<!-- Modal backdrop -->
+<!-- Backdrop cho modal chỉnh sửa -->
 <div class="modal-backdrop" *ngIf="showEditModal" (click)="closeEditModal()"></div>
 
-<!-- Modal -->
+<!-- Modal chỉnh sửa -->
 <div class="modal" *ngIf="showEditModal">
   <h3>Chọn sản phẩm để chỉnh sửa</h3>
 
@@ -33,7 +36,8 @@
   <!-- Danh sách sản phẩm -->
   <ul *ngIf="!loadingProducts && myProducts.length > 0">
     <li *ngFor="let p of myProducts">
-      <i class="fas fa-box"></i> {{ p.productName }} - {{ p.price | currency:'VND' }}
+      <i class="fas fa-box"></i>
+      {{ p.productName }} - {{ p.price | currency:'VND' }}
       <button (click)="selectProductForEdit(p)">Chỉnh sửa</button>
     </li>
   </ul>
@@ -46,10 +50,35 @@
   <button (click)="closeEditModal()">Đóng</button>
 </div>
 
+<!-- Backdrop cho modal xóa -->
+<div class="modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()"></div>
+
+<!-- Modal xóa -->
+<div class="modal" *ngIf="showDeleteModal">
+  <h3>Chọn sản phẩm để xóa</h3>
+
+  <div *ngIf="loadingProducts">Đang tải sản phẩm...</div>
+
+  <ul *ngIf="!loadingProducts && myProducts.length > 0">
+    <li *ngFor="let p of myProducts">
+      <i class="fas fa-box"></i>
+      {{ p.productName }} - {{ p.price | currency:'VND' }}
+      <button class="danger" (click)="deleteProduct(p)">Xóa</button>
+    </li>
+  </ul>
+
+  <div *ngIf="!loadingProducts && myProducts.length === 0">
+    Bạn chưa có sản phẩm nào.
+  </div>
+
+  <button (click)="closeDeleteModal()">Đóng</button>
+</div>
+
 <!-- Form popup (tạo + chỉnh sửa) -->
 <app-product-form
   *ngIf="showProductModal"
   [productData]="selectedProduct"
   (productChange)="onProductChange($event)"
-  (close)="closeProductModal()">
+  (close)="closeProductModal()"
+>
 </app-product-form>

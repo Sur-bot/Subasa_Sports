@@ -140,3 +140,57 @@
   border-radius: 6px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
+/* Style chung cho select */
+.form-group select {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  appearance: none; /* ẩn arrow mặc định */
+  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+}
+
+/* Hover */
+.form-group select:hover {
+  border-color: #28a745;
+  box-shadow: 0 0 4px rgba(40, 167, 69, 0.3);
+}
+
+/* Focus */
+.form-group select:focus {
+  outline: none;
+  border-color: #28a745;
+  box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
+}
+
+/* Option style */
+.form-group option {
+  padding: 10px;
+}
+.size-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.size-selector button {
+  padding: 6px 12px;
+  border: 1px solid #aaa;
+  border-radius: 20px;
+  background: #fff;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.size-selector button.active {
+  border: 2px solid black;
+  font-weight: bold;
+  background: #f0f0f0;
+}

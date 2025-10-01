@@ -1,20 +1,21 @@
+/* ========== FAB BUTTON ========== */
 .fab-wrapper {
   position: fixed;
-  bottom: 100px;   
+  bottom: 100px;
   right: 10px;
   width: 80px;
   height: 80px;
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;  
+  z-index: 999;
 }
 
 .fab-main {
   width: 65px;
   height: 65px;
   border-radius: 50%;
-  background: #28a745;  
+  background: #28a745;
   color: #fff;
   border: none;
   cursor: pointer;
@@ -50,15 +51,14 @@
   transition: transform 0.5s ease, opacity 0.3s;
   opacity: 0;
 }
-
 .fab-action.open {
   opacity: 1;
 }
-
 .fab-action i {
-  color: #007bff; 
+  color: #007bff;
 }
-/* backdrop mờ nền */
+
+/* ========== MODAL BACKDROP ========== */
 .modal-backdrop {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -66,6 +66,7 @@
   z-index: 998;
 }
 
+/* ========== MODAL BOX ========== */
 .modal {
   position: fixed;
   top: 50%; left: 50%;
@@ -74,7 +75,9 @@
   border-radius: 10px;
   padding: 20px;
   z-index: 999;
-  width: 400px;
+  width: 420px;
+  max-height: 80vh;
+  overflow-y: auto;
   box-shadow: 0 8px 24px rgba(0,0,0,0.2);
   animation: fadeIn 0.3s ease;
 }
@@ -86,6 +89,12 @@
 
 .modal h3 {
   margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
 .modal ul {
@@ -105,4 +114,41 @@
 .modal li i {
   margin-right: 8px;
   color: #007bff;
+}
+
+/* ========== BUTTONS ========== */
+.modal button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+/* nút thường (chỉnh sửa, đóng) */
+.modal button:not(.danger) {
+  background: #007bff;
+  color: #fff;
+}
+.modal button:not(.danger):hover {
+  background: #0056b3;
+}
+
+/* nút xóa */
+.modal button.danger {
+  background: #dc3545;
+  color: #fff;
+}
+.modal button.danger:hover {
+  background: #b02a37;
+}
+
+/* nút đóng cuối modal */
+.modal > button:last-child {
+  margin-top: 12px;
+  background: #6c757d;
+}
+.modal > button:last-child:hover {
+  background: #5a6268;
 }
