@@ -1,131 +1,139 @@
 // src/components/product-options-modal/product-options-modal.component.ts
 
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
-import { CommonModule, DecimalPipe } from '@angular/common';
-import { Product } from '../product-card/product-card.component'; 
+import { CommonModule, } from '@angular/common';
+import { Product, ProductSizeOption } from '../product-card/product-card.component';
 
-// Định nghĩa interface cho dữ liệu gửi đi khi thêm vào giỏ hàng
 export interface CartItem {
-    product: Product;
-    selectedColor: string; 
-    selectedSize: string;
-    quantity: number;
+  product: Product;
+  selectedColor: string;
+  selectedSize: string;
+  quantity: number;
 }
 
 @Component({
   selector: 'app-product-options-modal',
   standalone: true,
-  imports: [CommonModule, DecimalPipe],
-  templateUrl: './product-options-modal.component.html', 
-  styleUrls: ['./product-options-modal.component.css'] 
+  imports: [CommonModule],
+  templateUrl: './product-options-modal.component.html',
+  styleUrls: ['./product-options-modal.component.css']
 })
 export class ProductOptionsModalComponent implements OnInit {
-  
   @Input({ required: true }) product!: Product;
   @Output() closeModal = new EventEmitter<void>();
-  @Output() productAdded = new EventEmitter<CartItem>(); // Sự kiện khi thêm vào giỏ hàng
+  @Output() productAdded = new EventEmitter<CartItem>();
 
-  // Trạng thái lựa chọn
-  selectedColor: string = ''; 
-  selectedSize: string = ''; 
+  selectedColor: string = '';
+  selectedSize: string = '';
   selectedQuantity: number = 1;
-  maxQuantity: number = 1;
+  maxQuantity: number = 0; // Số lượng tối đa có thể mua
+  errorMessage: string | null = null;
+
+  String = String; // Để dùng trong template
 
   ngOnInit(): void {
-    this.maxQuantity = this.product.quantity || 1;
-    
-    console.log("Size Options Available:", this.sizeOptions);
-    this.selectedQuantity = 1;
-    
-    // Khởi tạo màu mặc định
+    // Luôn chọn màu đầu tiên nếu có
     if (this.product.colors && this.product.colors.length > 0) {
-      this.selectedColor = this.product.colors[0].hexCode;
+      this.selectColor(this.product.colors[0].hexCode);
     }
-    
-    // Khởi tạo size mặc định nếu có hàng
-    if (this.sizeOptions.length > 0) {
-      this.selectedSize = this.sizeOptions[0];
+
+    // ===================================================================
+    // THAY ĐỔI 1: Phân luồng logic dựa trên `hasSize`
+    // ===================================================================
+    if (this.product.hasSize) {
+      // Logic cũ cho sản phẩm CÓ size
+      if (this.availableSizeOptions.length > 0) {
+        // Tự động chọn size đầu tiên còn hàng
+        this.selectSize(this.availableSizeOptions[0].size); 
+      } else {
+        // Hết tất cả các size
+        this.maxQuantity = 0;
+        this.selectedQuantity = 0;
+      }
+    } else {
+      // Logic mới cho sản phẩm KHÔNG CÓ size (phụ kiện, v.v.)
+      this.maxQuantity = this.product.quantity || 0;
+      // Nếu còn hàng thì mặc định chọn 1, nếu hết hàng thì là 0
+      this.selectedQuantity = this.maxQuantity > 0 ? 1 : 0;
     }
   }
-
-  // ============== GETTER XỬ LÝ DỮ LIỆU TỪ DB (sizeOptions) ==============
 
   /**
-   * Chuyển đổi thuộc tính product.size từ DB thành mảng tùy chọn.
-   * Nếu không có hàng (không có dữ liệu), trả về mảng rỗng.
+   * Getter để lọc và trả về các size còn hàng.
+   * Hoạt động đúng cho cả hai trường hợp.
    */
-    get sizeOptions(): string[] {
-    const sizeData = this.product.size;
-    let sizeArray: string[] = [];
-    
-    // Trường hợp 1: Dữ liệu là MẢNG
-    if (Array.isArray(sizeData)) {
-        sizeArray = sizeData.map((s: any) => s.toString().trim());
-    } 
-    
-    // Trường hợp 2: Dữ liệu là CHUỖI (ví dụ: "36" hoặc "36, 37")
-    else if (typeof sizeData === 'string' && sizeData) {
-        // Ép kiểu an toàn
-        const sizeString = sizeData as string; 
-        
-        // Phân tách chuỗi bằng dấu phẩy. Nếu chuỗi chỉ là "36", nó sẽ tạo ra ["36"].
-        sizeArray = sizeString.split(',').map(s => s.trim());
-    }
-    
-    // Trả về mảng đã lọc (chỉ giữ lại các giá trị không rỗng)
-    return sizeArray.filter(s => s.length > 0);
+  get availableSizeOptions(): ProductSizeOption[] {
+    return Array.isArray(this.product.sizes)
+      ? this.product.sizes.filter(opt => (opt.quantity || 0) > 0)
+      : [];
   }
-  
-  // Getter giá (để giữ cho HTML sạch sẽ)
-  get originalPrice(): number { return this.product.originalPrice; }
-  get salePrice(): number { return this.product.salePrice; }
 
-  // ============== LOGIC XỬ LÝ LỰA CHỌN ==============
-  
+  // Chọn màu
   selectColor(colorHex: string): void {
     this.selectedColor = colorHex;
+    this.errorMessage = null;
   }
 
-  selectSize(size: string): void { 
-    this.selectedSize = size;
+  // Chọn size (chỉ được gọi khi sản phẩm có size)
+  selectSize(size: string | number): void {
+    this.errorMessage = null;
+    this.selectedSize = String(size);
+    const selectedOption = this.availableSizeOptions.find(opt => String(opt.size) === this.selectedSize);
+
+    if (selectedOption) {
+      this.maxQuantity = selectedOption.quantity;
+      // Reset số lượng về 1 mỗi khi đổi size
+      this.selectedQuantity = this.maxQuantity > 0 ? 1 : 0;
+    }
   }
-  
+
+  // Thay đổi số lượng
   changeQuantity(delta: number): void {
+    this.errorMessage = null;
     const newQuantity = this.selectedQuantity + delta;
     if (newQuantity >= 1 && newQuantity <= this.maxQuantity) {
       this.selectedQuantity = newQuantity;
     }
   }
 
-  // ============== LOGIC THÊM VÀO GIỎ HÀNG ==============
-  
+  // Thêm vào giỏ hàng
   addToCart(): void {
-    // 1. Kiểm tra tính hợp lệ của lựa chọn
+    this.errorMessage = null;
+    // Kiểm tra màu sắc
     if (this.product.colors && this.product.colors.length > 0 && !this.selectedColor) {
-        alert("Vui lòng chọn màu sắc.");
+      this.errorMessage = "Vui lòng chọn màu sắc.";
+      return;
+    }
+
+    // ===================================================================
+    // THAY ĐỔI 2: Kiểm tra size một cách tường minh hơn
+    // ===================================================================
+    if (this.product.hasSize && !this.selectedSize) {
+      this.errorMessage = "Vui lòng chọn kích thước.";
+      return;
+    }
+
+    // Kiểm tra số lượng
+    if (this.maxQuantity === 0) {
+        this.errorMessage = "Sản phẩm đã hết hàng.";
         return;
     }
-    if (this.sizeOptions.length > 0 && !this.selectedSize) { 
-        alert("Vui lòng chọn kích thước.");
+    if (this.selectedQuantity < 1) {
+        this.errorMessage = "Vui lòng chọn số lượng.";
         return;
     }
-    
-    // 2. Tạo đối tượng CartItem
+
     const item: CartItem = {
       product: this.product,
       selectedColor: this.selectedColor,
-      selectedSize: this.selectedSize,
+      selectedSize: this.selectedSize, // Sẽ là '' nếu không có size
       quantity: this.selectedQuantity
     };
-    
-    // 3. Phát sự kiện
     this.productAdded.emit(item);
-    
-    // 4. Đóng Modal
     this.onClose();
   }
-  
-  onClose() {
+
+  onClose(): void {
     this.closeModal.emit();
   }
 }
