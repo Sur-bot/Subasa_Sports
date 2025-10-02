@@ -1,6 +1,7 @@
 <section class="flash-sale-section">
+   <div class="background-image-wrapper"> </div>
   <div class="sidebar-countdown">
-    <a routerLink="/as" ngClass="title-link">
+    <a routerLink="/" ngClass="title-link">
     <h2 class="title">BÃO DEAL GIẢM GIÁ</h2>
     </a>
      <h3 class="subtitle">Chớp lấy cơ hội!!!!!!!</h3>
@@ -21,7 +22,8 @@
     <div class="products-carousel">
       @for (product of flashSaleProducts$ | async; track product.id) {
         <app-product-card 
-          [product]="product">
+          [product]="product"
+           (optionSelected)="onProductCardOptionSelected(product)">
         </app-product-card>
       } @empty {
         <p class="loading-message">Đang tải sản phẩm giảm giá...</p>

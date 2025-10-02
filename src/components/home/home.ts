@@ -15,6 +15,8 @@ import { FloatingMenuComponent } from '../menu-com/floating-menu';
 import { RequestSellerComponent } from '../request-seller-com/request-seller';
 import { UserService } from '../menu-com/UserService';
 import { FlashSaleSectionComponent } from '../flashsalesection-com/flash-sale-section.component';
+import { Product } from '../product-card/product-card.component';
+import { ProductOptionsModalComponent } from '../product-options-modal/product-options-modal.component';
 import {AdminSellerRequestsComponent} from '../request-seller-com/admin-seller-requests'
 import { FooterComponent } from '../footer-com/footer-component';
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
@@ -31,6 +33,7 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     NotificationFloatingComponent,
     FloatingMenuComponent,
     FlashSaleSectionComponent,
+    ProductOptionsModalComponent,
     RequestSellerComponent,
     AdminSellerRequestsComponent,
     FormsModule,
@@ -84,5 +87,21 @@ export class HomeComponent implements OnInit {
         this.cdr.detectChanges();
       });
     });
+  }
+    // Modal logic
+    selectedProductForModal: Product | null = null;
+    isModalOpen: boolean = false; 
+    handleProductOptionSelected(product: Product) {
+    this.selectedProductForModal = product;
+    this.isModalOpen = true;
+    document.body.classList.add('modal-open'); 
+    this.cdr.detectChanges();
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.selectedProductForModal = null;
+    document.body.classList.remove('modal-open');
+    this.cdr.detectChanges();
   }
 }

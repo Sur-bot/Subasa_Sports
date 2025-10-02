@@ -1,6 +1,6 @@
 // src/components/flashsalesection-com/flash-sale-section.component.ts
 
-import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, ViewChild, OnInit, AfterViewInit, OnDestroy, Output, EventEmitter, Input} from '@angular/core';
 import { Observable } from 'rxjs'; // Không còn interval/Subscription
 import { CommonModule } from '@angular/common';
 import { ProductCardComponent, Product } from '../product-card/product-card.component';
@@ -19,6 +19,11 @@ import { ProductService } from '../servives/product.service'; // Đảm bảo đ
   providers: [ProductService]
 })
 export class FlashSaleSectionComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  @Output() onOptionSelect = new EventEmitter<Product>();
+   onProductCardOptionSelected(product: Product) {
+        this.onOptionSelect.emit(product);
+    }
   @ViewChild('productsContainer') productsContainer!: ElementRef;
 
   flashSaleProducts$!: Observable<Product[]>;

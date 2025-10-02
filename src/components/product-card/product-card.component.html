@@ -1,6 +1,6 @@
 <div class="product-card-container">
-  <div class="sale-badge" [class.red-badge]="product.discountPercent >= 20">
-    GIẢM {{ product.discountPercent }}%
+  <div class="sale-badge" [class.red-badge]="product.discount >= 20">
+    GIẢM {{ product.discount }}%
   </div>
 
   <div class="product-image-wrapper">
@@ -27,7 +27,7 @@
 
     <p class="product-name">{{ product.productName }}</p>
 
-    <button class="select-option-button">Tùy chọn</button>
+   <button class="select-option-button" (click)="onSelectOption()">Tùy chọn</button>
 
     <p class="sold-count">Đã bán {{ product.soldCount }} sản phẩm</p>
   </div>
