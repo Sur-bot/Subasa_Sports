@@ -216,6 +216,8 @@
 .header-cart .count-item {
   background: #a2ff00;
   color: #002d3a;
+   align-items: center;   /* icon và chữ nằm ngang, căn giữa */
+  gap: 6px; 
   font-size: 12px;
   font-weight: bold;
   border-radius: 50%;
@@ -274,7 +276,12 @@
 }
 
 .frame-fix {
+  display: flex;
+  align-items: center;
   margin-right: 10px;
+}
+.icon-title{
+  color: #fff
 }
 
 /* SIDE-BAR */
@@ -528,4 +535,9 @@ li.sub-tab {
 
 .logout-btn:active {
   transform: scale(0.95);
+}
+.box-icon svg {
+  fill: #ffffff; /* icon trắng */
+  width: 30px;
+  height: 30px;
 }

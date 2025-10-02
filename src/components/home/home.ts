@@ -16,7 +16,7 @@ import { RequestSellerComponent } from '../request-seller-com/request-seller';
 import { UserService } from '../menu-com/UserService';
 import { FlashSaleSectionComponent } from '../flashsalesection-com/flash-sale-section.component';
 import {AdminSellerRequestsComponent} from '../request-seller-com/admin-seller-requests'
-
+import { FooterComponent } from '../footer-com/footer-component';
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
 @Component({
@@ -34,6 +34,7 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     RequestSellerComponent,
     AdminSellerRequestsComponent,
     FormsModule,
+    FooterComponent,
     CommonModule
   ],
   templateUrl: './home.html',
