@@ -1,74 +1,20 @@
+/* ========== BACKDROP (nền mờ + blur) ========== */
 .modal-backdrop {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.5);
-  z-index: 999;
-}
-
-.modal {
-  position: fixed;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  width: 400px;
-  max-height: 90vh;
-  overflow-y: auto;
-  z-index: 1000;
-}
-
-.form-group {
-  margin-bottom: 12px;
-  display: flex;
-  flex-direction: column;
-}
-
-.form-group input,
-.form-group textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-}
-
-.preview {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.preview img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-}
-
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-.open-btn {
-  background: #28a745;
-  color: #fff;
-  padding: 10px 18px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  margin: 20px 0;
-}
-
-.backdrop {
-  position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(4px); /* 💎 Hiệu ứng mờ nền */
+  -webkit-backdrop-filter: blur(4px);
   z-index: 1100;
+  animation: fadeInBackdrop 0.25s ease;
 }
 
+@keyframes fadeInBackdrop {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========== MODAL ========== */
 .modal {
   position: fixed;
   top: 50%;
@@ -77,102 +23,85 @@
   background: #fff;
   border-radius: 12px;
   padding: 20px;
-  width: 400px;
+  width: 420px;
+  max-width: 95vw; /* 📱 Giới hạn cho mobile */
   max-height: 90vh;
   overflow-y: auto;
   z-index: 1200;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  animation: fadeInModal 0.3s ease;
 }
 
+@keyframes fadeInModal {
+  from { opacity: 0; transform: translate(-50%, -55%); }
+  to { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+/* Responsive cho mobile nhỏ */
+@media (max-width: 480px) {
+  .modal {
+    width: 92vw;
+    padding: 16px;
+    border-radius: 10px;
+  }
+}
+
+/* ========== TIÊU ĐỀ ========== */
 .modal h2 {
   margin-top: 0;
   text-align: center;
+  font-size: 18px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
+/* ========== FORM ========== */
 .modal form {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
-.modal input, .modal textarea {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.actions {
+.form-group {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-top: 10px;
+  flex-direction: column;
+  margin-bottom: 12px;
 }
 
-.actions button {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+.form-group label {
+  font-weight: 500;
+  margin-bottom: 6px;
+  color: #333;
 }
 
-.actions button:first-child {
-  background: #28a745;
-  color: #fff;
-}
-
-.actions button:last-child {
-  background: #6c757d;
-  color: #fff;
-}
-
-/* Preview ảnh */
-.preview-container {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.preview img {
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 6px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-}
-/* Style chung cho select */
+.form-group input,
+.form-group textarea,
 .form-group select {
-  padding: 10px;
-  border: 1px solid #ddd;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
   border-radius: 6px;
-  background: #fff;
   font-size: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  appearance: none; /* ẩn arrow mặc định */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 10px center;
-  background-size: 16px;
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-/* Hover */
-.form-group select:hover {
-  border-color: #28a745;
-  box-shadow: 0 0 4px rgba(40, 167, 69, 0.3);
-}
-
-/* Focus */
+/* focus và hover đẹp */
+.form-group input:focus,
+.form-group textarea:focus,
 .form-group select:focus {
   outline: none;
   border-color: #28a745;
-  box-shadow: 0 0 6px rgba(40, 167, 69, 0.4);
+  box-shadow: 0 0 6px rgba(40, 167, 69, 0.3);
 }
 
-/* Option style */
-.form-group option {
-  padding: 10px;
+/* ========== SELECT CUSTOM ========== */
+.form-group select {
+  appearance: none;
+  background: #fff url("data:image/svg+xml;utf8,<svg fill='gray' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>") no-repeat right 10px center;
+  background-size: 16px;
 }
+
+/* ========== SIZE SELECTOR ========== */
 .size-selector {
   display: flex;
   flex-wrap: wrap;
@@ -186,11 +115,79 @@
   border-radius: 20px;
   background: #fff;
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s;
 }
 
 .size-selector button.active {
-  border: 2px solid black;
+  border: 2px solid #000;
   font-weight: bold;
-  background: #f0f0f0;
+  background: #f1f1f1;
+}
+
+/* ========== ẢNH XEM TRƯỚC ========== */
+.preview-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.preview img {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  border: 1px solid #ddd;
+}
+
+/* ========== ACTION BUTTONS ========== */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.actions button {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.25s;
+}
+
+/* Lưu / xác nhận */
+.actions button:first-child {
+  background: #28a745;
+  color: #fff;
+}
+.actions button:first-child:hover {
+  background: #218838;
+}
+
+/* Đóng */
+.actions button:last-child {
+  background: #6c757d;
+  color: #fff;
+}
+.actions button:last-child:hover {
+  background: #5a6268;
+}
+
+/* ========== NÚT MỞ MODAL ========== */
+.open-btn {
+  background: #28a745;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  margin: 20px 0;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+.open-btn:hover {
+  background: #218838;
 }

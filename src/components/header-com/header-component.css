@@ -12,7 +12,7 @@
   font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
     'Segoe UI Symbol', 'Noto Color Emoji';
-  z-index: 1000; /* đảm bảo đứng trên các thành phần khác */
+  z-index: 600; /* đảm bảo đứng trên các thành phần khác */
 }
 
 /* TOPBAR-CSS */
