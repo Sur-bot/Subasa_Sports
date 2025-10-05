@@ -68,7 +68,7 @@ export class LoginComponent {
     }
 
     try {
-      await setPersistence(this.auth, browserLocalPersistence); // 👈 thêm dòng này
+      await setPersistence(this.auth, browserLocalPersistence); 
       const cred = await signInWithEmailAndPassword(this.auth, this.email, this.password);
       const user: User = cred.user;
 
@@ -84,7 +84,7 @@ export class LoginComponent {
 
   async loginAsGuest() {
     try {
-      await setPersistence(this.auth, browserLocalPersistence); // 👈 thêm dòng này
+      await setPersistence(this.auth, browserLocalPersistence);
       const cred = await signInAnonymously(this.auth);
       const user: User = cred.user;
 
@@ -111,7 +111,7 @@ export class LoginComponent {
     }
 
     try {
-      await setPersistence(this.auth, browserLocalPersistence); // 👈 thêm dòng này
+      await setPersistence(this.auth, browserLocalPersistence); 
       const cred = await createUserWithEmailAndPassword(this.auth, this.email, this.password);
       const user: User = cred.user;
 

@@ -132,7 +132,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     return data.secure_url;
   }
 
-  // 🔹 Lấy danh mục từ Firestore
+  // Lấy danh mục từ Firestore
   async loadCategories() {
     const ref = collection(this.firestore, 'category');
     const snap = await getDocs(ref);
@@ -147,7 +147,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     });
   }
 
-  // 🔹 Lấy brand theo category từ Firestore
+  // Lấy brand theo category từ Firestore
   async loadBrands() {
     if (!this.selectedCategory) {
       this.brands = [];
@@ -185,7 +185,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     return this.product.sizes.some((s: any) => s.size === size);
   }
 
-  // ✅ GỌI API để thêm / cập nhật
+  // GỌI API để thêm / cập nhật
   async saveProduct() {
     try {
       this.loading = true;
@@ -209,11 +209,11 @@ export class ProductFormComponent implements OnInit, OnChanges {
       this.product.status = 'pending';
 
       if (this.product.id) {
-        // ✅ Cập nhật
+        // Cập nhật
         await this.http.put(`${this.apiUrl}/${this.product.id}`, this.product).toPromise();
         alert('Cập nhật sản phẩm thành công!');
       } else {
-        // ✅ Thêm mới
+        // Thêm mới
         await this.http.post(this.apiUrl, this.product).toPromise();
         alert('Tạo sản phẩm thành công!');
       }
@@ -241,7 +241,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     }
   }
 
-  // ✅ GỌI API để xóa
+  // GỌI API để xóa
   async deleteProduct() {
     if (!this.product.id) return;
 

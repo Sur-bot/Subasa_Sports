@@ -57,7 +57,7 @@
     <!-- Nếu KHÔNG có size (accessorys, v.v.) -->
     <div class="form-group" *ngIf="selectedCategoryObj && !selectedCategoryObj.hasSize">
       <label>Số lượng</label>
-      <input type="number" [(ngModel)]="product.quantity" name="quantity" min="0" />
+      <input type="number" [(ngModel)]="product.quantity" name="quantity" min="1" />
     </div>
 
     <!-- Category -->
@@ -81,7 +81,7 @@
     <!-- Giảm giá -->
     <div class="form-group">
       <label>Giảm giá (%)</label>
-      <input type="number" [(ngModel)]="product.discount" name="discount" />
+      <input type="number" [(ngModel)]="product.discount" name="discount" min="0" />
     </div>
 
     <!-- Upload ảnh -->

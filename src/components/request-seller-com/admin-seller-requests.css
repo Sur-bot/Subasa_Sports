@@ -3,7 +3,7 @@
   position: fixed;
   bottom: 100px;
   right: 20px;
-  z-index: 1200;
+  z-index: 600;
 }
 
 .fab-main {
@@ -54,6 +54,9 @@
   position: relative;
   max-height: 85vh;
   overflow-y: auto;
+  font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 @keyframes fadeInPopup {
@@ -109,6 +112,9 @@
   font-size: 14px;
   font-weight: 500;
   transition: background 0.2s;
+  font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 /* Nút thêm / lưu */
@@ -191,6 +197,9 @@
   margin-bottom: 15px;
   justify-content: center;
   flex-wrap: wrap;
+  font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 .tabs button {

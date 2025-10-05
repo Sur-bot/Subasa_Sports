@@ -49,6 +49,9 @@
   box-shadow: 0 6px 20px rgba(0,0,0,0.6);
   transform-origin: bottom right;
   animation: popupGrow 0.4s ease forwards;
+  font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 /* Animation bay từ nút */
@@ -100,6 +103,9 @@
   justify-content: space-between;
   margin-top: 20px;
   gap: 12px;
+  font-family: 'Roboto Condensed', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 .actions button {
@@ -110,6 +116,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
+  
 }
 
 /* Nút gửi */
@@ -126,6 +133,7 @@
 .actions button[type="button"] {
   background: #f10808;
   color: #fff;
+
 }
 
 .actions button[type="button"]:hover {
