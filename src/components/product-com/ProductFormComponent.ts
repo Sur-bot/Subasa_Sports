@@ -1,8 +1,9 @@
 import { Component, EventEmitter, Input, Output, ChangeDetectorRef, NgZone, OnInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Firestore, collection, addDoc, doc, updateDoc, deleteDoc, getDocs } from '@angular/fire/firestore';
+import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-product-form',
@@ -16,6 +17,8 @@ export class ProductFormComponent implements OnInit, OnChanges {
   @Input() productData: any = null;
   @Input() productList: any[] = [];
   @Output() productChange = new EventEmitter<any>();
+
+  private apiUrl = 'http://192.168.1.3:4000/api/products'; // 🔹 API của bạn
 
   product: any = {
     productName: '',
@@ -39,12 +42,12 @@ export class ProductFormComponent implements OnInit, OnChanges {
   brands: any[] = [];
   selectedCategory: string = '';
   selectedCategoryObj: any = null;
-
   availableSizes = Array.from({ length: 11 }, (_, i) => 36 + i);
 
   constructor(
     private firestore: Firestore,
     private auth: Auth,
+    private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private zone: NgZone
   ) {}
@@ -105,10 +108,18 @@ export class ProductFormComponent implements OnInit, OnChanges {
   }
 
   onFileSelected(event: any) {
-    if (event.target.files) {
-      this.selectedFiles = Array.from(event.target.files);
-    }
+  if (event.target.files) {
+    const files = Array.from(event.target.files) as File[];
+
+    // Tạo preview sẵn để template không phải gọi hàm mỗi lần render
+    this.selectedFiles = files.map(file => {
+      return Object.assign(file, { preview: URL.createObjectURL(file) });
+    });
+
+    this.cdr.detectChanges();
   }
+}
+
 
   async uploadImage(file: File): Promise<string> {
     const url = `https://api.cloudinary.com/v1_1/dyr0gm9zc/image/upload`;
@@ -121,6 +132,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     return data.secure_url;
   }
 
+  // 🔹 Lấy danh mục từ Firestore
   async loadCategories() {
     const ref = collection(this.firestore, 'category');
     const snap = await getDocs(ref);
@@ -135,6 +147,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     });
   }
 
+  // 🔹 Lấy brand theo category từ Firestore
   async loadBrands() {
     if (!this.selectedCategory) {
       this.brands = [];
@@ -172,19 +185,13 @@ export class ProductFormComponent implements OnInit, OnChanges {
     return this.product.sizes.some((s: any) => s.size === size);
   }
 
+  // ✅ GỌI API để thêm / cập nhật
   async saveProduct() {
     try {
       this.loading = true;
 
-      if (!this.selectedCategory) {
-        alert('Vui lòng chọn danh mục');
-        return;
-      }
-
-      if (!this.product.brand) {
-        alert('Vui lòng chọn thương hiệu');
-        return;
-      }
+      if (!this.selectedCategory) return alert('Vui lòng chọn danh mục');
+      if (!this.product.brand) return alert('Vui lòng chọn thương hiệu');
 
       this.product.category = this.selectedCategory;
 
@@ -202,13 +209,12 @@ export class ProductFormComponent implements OnInit, OnChanges {
       this.product.status = 'pending';
 
       if (this.product.id) {
-        const ref = doc(this.firestore, 'products', this.product.id);
-        const { id, ...dataToUpdate } = this.product;
-        await updateDoc(ref, dataToUpdate);
+        // ✅ Cập nhật
+        await this.http.put(`${this.apiUrl}/${this.product.id}`, this.product).toPromise();
         alert('Cập nhật sản phẩm thành công!');
       } else {
-        const productRef = collection(this.firestore, 'products');
-        await addDoc(productRef, this.product);
+        // ✅ Thêm mới
+        await this.http.post(this.apiUrl, this.product).toPromise();
         alert('Tạo sản phẩm thành công!');
       }
 
@@ -235,6 +241,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
     }
   }
 
+  // ✅ GỌI API để xóa
   async deleteProduct() {
     if (!this.product.id) return;
 
@@ -243,9 +250,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
 
     try {
       this.loading = true;
-      const ref = doc(this.firestore, 'products', this.product.id);
-      await deleteDoc(ref);
-
+      await this.http.delete(`${this.apiUrl}/${this.product.id}`).toPromise();
       alert('Xóa sản phẩm thành công!');
       this.close.emit();
     } catch (err) {

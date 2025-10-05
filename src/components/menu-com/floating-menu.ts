@@ -5,11 +5,11 @@ import { Subscription } from 'rxjs';
 import { Firestore, collection, query, where, getDocs, doc, deleteDoc } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { ProductFormComponent } from '../product-com/ProductFormComponent';
-
+import { HttpClientModule } from '@angular/common/http'
 @Component({
   selector: 'FloatingMenuComponent',
   standalone: true,
-  imports: [CommonModule, ProductFormComponent],
+  imports: [CommonModule, ProductFormComponent,HttpClientModule],
   templateUrl: './floating-menu.html',
   styleUrls: ['./floating-menu.css']
 })
