@@ -1,23 +1,682 @@
-<link href="./product-component.css" />
+<link href="./productPage-component.css" />
 <header-component></header-component>
-<app-notification-floating></app-notification-floating>
-<FloatingMenuComponent></FloatingMenuComponent>
-<div class="bodywrap">
-    <div class="head-path">
-        <div class="path-container">
-            <div class="path-content">
-                <p>đây là đường dẫn</p>
-            </div>
-        </div>
+
+<div class="head-path">
+  <div class="path-container">
+    <div class="path-content">
+      <p class="path-text">đây là đường dẫn</p>
     </div>
-    <!-- noi dung chinh -->
-    <div class="container"></div>
+  </div>
 </div>
-<ChatComponent *ngIf="!isAdmin && userId" [userId]="userId"></ChatComponent>
 
-<!-- Admin -->
-<AdminChatComponent *ngIf="isAdmin && userId" [adminId]="userId"></AdminChatComponent>
+<div class="bodywrap">
+  <div class="banner">
+    <h1>Sản phẩm</h1>
+    <img
+      alt="Banner top"
+      width="1900"
+      height="300"
+      class="lazyload loaded"
+      data-src="//bizweb.dktcdn.net/100/490/431/themes/927074/assets/collection_banner.jpg?1758009149569"
+      src="//bizweb.dktcdn.net/100/490/431/themes/927074/assets/collection_banner.jpg?1758009149569"
+      data-was-processed="true"
+    />
+  </div>
 
-<app-request-seller [role]="role"></app-request-seller>
+  <!-- noi dung chinh -->
+  <div class="container">
+    <!-- filter -->
+    <div class="filter-content">
+      <div class="filter-text">
+        <div class="title-content">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            fill="currentColor"
+            class="svg"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3h9.05zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8h2.05zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1h9.05z"
+            ></path>
+          </svg>
+          <p>BỘ LỌC SẢN PHẨM</p>
+        </div>
+      </div>
 
-<app-admin-dashboard *ngIf="isAdmin"></app-admin-dashboard>
+      <div class="filter-container">
+        <div class="filter-container__selected-filter" style="display: none">
+          <div class="filter-container__selected-filter-header clearfix">
+            <span class="filter-container__selected-filter-header-title"
+              ><i class="fa fa-arrow-left hidden-sm-up"></i> Bạn chọn</span
+            >
+            <a
+              href="javascript:void(0)"
+              onclick="clearAllFiltered()"
+              class="filter-container__clear-all"
+              >Bỏ chọn hết
+              <i class="icon"
+                ><svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  xmlns:xlink="http://www.w3.org/1999/xlink"
+                  version="1.1"
+                  width="10"
+                  height="10"
+                  x="0"
+                  y="0"
+                  viewBox="0 0 365.696 365.696"
+                  style="enable-background: new 0 0 512 512"
+                  xml:space="preserve"
+                  class=""
+                >
+                  <g>
+                    <path
+                      xmlns="http://www.w3.org/2000/svg"
+                      d="m243.1875 182.859375 113.132812-113.132813c12.5-12.5 12.5-32.765624 0-45.246093l-15.082031-15.082031c-12.503906-12.503907-32.769531-12.503907-45.25 0l-113.128906 113.128906-113.132813-113.152344c-12.5-12.5-32.765624-12.5-45.246093 0l-15.105469 15.082031c-12.5 12.503907-12.5 32.769531 0 45.25l113.152344 113.152344-113.128906 113.128906c-12.503907 12.503907-12.503907 32.769531 0 45.25l15.082031 15.082031c12.5 12.5 32.765625 12.5 45.246093 0l113.132813-113.132812 113.128906 113.132812c12.503907 12.5 32.769531 12.5 45.25 0l15.082031-15.082031c12.5-12.503906 12.5-32.769531 0-45.25zm0 0"
+                      fill="#ffffff"
+                      data-original="#000000"
+                    ></path>
+                  </g></svg></i
+            ></a>
+          </div>
+          <div class="filter-container__selected-filter-list">
+            <ul></ul>
+          </div>
+        </div>
+
+        <!-- Lọc giá -->
+        <aside class="aside-item filter-price">
+          <div class="aside-title">
+            <h2><span>Chọn mức giá</span></h2>
+          </div>
+          <div class="aside-content filter-group content_price">
+            <ul>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label data-filter="2-000-000d" for="filter-duoi-2-000-000d">
+                    <input
+                      type="checkbox"
+                      id="filter-duoi-2-000-000d"
+                      data-group="Khoảng giá"
+                      data-field="price_min"
+                      data-text="Dưới 2.000.000đ"
+                      value="(<2000000)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Dưới 2 triệu
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label data-filter="6-000-000d" for="filter-2-000-000d-6-000-000d">
+                    <input
+                      type="checkbox"
+                      id="filter-2-000-000d-6-000-000d"
+                      data-group="Khoảng giá"
+                      data-field="price_min"
+                      data-text="2.000.000đ - 6.000.000đ"
+                      value="(>=2000000 AND <=6000000)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Từ 2 triệu - 6 triệu
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label data-filter="15-000-000d" for="filter-6-000-000d-15-000-000d">
+                    <input
+                      type="checkbox"
+                      id="filter-6-000-000d-15-000-000d"
+                      data-group="Khoảng giá"
+                      data-field="price_min"
+                      data-text="6.000.000đ - 15.000.000đ"
+                      value="(>=6000000 AND <=15000000)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Từ 6 triệu - 15 triệu
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label data-filter="20-000-000d" for="filter-15-000-000d-20-000-000d">
+                    <input
+                      type="checkbox"
+                      id="filter-15-000-000d-20-000-000d"
+                      data-group="Khoảng giá"
+                      data-field="price_min"
+                      data-text="15.000.000đ - 20.000.000đ"
+                      value="(>=15000000 AND <=20000000)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Từ 15 triệu - 20 triệu
+                  </label>
+                </span>
+              </li>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label data-filter="20-000-000d" for="filter-tren20-000-000d">
+                    <input
+                      type="checkbox"
+                      id="filter-tren20-000-000d"
+                      data-group="Khoảng giá"
+                      data-field="price_min"
+                      data-text="Trên 20.000.000đ"
+                      value="(>20000000)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Trên 20 triệu
+                  </label>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- End Lọc giá -->
+
+        <!-- Lọc Loại -->
+        <aside class="aside-item aside-itemxx filter-type">
+          <div class="aside-title">
+            <h2 class="title-filter title-head margin-top-0"><span>Loại sản phẩm</span></h2>
+          </div>
+          <div class="aside-content filter-group">
+            <ul>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-dung-cu-the-thao">
+                    <input
+                      type="checkbox"
+                      id="filter-dung-cu-the-thao"
+                      data-group="PRODUCT_TYPE"
+                      data-field="product_type.filter_key"
+                      data-text=""
+                      value='("Dụng cụ thể thao")'
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Dụng cụ thể thao
+                  </label>
+                </span>
+              </li>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-ao">
+                    <input
+                      type="checkbox"
+                      id="filter-ao"
+                      data-group="PRODUCT_TYPE"
+                      data-field="product_type.filter_key"
+                      data-text=""
+                      value='("Áo")'
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Áo
+                  </label>
+                </span>
+              </li>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-giay-the-thao">
+                    <input
+                      type="checkbox"
+                      id="filter-giay-the-thao"
+                      data-group="PRODUCT_TYPE"
+                      data-field="product_type.filter_key"
+                      data-text=""
+                      value='("Giày thể thao")'
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Giày thể thao
+                  </label>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+        <!-- End Lọc Loại -->
+
+        <!-- Lọc Thương hiệu -->
+
+        <aside class="aside-item filter-vendor f-left">
+          <div class="aside-title">
+            <h2 class="title-filter title-head margin-top-0"><span>Thương hiệu</span></h2>
+          </div>
+          <div class="aside-content margin-top-0 filter-group">
+            <ul>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-geologic">
+                    <input
+                      type="checkbox"
+                      id="filter-geologic"
+                      data-group="Hãng"
+                      data-field="vendor"
+                      data-text="GEOLOGIC"
+                      value="(GEOLOGIC)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    GEOLOGIC
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-perfly">
+                    <input
+                      type="checkbox"
+                      id="filter-perfly"
+                      data-group="Hãng"
+                      data-field="vendor"
+                      data-text="PERFLY"
+                      value="(PERFLY)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    PERFLY
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-quechua">
+                    <input
+                      type="checkbox"
+                      id="filter-quechua"
+                      data-group="Hãng"
+                      data-field="vendor"
+                      data-text="QUECHUA"
+                      value="(QUECHUA)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    QUECHUA
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-domyos">
+                    <input
+                      type="checkbox"
+                      id="filter-domyos"
+                      data-group="Hãng"
+                      data-field="vendor"
+                      data-text="DOMYOS"
+                      value="(DOMYOS)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    DOMYOS
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-kalenji">
+                    <input
+                      type="checkbox"
+                      id="filter-kalenji"
+                      data-group="Hãng"
+                      data-field="vendor"
+                      data-text="KALENJI"
+                      value="(KALENJI)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    KALENJI
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-newfeel">
+                    <input
+                      type="checkbox"
+                      id="filter-newfeel"
+                      data-group="Hãng"
+                      data-field="vendor"
+                      data-text="NEWFEEL"
+                      value="(NEWFEEL)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    NEWFEEL
+                  </label>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- End Lọc Thương hiệu -->
+
+        <!-- Lọc tag 1 -->
+
+        <aside class="aside-item filter-tag">
+          <div class="aside-title">
+            <h2 class="title-head margin-top-0">
+              <span>Màu sắc</span>
+            </h2>
+          </div>
+          <div class="aside-content filter-group">
+            <ul>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-vang">
+                    <input
+                      type="checkbox"
+                      id="filter-vang"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Vàng"
+                      value="(Vàng)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Vàng
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-tim">
+                    <input
+                      type="checkbox"
+                      id="filter-tim"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Tím"
+                      value="(Tím)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Tím
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-do">
+                    <input
+                      type="checkbox"
+                      id="filter-do"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Đỏ"
+                      value="(Đỏ)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Đỏ
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-xanh">
+                    <input
+                      type="checkbox"
+                      id="filter-xanh"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Xanh"
+                      value="(Xanh)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Xanh
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-hong">
+                    <input
+                      type="checkbox"
+                      id="filter-hong"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Hồng"
+                      value="(Hồng)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Hồng
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-cam">
+                    <input
+                      type="checkbox"
+                      id="filter-cam"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Cam"
+                      value="(Cam)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Cam
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-trang">
+                    <input
+                      type="checkbox"
+                      id="filter-trang"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Trắng"
+                      value="(Trắng)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Trắng
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-den">
+                    <input
+                      type="checkbox"
+                      id="filter-den"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Đen"
+                      value="(Đen)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Đen
+                  </label>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- End lọc tag 1 -->
+
+        <!-- Lọc tag 2 -->
+
+        <aside class="aside-item filter-tag">
+          <div class="aside-title">
+            <h2 class="title-head margin-top-0">
+              <span>Giới tính</span>
+            </h2>
+          </div>
+          <div class="aside-content filter-group">
+            <ul>
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-nam">
+                    <input
+                      type="checkbox"
+                      id="filter-nam"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Nam"
+                      value="(Nam)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Nam
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-nu">
+                    <input
+                      type="checkbox"
+                      id="filter-nu"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Nữ"
+                      value="(Nữ)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Nữ
+                  </label>
+                </span>
+              </li>
+
+              <li class="filter-item filter-item--check-box filter-item--green">
+                <span>
+                  <label for="filter-unisex">
+                    <input
+                      type="checkbox"
+                      id="filter-unisex"
+                      data-group="tag2"
+                      data-field="tags"
+                      data-text="Unisex"
+                      value="(Unisex)"
+                      data-operator="OR"
+                    />
+                    <i class="fa"></i>
+                    Unisex
+                  </label>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+
+        <!-- End lọc tag 2 -->
+
+        <!-- Lọc tag 3 -->
+      </div>
+    </div>
+
+    <!-- danh sach san pham -->
+    <div class="block-collection">
+      <div class="head">
+        <!-- danh muc -->
+        <div class="cate-list">
+          <a class="cate-item" href="#"> Chạy Bộ </a>
+          <a class="cate-item" href="#"> Bóng Đá </a>
+          <a class="cate-item" href="#">Bóng Rổ </a>
+          <a class="cate-item" href="#"> Tennis </a>
+          <a class="cate-item" href="#"> Sneakers </a>
+          <a class="cate-item" href="#"> Xăng Đan & Dép </a>
+          <a class="cate-item" href="#"> Phụ Kiện </a>
+          <a class="cate-item" href="#"> Chăm Sóc Giày </a>
+        </div>
+
+        <!-- sap xep -->
+        <div class="sort-cate-right">
+          <h3>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-sort-alpha-down"
+              viewBox="0 0 16 16"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M10.082 5.629 9.664 7H8.598l1.789-5.332h1.234L13.402 7h-1.12l-.419-1.371h-1.781zm1.57-.785L11 2.687h-.047l-.652 2.157h1.351z"
+              ></path>
+              <path
+                d="M12.96 14H9.028v-.691l2.579-3.72v-.054H9.098v-.867h3.785v.691l-2.567 3.72v.054h2.645V14zM4.5 2.5a.5.5 0 0 0-1 0v9.793l-1.146-1.147a.5.5 0 0 0-.708.708l2 1.999.007.007a.497.497 0 0 0 .7-.006l2-2a.5.5 0 0 0-.707-.708L4.5 12.293V2.5z"
+              ></path>
+            </svg>
+            Sắp xếp theo
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="16"
+              height="16"
+              fill="currentColor"
+              class="bi bi-caret-down-fill duration-300"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"
+              ></path>
+            </svg>
+          </h3>
+          <ul>
+            <li class="btn-quick-sort default active">
+              <a href="#" title="Mặc định"><i></i>Mặc định</a>
+            </li>
+            <li class="btn-quick-sort alpha-asc">
+              <a href="#" title="Tên A-Z"><i></i>Tên A-Z</a>
+            </li>
+            <li class="btn-quick-sort alpha-desc">
+              <a href="#" title="Tên Z-A"><i></i>Tên Z-A</a>
+            </li>
+            <li class="btn-quick-sort position-desc">
+              <a href="#" title="Hàng mới"><i></i>Hàng mới</a>
+            </li>
+            <li class="btn-quick-sort price-asc">
+              <a href="#" title="Giá thấp đến cao"><i></i>Giá thấp đến cao</a>
+            </li>
+            <li class="btn-quick-sort price-desc">
+              <a href="#" title="Giá cao xuống thấp"><i></i>Giá cao xuống thấp</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div>
+        <p>ĐÂY LÀ SAN PHAM NÈ</p>
+      </div>
+    </div>
+  </div>
+</div>
