@@ -22,7 +22,9 @@ function getLocalIp() {
   }
   return "localhost";
 }
-
+app.get("/health", (req, res) => {
+  res.status(200).send("OK");
+});
 app.listen(PORT, "0.0.0.0", () => {
   console.log(` Server chạy tại: http://${getLocalIp()}:${PORT}`);
 });
