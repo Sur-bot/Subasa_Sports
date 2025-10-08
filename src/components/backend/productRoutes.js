@@ -1,8 +1,7 @@
 import express from "express";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
-const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
-
+import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
 
 const router = express.Router();
 
