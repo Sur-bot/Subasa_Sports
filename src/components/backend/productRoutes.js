@@ -1,11 +1,10 @@
 import express from "express";
 import { initializeApp, cert, getApps } from "firebase-admin/app";
 import { getFirestore } from "firebase-admin/firestore";
-import serviceAccount from "./serviceAccountKey.json" assert { type: "json" };
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 const router = express.Router();
 
-// 🔹 Khởi tạo Firebase Admin chỉ 1 lần
 if (!getApps().length) {
   initializeApp({
     credential: cert(serviceAccount),
