@@ -5,13 +5,15 @@ import { Router } from '@angular/router';
 import { Auth, signOut } from '@angular/fire/auth';
 import { authState } from 'rxfire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { CartComponent } from '../cart-com/cart-component';
 
 @Component({
   selector: 'header-component',
   standalone: true,
-  imports: [CommonModule, LoginComponent],
+  imports: [CommonModule, LoginComponent, CartComponent],
   templateUrl: './header-component.html',
   styleUrls: ['./header-component.css'],
+ 
 })
 export class HeaderComponent implements OnInit {
   isOpen = false;

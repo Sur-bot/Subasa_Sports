@@ -1,0 +1,57 @@
+<ng-container *ngIf="vm$ | async as vm">
+
+  <div class="cart-container">
+    <a routerLink="/cart" class="cart-button" title="Giỏ hàng">
+      <div class="cart-icon-wrapper">
+        <svg class="cart-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+          <path fill="currentColor" d="M96 0C107.5 0 118.1 4.3 126.7 12.1L193.3 80H480c26.5 0 48 21.5 48 48V352c0 26.5-21.5 48-48 48H176c-13.2 0-25-5.3-34-14.3L8 160V48c0-26.5 21.5-48 48-48H96zM152 464c0 17.7 14.3 32 32 32s32-14.3 32-32c0-17.7-14.3-32-32-32s-32 14.3-32 32zm256 0c0 17.7 14.3 32 32 32s32-14.3 32-32c0-17.7-14.3-32-32-32s-32 14.3-32 32z"/>
+        </svg>
+        <span class="cart-badge">{{ vm.totalItems }}</span>
+      </div>
+      <span class="cart-text">Giỏ hàng</span>
+    </a>
+
+    <div class="cart-dropdown">
+      <div class="dropdown-header">
+        <h4>Giỏ hàng của bạn ({{ vm.totalItems }} sản phẩm)</h4>
+      </div>
+      
+      <div *ngIf="vm.totalItems === 0" class="empty-cart">
+        <p>Giỏ hàng trống! Hãy thêm sản phẩm nhé.</p>
+      </div>
+
+      <div *ngIf="vm.totalItems > 0" class="dropdown-items">
+        <div *ngFor="let item of vm.items" class="item-example">
+          <img [src]="item.product.imageUrl" [alt]="item.product.productName" class="item-thumb">
+          <div class="item-info">
+            <p>{{ item.product.productName }}</p>
+            <small *ngIf="item.selectedSize">Size: {{ item.selectedSize }}</small>
+            <div class="quantity-controls">
+              <button 
+                (click)="cartService.decreaseQuantity(item.uniqueId)" 
+                class="btn-qty" 
+                [disabled]="item.quantity <= 1">-</button>
+              
+              <span>{{ item.quantity }}</span>
+              
+              <button 
+                (click)="cartService.increaseQuantity(item.uniqueId)" 
+                class="btn-qty" 
+                [disabled]="item.quantity >= getMaxStock(item)">+</button>
+            </div>
+          </div>
+          <button (click)="cartService.removeFromCart(item.uniqueId)" class="btn-remove" title="Xóa sản phẩm">×</button>
+        </div>
+      </div>
+      
+      <div *ngIf="vm.totalItems > 0" class="dropdown-footer">
+        <div class="total-row">
+          <span>Tổng cộng:</span>
+          <span class="total-price">{{ vm.totalPrice | currency:'VND' }}</span>
+        </div>
+        <button routerLink="/cart" class="btn-view-cart">Xem Giỏ hàng</button>
+      </div>
+    </div>
+  </div>
+
+</ng-container>
