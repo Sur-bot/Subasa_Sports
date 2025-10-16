@@ -214,6 +214,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
         alert('Cập nhật sản phẩm thành công!');
       } else {
         // Thêm mới
+        this.product.createdAt = new Date().toISOString();
         await this.http.post(this.apiUrl, this.product).toPromise();
         alert('Tạo sản phẩm thành công!');
       }

@@ -11,17 +11,17 @@ export class UserService {
   role$ = this.roleSubject.asObservable();
 
   constructor(private auth: Auth, private firestore: Firestore) {
-    // Lắng nghe login/logout
+
     onAuthStateChanged(this.auth, (user) => {
       if (user) {
-        // Nếu UID = ADMIN_UID thì auto gán role = "admin"
+        
         if (user.uid === ADMIN_UID) {
           this.roleSubject.next("admin");
-          return; // bỏ qua đọc Firestore
+          return; 
         }
 
         const ref = doc(this.firestore, `users/${user.uid}`);
-        // Lắng nghe realtime document user
+        
         onSnapshot(ref, (snap) => {
           if (snap.exists()) {
             this.roleSubject.next(snap.data()['role'] || null);

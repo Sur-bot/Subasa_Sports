@@ -50,7 +50,7 @@
     <div class="form-group" *ngIf="selectedCategoryObj?.hasSize">
       <div *ngFor="let s of product.sizes; let i = index">
         <label>Size {{ s.size }}</label>
-        <input type="number" [(ngModel)]="product.sizes[i].quantity" name="quantity-{{s.size}}" min="0" />
+        <input type="number" [(ngModel)]="product.sizes[i].quantity" name="quantity-{{s.size}}" min="1" />
       </div>
     </div>
 
@@ -81,7 +81,7 @@
     <!-- Giảm giá -->
     <div class="form-group">
       <label>Giảm giá (%)</label>
-      <input type="number" [(ngModel)]="product.discount" name="discount" min="0" />
+      <input type="number" [(ngModel)]="product.discount" name="discount" min="0" max="100"/>
     </div>
 
     <!-- Upload ảnh -->
