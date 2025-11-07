@@ -6,6 +6,7 @@ import { RouterLink } from '@angular/router';
 import { Observable, combineLatest, map } from 'rxjs';
 // ✅ Import CartService và CartItem từ service
 import { CartService, CartItem } from '../servives/cart.service';
+import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.component'
 
 interface CartViewModel {
   items: CartItem[];
@@ -18,11 +19,12 @@ interface CartViewModel {
   standalone: true,
   templateUrl: './cart-component.html',
   styleUrls: ['./cart-component.css'],
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, CheckoutModalComponent],
 })
 export class CartComponent {
   public readonly vm$: Observable<CartViewModel>;
-
+  public isCheckoutModalVisible = false;
+  
   constructor(public cartService: CartService) {
     this.vm$ = combineLatest([
       this.cartService.items$,

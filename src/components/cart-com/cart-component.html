@@ -49,9 +49,13 @@
           <span>Tổng cộng:</span>
           <span class="total-price">{{ vm.totalPrice | currency:'VND' }}</span>
         </div>
-        <button routerLink="/cart" class="btn-view-cart">Xem Giỏ hàng</button>
+        <<button (click)="isCheckoutModalVisible = true" class="btn-view-cart">Xem Giỏ Hàng</button>
       </div>
     </div>
   </div>
-
+  <app-checkout-modal
+    *ngIf="isCheckoutModalVisible"
+    (closeModal)="isCheckoutModalVisible = false">
+  </app-checkout-modal>
+  
 </ng-container>
