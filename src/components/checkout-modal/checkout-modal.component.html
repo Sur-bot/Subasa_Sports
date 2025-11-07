@@ -1,0 +1,81 @@
+<div class="modal-overlay" (click)="onClose()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <h3>Thông tin thanh toán</h3>
+      <button class="close-button" (click)="onClose()">×</button>
+    </div>
+
+    <div class="checkout-body">
+
+      <div class="product-list">
+        <h4>Sản phẩm trong giỏ</h4>
+        <div class="items-container">
+          <div *ngFor="let item of displayItems" class="product-item">
+
+            <div class="item-checker">
+              <input type="checkbox" [(ngModel)]="item.isSelected" (ngModelChange)="updateSelectedTotal()">
+            </div>
+
+            <div class="item-image">
+              <img [src]="item.product.imageUrl" [alt]="item.product.productName">
+              <span class="item-quantity">{{ item.quantity }}</span>
+            </div>
+            <div class="item-details">
+              <p class="item-name">{{ item.product.productName }}</p>
+              <p class="item-size" *ngIf="item.selectedSize">Size: {{ item.selectedSize }}</p>
+
+              <div class="quantity-controls">
+                <button class="btn-qty" [disabled]="item.quantity <= 1"
+                  (click)="cartService.decreaseQuantity(item.uniqueId)">-</button>
+                <span>{{ item.quantity }}</span>
+
+                <button class="btn-qty" [disabled]="item.quantity >= getMaxStock(item)"
+                  (click)="cartService.increaseQuantity(item.uniqueId)">+</button>
+              </div>
+            </div>
+            <div class="item-price-section">
+              <p class="item-price">{{ (item.product.salePrice * item.quantity) | currency:'VND' }}</p>
+              <button class="btn-remove-modal" (click)="cartService.removeFromCart(item.uniqueId)">Xóa</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="payment-summary">
+        <h4>Phương thức thanh toán</h4>
+        <div class="payment-options">
+          <label class="payment-option">
+            <input type="radio" name="payment" value="cod" [(ngModel)]="selectedPaymentMethod">
+            Thanh toán khi nhận hàng (COD)
+          </label>
+          <label class="payment-option">
+            <input type="radio" name="payment" value="bank">
+            Chuyển khoản ngân hàng
+          </label>
+          <label class="payment-option">
+            <input type="radio" name="payment" value="momo">
+            Ví điện tử Momo
+          </label>
+        </div>
+
+        <div class="summary-details">
+          <div class="summary-row">
+            <span>Tạm tính</span>
+            <span>{{ totalSelectedPrice | currency:'VND' }}</span>
+          </div>
+          <div class="summary-row">
+            <span>Phí vận chuyển</span>
+            <span>Miễn phí</span>
+          </div>
+          <div class="summary-row total">
+            <span>Tổng cộng</span>
+            <span class="total-price">{{ totalSelectedPrice | currency:'VND' }}</span>
+          </div>
+        </div>
+
+        <button class="checkout-button" (click)="handleCheckout()">Thanh Toán</button>
+      </div>
+    </div>
+  </div>
+</div>
