@@ -1,0 +1,16 @@
+<div class="modal-overlay" *ngIf="isVisible" (click)="close()">
+  
+  <div class="modal-container" (click)="$event.stopPropagation()">
+    
+    <div class="modal-icon" [ngClass]="type">
+      <span *ngIf="type === 'success'">&#10003;</span>
+      <span *ngIf="type === 'error'">!</span>
+    </div>
+
+    <h3 class="modal-title">{{ title }}</h3>
+    <p class="modal-message">{{ message }}</p>
+
+    <button class="modal-btn" (click)="close()">Đóng</button>
+  </div>
+
+</div>

@@ -1,0 +1,47 @@
+<div *ngIf="isLoading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Đang tải sản phẩm...</p>
+</div>
+
+<div *ngIf="errorMessage" class="error-message">
+  {{ errorMessage }}
+</div>
+
+<div class="products-view-grid" *ngIf="!isLoading && !errorMessage">
+  
+  <div class="product-box" *ngFor="let item of products">
+    
+    <div class="product-thumbnail">
+      <a href="#" class="image_link display_block">
+        <img [src]="item.image" [alt]="item.name" loading="lazy">
+      </a>
+      
+      <span class="smart" *ngIf="item.discount && item.discount !== '-0%'">
+        {{ item.discount }}
+      </span>
+
+      <!-- <div class="action-cart">
+         <button title="Thêm vào giỏ"(click)="onAddToCart(item)">Thêm vào giỏ</button>
+      </div>
+    </div> -->
+
+    <div class="product-info">
+      <h3 class="product-name">
+        <a href="#" [title]="item.name">{{ item.name }}</a>
+      </h3>
+      
+      <div class="price-box">
+        <span class="price">{{ item.price | number:'1.0-0' }}₫</span>
+        
+        <span class="compare-price" *ngIf="item.oldPrice">
+          {{ item.oldPrice | number:'1.0-0' }}₫
+        </span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div *ngIf="!isLoading && products.length === 0 && !errorMessage" class="no-products">
+  <p>Không tìm thấy sản phẩm nào.</p>
+</div>
