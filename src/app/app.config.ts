@@ -11,12 +11,14 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 
 import { provideAuth, getAuth } from '@angular/fire/auth';
 import { environment } from './environments/environments'
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
+    provideHttpClient(withFetch()),
     importProvidersFrom(ReactiveFormsModule, CommonModule,FormsModule),
     provideAnimations(),
     provideFirebaseApp(() => initializeApp(environment.firebase)),

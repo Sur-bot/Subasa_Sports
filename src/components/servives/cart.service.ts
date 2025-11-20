@@ -6,6 +6,7 @@ import { map } from 'rxjs/operators';
 // Import Product từ vị trí cũ
 import { Product } from '../product-card/product-card.component';
 
+
 // ✅ Định nghĩa và export CartItem tại đây
 export interface CartItem {
   product: Product;
