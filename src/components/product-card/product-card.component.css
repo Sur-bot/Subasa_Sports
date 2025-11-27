@@ -3,25 +3,11 @@
 .product-card-container {
     position: relative;
     background-color: white;
-    border-radius: 4px;
-    
-    /* HIỆU ỨNG VIỀN NỔI BẬT: Viền chính ĐỎ, Viền ngoài mỏng VÀNG CAM */
-    border: 2px solid #2031c9; /* Viền chính  */
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 
-                0 0 0 1px #ffaa00; /* Viền ngoài mỏng */
-    
     width: 240px; 
     flex-shrink: 0;
     overflow: hidden;
     font-family: 'Open Sans', Arial, sans-serif; 
     transition: transform 0.2s, box-shadow 0.2s;
-}
-
-.product-card-container:hover {
-    transform: translateY(-3px); 
-    /* Viền ngoài dày và đỏ hơn khi hover */
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15),
-                0 0 0 2px #1408b9; 
 }
 
 /* ------------------------------------------- */

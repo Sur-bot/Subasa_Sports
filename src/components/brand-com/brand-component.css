@@ -1,0 +1,57 @@
+.section_brands {
+  padding: 30px 45px;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-title h2 {
+  display: inline-block;
+  font-weight: 700;
+  font-size: 2rem;
+  text-transform: uppercase;
+  margin-bottom: 0px;
+  font-family: 'Oswald', sans-serif;
+  position: relative;
+  padding-bottom: 8px;
+}
+
+.nav-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #ccc;
+  background: white;
+  cursor: pointer;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+.slider-wrapper {
+  overflow: hidden;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.slider-inner {
+  display: flex;
+  transition: transform 0.3s ease;
+  align-items: center;
+}
+
+.brand-item {
+  width: 200px;
+  padding: 10px;
+}
+
+.brand-item img {
+  width: 100%;
+  object-fit: contain;
+  transition: transform 0.2s;
+}
+
+.brand-item img:hover {
+  transform: scale(1.05);
+}
