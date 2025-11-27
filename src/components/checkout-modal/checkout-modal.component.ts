@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, OnDestroy,ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService, CartItem } from '../servives/cart.service';
@@ -34,9 +34,11 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
 
   generatedOrderId = 'ORDER-' + Date.now();
   private cartSubscription!: Subscription;
-
+  private timer: any;
+  
   constructor(
     public cartService: CartService,
+    private cdr: ChangeDetectorRef,
     private firestore: Firestore,
     private router: Router
   ) { }
@@ -59,6 +61,68 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     this.totalSelectedPrice = this.displayItems
       .filter(i => i.isSelected)
       .reduce((sum, i) => sum + (i.product.salePrice * i.quantity), 0);
+  }
+  onManualQuantityChange(event: Event, item: CartItem): void {
+    const inputElement = event.target as HTMLInputElement;
+    let newValue = parseInt(inputElement.value, 10);
+    const maxStock = this.getMaxStock(item);
+
+    // Validate
+    if (isNaN(newValue) || newValue < 1) {
+      newValue = 1;
+    }
+    if (newValue > maxStock) {
+      newValue = maxStock;
+    }
+
+    this.cartService.updateQuantity(item.uniqueId, newValue);
+    
+    
+    inputElement.value = newValue.toString();
+  }
+
+  // --- LOGIC ẤN GIỮ (LONG PRESS) ---
+  
+  // Bắt đầu ấn giữ
+  startChangingQuantity(item: CartItem, delta: number) {
+    const maxStock = this.getMaxStock(item);
+
+    // Kiểm tra điều kiện giới hạn
+    if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= maxStock)) return;
+
+    // 1. Thay đổi ngay 1 lần (Click đơn)
+    this.changeOne(item, delta);
+
+    // 2. Đợi 400ms, nếu vẫn giữ chuột thì chạy liên tục
+    this.timer = setTimeout(() => {
+      this.timer = setInterval(() => {
+        // Kiểm tra lại trong vòng lặp
+        if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= maxStock)) {
+          this.stopChangingQuantity();
+          return;
+        }
+        this.changeOne(item, delta);
+      }, 100); // Tốc độ 100ms
+    }, 400);
+  }
+
+  // Thả tay ra -> Dừng lại
+  stopChangingQuantity() {
+    if (this.timer) {
+      clearTimeout(this.timer);
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
+
+  // Hàm phụ trợ để gọi service và vẽ lại màn hình
+  private changeOne(item: CartItem, delta: number) {
+    if (delta > 0) {
+        this.cartService.increaseQuantity(item.uniqueId);
+    } else {
+        this.cartService.decreaseQuantity(item.uniqueId);
+    }
+    this.cdr.detectChanges(); 
   }
 
   /** ============================================================

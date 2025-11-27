@@ -22,24 +22,46 @@
 
       <div *ngIf="vm.totalItems > 0" class="dropdown-items">
         <div *ngFor="let item of vm.items" class="item-example">
+          
           <img [src]="item.product.imageUrl" [alt]="item.product.productName" class="item-thumb">
+          
           <div class="item-info">
-            <p>{{ item.product.productName }}</p>
-            <small *ngIf="item.selectedSize">Size: {{ item.selectedSize }}</small>
+            <p class="item-name">{{ item.product.productName }}</p>
+            <small *ngIf="item.selectedSize !== 'Mặc định'">Size: {{ item.selectedSize }}</small>
+            <small *ngIf="item.selectedColor !== 'Mặc định'"> | Màu: {{ item.selectedColor }}</small>
+            
             <div class="quantity-controls">
-              <button 
-                (click)="cartService.decreaseQuantity(item.uniqueId)" 
-                class="btn-qty" 
-                [disabled]="item.quantity <= 1">-</button>
-              
-              <span>{{ item.quantity }}</span>
               
               <button 
-                (click)="cartService.increaseQuantity(item.uniqueId)" 
+                (mousedown)="startChangingQuantity(item, -1)" 
+                (mouseup)="stopChangingQuantity()" 
+                (mouseleave)="stopChangingQuantity()"
                 class="btn-qty" 
-                [disabled]="item.quantity >= getMaxStock(item)">+</button>
+                [disabled]="item.quantity <= 1">
+                -
+              </button>
+              
+              <input 
+                type="number" 
+                class="qty-input" 
+                [value]="item.quantity" 
+                (change)="onManualQuantityChange($event, item)"
+                min="1" 
+                [max]="getMaxStock(item)"
+              >
+              
+              <button 
+                (mousedown)="startChangingQuantity(item, 1)" 
+                (mouseup)="stopChangingQuantity()" 
+                (mouseleave)="stopChangingQuantity()"
+                class="btn-qty" 
+                [disabled]="item.quantity >= getMaxStock(item)">
+                +
+              </button>
+
             </div>
-          </div>
+            </div>
+          
           <button (click)="cartService.removeFromCart(item.uniqueId)" class="btn-remove" title="Xóa sản phẩm">×</button>
         </div>
       </div>
@@ -47,12 +69,13 @@
       <div *ngIf="vm.totalItems > 0" class="dropdown-footer">
         <div class="total-row">
           <span>Tổng cộng:</span>
-          <span class="total-price">{{ vm.totalPrice | currency:'VND' }}</span>
+          <span class="total-price">{{ vm.totalPrice | number:'1.0-0' }}₫</span>
         </div>
-        <<button (click)="isCheckoutModalVisible = true" class="btn-view-cart">Xem Giỏ Hàng</button>
+        <button (click)="isCheckoutModalVisible = true" class="btn-view-cart">Thanh toán ngay</button>
       </div>
     </div>
   </div>
+
   <app-checkout-modal
     *ngIf="isCheckoutModalVisible"
     (closeModal)="isCheckoutModalVisible = false">

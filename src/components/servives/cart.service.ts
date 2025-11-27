@@ -97,6 +97,39 @@ export class CartService {
     this.saveCartToLocalStorage(currentItems);
   }
 
+  updateQuantity(uniqueId: string, newQuantity: number): void {
+    const currentItems = [...this.itemsSubject.getValue()];
+    const item = currentItems.find(i => i.uniqueId === uniqueId);
+
+    if (!item) return;
+
+    // 1. Tính toán tồn kho tối đa cho item này
+    let maxStock = 0;
+    if (item.product.hasSize && item.product.sizes) {
+      const sizeOption = item.product.sizes.find(s => String(s.size) === item.selectedSize);
+      maxStock = sizeOption ? sizeOption.quantity : 0;
+    } else {
+      maxStock = item.product.quantity || 0;
+    }
+
+    // 2. Validate số lượng nhập vào
+    if (newQuantity <= 0) {
+      // Nếu nhập <= 0, có thể chọn xóa hoặc reset về 1. Ở đây mình reset về 1 cho an toàn.
+      item.quantity = 1;
+    } else if (newQuantity > maxStock) {
+      // Nếu nhập quá tồn kho -> set bằng maxStock
+      item.quantity = maxStock;
+      console.warn(`Số lượng yêu cầu vượt quá tồn kho. Đã điều chỉnh về ${maxStock}.`);
+    } else {
+      // Hợp lệ
+      item.quantity = newQuantity;
+    }
+
+    // 3. Lưu lại
+    this.itemsSubject.next(currentItems);
+    this.saveCartToLocalStorage(currentItems);
+  }
+
   public getItems(): CartItem[] {
     return this.itemsSubject.getValue();
   }

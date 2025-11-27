@@ -231,6 +231,12 @@
     /* Dùng background trắng để phù hợp với mẫu */
     background-color: white; 
 }
+.quantity-input::-webkit-outer-spin-button,
+.quantity-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 
 .add-to-cart-button {
     flex-grow: 1; /* Chiếm phần còn lại của không gian */

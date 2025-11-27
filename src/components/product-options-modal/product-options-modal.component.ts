@@ -1,11 +1,7 @@
-// src/components/product-options-modal/product-options-modal.component.ts
-
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// Import Product từ vị trí cũ
 import { Product, ProductSizeOption } from '../product-card/product-card.component';
-// ✅ Import CartService và CartItem từ service
-import { CartService, CartItem } from '../servives/cart.service';
+import { CartService } from '../servives/cart.service'; // Kiểm tra lại đường dẫn service này của bạn
 
 @Component({
   selector: 'app-product-options-modal',
@@ -25,17 +21,20 @@ export class ProductOptionsModalComponent implements OnInit {
   errorMessage: string | null = null;
   String = String;
 
-  constructor(private cartService: CartService) { }
+  // Biến quản lý việc ấn giữ
+  private timer: any;
+
+  constructor(
+    private cartService: CartService,
+    private cdr: ChangeDetectorRef // Inject ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     if (this.product.colors && this.product.colors.length > 0) {
       this.selectColor(this.product.colors[0].hexCode);
     }
-    if (this.product.hasSize) {
-      const firstAvailableSize = this.availableSizeOptions[0];
-      if (firstAvailableSize) {
-        this.selectSize(firstAvailableSize.size);
-      }
+    if (this.product.hasSize && this.availableSizeOptions.length > 0) {
+      this.selectSize(this.availableSizeOptions[0].size);
     }
     this.updateAvailableQuantity();
   }
@@ -75,14 +74,71 @@ export class ProductOptionsModalComponent implements OnInit {
     const quantityInCart = itemInCart ? itemInCart.quantity : 0;
 
     this.maxQuantity = stockQuantity - quantityInCart;
+    // Reset về 1 nếu còn hàng, về 0 nếu hết hàng
     this.selectedQuantity = this.maxQuantity > 0 ? 1 : 0;
   }
 
+  // --- LOGIC TĂNG GIẢM SỐ LƯỢNG (ĐÃ SỬA) ---
+
+  // Hàm thay đổi giá trị (chạy 1 lần)
   changeQuantity(delta: number): void {
     const newQuantity = this.selectedQuantity + delta;
     if (newQuantity >= 1 && newQuantity <= this.maxQuantity) {
       this.selectedQuantity = newQuantity;
+      this.cdr.detectChanges(); // Ép giao diện cập nhật ngay lập tức
     }
+  }
+
+  // Bắt đầu ấn giữ
+  startChanging(delta: number): void {
+    // Nếu nút bị disable hoặc hết hàng thì không làm gì
+    if (this.maxQuantity === 0) return;
+    if (delta < 0 && this.selectedQuantity <= 1) return;
+    if (delta > 0 && this.selectedQuantity >= this.maxQuantity) return;
+
+    // 1. Thay đổi ngay lập tức 1 lần (click đơn)
+    this.changeQuantity(delta);
+
+    // 2. Đợi 400ms, nếu vẫn giữ chuột thì bắt đầu chạy nhanh
+    this.timer = setTimeout(() => {
+      this.timer = setInterval(() => {
+        // Kiểm tra điều kiện dừng trong vòng lặp
+        if ((delta < 0 && this.selectedQuantity <= 1) || 
+            (delta > 0 && this.selectedQuantity >= this.maxQuantity)) {
+          this.stopChanging();
+          return;
+        }
+        this.changeQuantity(delta);
+      }, 100); // Tốc độ 100ms/lần
+    }, 400);
+  }
+
+  // Thả chuột ra -> Dừng lại
+  stopChanging(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+      clearTimeout(this.timer);
+      this.timer = null;
+    }
+  }
+  // ----------------------------------------
+
+  onManualQuantityChange(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    let inputValue = parseInt(inputElement.value, 10);
+
+    if (isNaN(inputValue) || inputValue < 1) {
+      inputValue = 1;
+    }
+
+    if (this.maxQuantity > 0 && inputValue > this.maxQuantity) {
+      inputValue = this.maxQuantity;
+    } else if (this.maxQuantity === 0) {
+      inputValue = 0;
+    }
+
+    this.selectedQuantity = inputValue;
+    inputElement.value = inputValue.toString();
   }
 
   addToCart(): void {

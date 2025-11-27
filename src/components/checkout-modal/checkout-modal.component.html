@@ -29,13 +29,29 @@
               <p class="item-size" *ngIf="item.selectedSize">Size: {{ item.selectedSize }}</p>
 
               <div class="quantity-controls">
-                <button class="btn-qty" [disabled]="item.quantity <= 1"
-                  (click)="cartService.decreaseQuantity(item.uniqueId)">−</button>
-
+                <button 
+                (mousedown)="startChangingQuantity(item, -1)" 
+                (mouseup)="stopChangingQuantity()" 
+                (mouseleave)="stopChangingQuantity()"
+                class="btn-qty" 
+                [disabled]="item.quantity <= 1">−</button>
+                
+              <input 
+                type="number" 
+                class="qty-input" 
+                [value]="item.quantity" 
+                (change)="onManualQuantityChange($event, item)"
+                min="1" 
+                [max]="getMaxStock(item)"
+              >
                 <span>{{ item.quantity }}</span>
 
-                <button class="btn-qty" [disabled]="item.quantity >= getMaxStock(item)"
-                  (click)="cartService.increaseQuantity(item.uniqueId)">+</button>
+                <button 
+                (mousedown)="startChangingQuantity(item, 1)" 
+                (mouseup)="stopChangingQuantity()" 
+                (mouseleave)="stopChangingQuantity()"
+                class="btn-qty" 
+                [disabled]="item.quantity >= getMaxStock(item)">+</button>
               </div>
             </div>
 
