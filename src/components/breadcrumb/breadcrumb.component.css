@@ -1,0 +1,52 @@
+.breadcrumb-wrap {
+  background-color: #f8f8f8; /* Màu nền xám giống hình */
+  padding: 10px 0;
+  width: 100%;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 0px; /* Sát vào phần dưới */
+}
+
+/* Container căn giữa */
+.container {
+  padding-left: 55px; /* Căn lề giống trang web của bạn */
+  padding-right: 55px;
+}
+
+.breadcrumb-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: 14px;
+}
+
+.breadcrumb-item {
+  display: flex;
+  align-items: center;
+  color: #333;
+}
+
+.breadcrumb-link {
+  text-decoration: none;
+  color: #666; /* Màu xám cho link thường */
+  transition: 0.2s;
+}
+
+.breadcrumb-link:hover {
+  color: #002d3a; /* Đổi màu khi hover */
+}
+
+.separator {
+  margin: 0 8px;
+  color: #999;
+  font-size: 16px;
+}
+
+/* Trang hiện tại in đậm */
+.current-page {
+  font-weight: 700;
+  color: #333;
+}

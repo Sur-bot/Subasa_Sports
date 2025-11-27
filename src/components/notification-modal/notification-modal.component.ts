@@ -5,9 +5,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-notification-modal',
   standalone: true,
   imports: [CommonModule],
-  // Trỏ đến file HTML
   templateUrl: './notification-modal.component.html',
-  // Trỏ đến file CSS
   styleUrl: './notification-modal.component.css'
 })
 export class NotificationModalComponent {

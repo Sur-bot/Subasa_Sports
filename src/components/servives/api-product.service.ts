@@ -42,8 +42,10 @@ export class ApiProductService {
             imageUrl = item.productImage;
           }
 
-
-         
+          // Nếu không có ảnh, dùng ảnh mặc định
+          if (!imageUrl) {
+            imageUrl = 'https://via.placeholder.com/300x300?text=No+Image';
+          }
 
           // 2. XỬ LÝ GIÁ VÀ DISCOUNT
           // Trong JSON: price = 2423400, discount = 0 (nghĩa là % giảm)
