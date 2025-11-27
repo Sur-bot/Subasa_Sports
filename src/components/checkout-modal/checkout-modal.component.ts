@@ -1,13 +1,12 @@
-// src/components/checkout-modal/checkout-modal.component.ts
-
 import { Component, Output, EventEmitter, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CartService, CartItem } from '../servives/cart.service'; // Import service
+import { CartService, CartItem } from '../servives/cart.service';
 import { Subscription } from 'rxjs';
-import { ProductSizeOption } from '../product-card/product-card.component';
+import { Router } from '@angular/router';
+import { Firestore, collection, addDoc, CollectionReference, serverTimestamp } from '@angular/fire/firestore';
 
-// Tạo một interface nội bộ để quản lý trạng thái "selected"
+
 interface CheckoutItem extends CartItem {
   isSelected: boolean;
 }
@@ -15,66 +14,226 @@ interface CheckoutItem extends CartItem {
 @Component({
   selector: 'app-checkout-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Đảm bảo đã import FormsModule
+  imports: [CommonModule, FormsModule],
   templateUrl: './checkout-modal.component.html',
   styleUrls: ['./checkout-modal.component.css']
 })
 export class CheckoutModalComponent implements OnInit, OnDestroy {
-  // ❌ Bỏ @Input() items và @Input() totalPrice
+
   @Output() closeModal = new EventEmitter<void>();
 
-  public displayItems: CheckoutItem[] = []; // Mảng để hiển thị (bao gồm cả trạng thái checkbox)
-  public totalSelectedPrice: number = 0;   // Chỉ tính tổng tiền các mục được chọn
-  
-  selectedPaymentMethod: string = 'cod';
-  private cartSubscription!: Subscription; // Để lắng nghe thay đổi từ service
+  public displayItems: CheckoutItem[] = [];
+  public totalSelectedPrice: number = 0;
 
-  // ✅ 1. Inject CartService
-  constructor(public cartService: CartService) {}
+  customerName = '';
+  customerPhone = '';
+  customerAddress = '';
+
+  selectedPaymentMethod: string = 'cod';
+  showBankInfo = false;
+
+  generatedOrderId = 'ORDER-' + Date.now();
+  private cartSubscription!: Subscription;
+
+  constructor(
+    public cartService: CartService,
+    private firestore: Firestore,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
-    //  2. Lắng nghe sự thay đổi của giỏ hàng
     this.cartSubscription = this.cartService.items$.subscribe(items => {
-      // Tạo danh sách hiển thị mới, mặc định TẤT CẢ đều được chọn
       this.displayItems = items.map(item => ({
         ...item,
-        isSelected: true // Mặc định là được chọn
+        isSelected: true
       }));
-      this.updateSelectedTotal(); // Cập nhật tổng tiền ngay lập Hte
+      this.updateSelectedTotal();
     });
   }
 
   ngOnDestroy(): void {
-    // Hủy subscription khi component bị phá hủy
-    if (this.cartSubscription) {
-      this.cartSubscription.unsubscribe();
+    if (this.cartSubscription) this.cartSubscription.unsubscribe();
+  }
+
+  updateSelectedTotal(): void {
+    this.totalSelectedPrice = this.displayItems
+      .filter(i => i.isSelected)
+      .reduce((sum, i) => sum + (i.product.salePrice * i.quantity), 0);
+  }
+
+  /** ============================================================
+   *  SAVE ORDER TO FIRESTORE
+   * ============================================================ */
+  private async saveOrderToFirestore(paymentMethod: string) {
+    const selectedItems = this.displayItems.filter(i => i.isSelected);
+
+    const orderData = {
+      orderId: this.generatedOrderId || 'ORDER-unknown',
+      userId: localStorage.getItem("userId") || null,
+      customerName: this.customerName || 'Khách hàng',
+      customerPhone: this.customerPhone || '',
+      customerAddress: this.customerAddress || '',
+      paymentMethod: paymentMethod || 'unknown',
+      totalPrice: this.totalSelectedPrice ?? 0,
+      createdAt: new Date(),
+      items: selectedItems.map(item => ({
+        productId: item.product.id || 'unknown',
+        name: item.product.productName || 'No name',
+        ownerEmail: item.product.ownerEmail || 'unknown',
+        price: item.product.salePrice ?? 0,
+        imageUrl: item.product.imageUrl || '',
+        quantity: item.quantity ?? 1,
+        size: item.selectedSize || null
+      }))
+    };
+
+
+    const orderRef = collection(this.firestore, 'orders');
+    await addDoc(orderRef, orderData);
+
+  }
+
+
+  /** ============================================================
+   *  CHECKOUT MAIN HANDLER
+   * ============================================================ */
+  handleCheckout(): void {
+    if (!this.customerName || !this.customerPhone || !this.customerAddress) {
+      alert("Vui lòng nhập đầy đủ tên, số điện thoại và địa chỉ!");
+      return;
+    }
+
+    const selectedItems = this.displayItems.filter(i => i.isSelected);
+    if (selectedItems.length === 0) {
+      alert("Bạn chưa chọn sản phẩm!");
+      return;
+    }
+
+    switch (this.selectedPaymentMethod) {
+      case "cod":
+        this.checkoutCOD();
+        break;
+      case "momo":
+        this.checkoutMomo();
+        break;
+      case "vnpay":
+        this.checkoutVNPay();
+        break;
+      case "bank":
+        this.checkoutBankTransfer();
+        break;
     }
   }
 
-  // ✅ 3. Hàm tính toán lại tổng tiền dựa trên các checkbox
-  updateSelectedTotal(): void {
-    this.totalSelectedPrice = this.displayItems
-      .filter(item => item.isSelected) // Lọc ra những item được chọn
-      .reduce((sum, item) => sum + (item.product.salePrice * item.quantity), 0);
+
+  /** ============================================================
+   *  COD
+   * ============================================================ */
+  async checkoutCOD() {
+    await this.saveOrderToFirestore("COD");
+
+    this.removeCheckedItems(); // Xoá item đã chọn
+
+    alert("Đặt hàng thành công! Thanh toán khi nhận hàng.");
+
+    this.onClose();
+    this.router.navigate(['/']); // về trang chủ
   }
 
-  onClose(): void {
+
+  /** ============================================================
+   *  MOMO
+   * ============================================================ */
+  async checkoutMomo() {
+    await this.saveOrderToFirestore("MOMO");
+
+   
+
+    const payload = {
+      amount: this.totalSelectedPrice,
+      orderId: this.generatedOrderId
+    };
+
+    fetch("http://localhost:3001/api/payment/momo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+      
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.payUrl) {
+          alert("Lỗi: không tìm thấy MoMo payUrl");
+        } else {
+          this.onClose();
+          this.router.navigate(['/']);
+          window.location.href = data.payUrl;
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Không thể tạo thanh toán MoMo");
+      });
+      this.removeCheckedItems();
+      setTimeout(() => {
+      this.onClose();
+      this.router.navigate(['/']);
+    }, 2000);
+  }
+
+
+  /** ============================================================
+   *  VNPAY
+   * ============================================================ */
+  async checkoutVNPay() {
+    await this.saveOrderToFirestore("VNPAY");
+
+    
+
+    const url = `http://localhost:3001/api/payment/vnpay?orderId=${this.generatedOrderId}&amount=${this.totalSelectedPrice}`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        if (!data.payUrl) {
+          alert("Lỗi: không tìm thấy VNPay payUrl");
+        } else {
+          this.onClose();
+          this.router.navigate(['/']);
+          window.location.href = data.payUrl;
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Không thể tạo thanh toán VNPay");
+      });
+      this.removeCheckedItems();
+  }
+
+
+  /** ============================================================
+   *  BANK TRANSFER
+   * ============================================================ */
+  async checkoutBankTransfer() {
+    await this.saveOrderToFirestore("BANK_TRANSFER");
+
+    this.removeCheckedItems();
+
+    this.showBankInfo = true;
+
+    // Sau khi hiện thông tin, đóng modal và về home
+    setTimeout(() => {
+      this.onClose();
+      this.router.navigate(['/']);
+    }, 1500);
+  }
+
+
+
+  onClose() {
     this.closeModal.emit();
   }
 
-  handleCheckout(): void {
-    const itemsToPurchase = this.displayItems.filter(item => item.isSelected);
-    
-    if (itemsToPurchase.length === 0) {
-      alert('Bạn chưa chọn sản phẩm nào để thanh toán.');
-      return;
-    }
-    
-    console.log('Đang tiến hành thanh toán cho các sản phẩm:', itemsToPurchase);
-    console.log('Tổng tiền:', this.totalSelectedPrice);
-    alert('Chức năng thanh toán đang được phát triển!');
-    this.onClose();
-  }
   public getMaxStock(item: CartItem): number {
     if (item.product.hasSize && item.product.sizes) {
       const sizeOption = item.product.sizes.find(s => String(s.size) === item.selectedSize);
@@ -82,6 +241,14 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     } else {
       return item.product.quantity || 0;
     }
+  }
+
+  private removeCheckedItems() {
+    this.displayItems
+      .filter(item => item.isSelected)
+      .forEach(item => {
+        this.cartService.removeFromCart(item.uniqueId);
+      });
   }
 
 }

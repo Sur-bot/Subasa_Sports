@@ -8,8 +8,10 @@
 
     <div class="checkout-body">
 
+      <!-- ====================== DANH SÁCH SẢN PHẨM ====================== -->
       <div class="product-list">
         <h4>Sản phẩm trong giỏ</h4>
+
         <div class="items-container">
           <div *ngFor="let item of displayItems" class="product-item">
 
@@ -21,41 +23,70 @@
               <img [src]="item.product.imageUrl" [alt]="item.product.productName">
               <span class="item-quantity">{{ item.quantity }}</span>
             </div>
+
             <div class="item-details">
               <p class="item-name">{{ item.product.productName }}</p>
               <p class="item-size" *ngIf="item.selectedSize">Size: {{ item.selectedSize }}</p>
 
               <div class="quantity-controls">
                 <button class="btn-qty" [disabled]="item.quantity <= 1"
-                  (click)="cartService.decreaseQuantity(item.uniqueId)">-</button>
+                  (click)="cartService.decreaseQuantity(item.uniqueId)">−</button>
+
                 <span>{{ item.quantity }}</span>
 
                 <button class="btn-qty" [disabled]="item.quantity >= getMaxStock(item)"
                   (click)="cartService.increaseQuantity(item.uniqueId)">+</button>
               </div>
             </div>
+
             <div class="item-price-section">
               <p class="item-price">{{ (item.product.salePrice * item.quantity) | currency:'VND' }}</p>
               <button class="btn-remove-modal" (click)="cartService.removeFromCart(item.uniqueId)">Xóa</button>
             </div>
+
           </div>
         </div>
       </div>
+<div class="customer-info">
+  <h4>Thông tin khách hàng</h4>
+  <div class="input-group">
+    <label>Tên:</label>
+    <input type="text" [(ngModel)]="customerName" placeholder="Họ tên">
+  </div>
+  <div class="input-group">
+    <label>SĐT:</label>
+    <input type="text" [(ngModel)]="customerPhone" placeholder="Số điện thoại">
+  </div>
+  <div class="input-group">
+    <label>Địa chỉ:</label>
+    <input type="text" [(ngModel)]="customerAddress" placeholder="Địa chỉ">
+  </div>
+</div>
 
+      <!-- ====================== THANH TOÁN ====================== -->
       <div class="payment-summary">
+
         <h4>Phương thức thanh toán</h4>
+
         <div class="payment-options">
           <label class="payment-option">
             <input type="radio" name="payment" value="cod" [(ngModel)]="selectedPaymentMethod">
             Thanh toán khi nhận hàng (COD)
           </label>
+
           <label class="payment-option">
-            <input type="radio" name="payment" value="bank">
-            Chuyển khoản ngân hàng
+            <input type="radio" name="payment" value="momo" [(ngModel)]="selectedPaymentMethod">
+            Thanh toán MOMO
           </label>
+
           <label class="payment-option">
-            <input type="radio" name="payment" value="momo">
-            Ví điện tử Momo
+            <input type="radio" name="payment" value="vnpay" [(ngModel)]="selectedPaymentMethod">
+            Thanh toán VNPAY
+          </label>
+
+          <label class="payment-option">
+            <input type="radio" name="payment" value="bank" [(ngModel)]="selectedPaymentMethod">
+            Chuyển khoản ngân hàng
           </label>
         </div>
 
@@ -64,10 +95,12 @@
             <span>Tạm tính</span>
             <span>{{ totalSelectedPrice | currency:'VND' }}</span>
           </div>
+
           <div class="summary-row">
             <span>Phí vận chuyển</span>
             <span>Miễn phí</span>
           </div>
+
           <div class="summary-row total">
             <span>Tổng cộng</span>
             <span class="total-price">{{ totalSelectedPrice | currency:'VND' }}</span>
@@ -75,6 +108,21 @@
         </div>
 
         <button class="checkout-button" (click)="handleCheckout()">Thanh Toán</button>
+
+        <!-- ====================== HIỂN THỊ BANK TRANSFER ====================== -->
+        <div *ngIf="showBankInfo" class="bank-transfer-box">
+          <h3>HƯỚNG DẪN CHUYỂN KHOẢN</h3>
+
+          <div class="bank-box">
+            <p><strong>Ngân hàng:</strong> Vietcombank</p>
+            <p><strong>Chủ tài khoản:</strong> SUBASA SPORTS</p>
+            <p><strong>Số tài khoản:</strong> 0123456789</p>
+            <p><strong>Nội dung CK:</strong> {{ generatedOrderId }}</p>
+          </div>
+
+          <img src="assets/qr-vcb.png" class="qr-img" />
+        </div>
+
       </div>
     </div>
   </div>

@@ -5,12 +5,13 @@ import { Firestore, collection, getDocs } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { HttpClient } from '@angular/common/http';
 
+
 @Component({
   selector: 'app-product-form',
   standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './ProductFormComponent.html',
   styleUrls: ['./ProductFormComponent.css'],
-  imports: [CommonModule, FormsModule]
 })
 export class ProductFormComponent implements OnInit, OnChanges {
   @Output() close = new EventEmitter<void>();
