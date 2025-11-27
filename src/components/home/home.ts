@@ -4,6 +4,7 @@ import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+
 //components
 import { HeaderComponent } from '../header-com/header-component';
 import { CategoryComponent } from '../category-com/category-component';
@@ -19,6 +20,7 @@ import { Product } from '../product-card/product-card.component';
 import { ProductOptionsModalComponent } from '../product-options-modal/product-options-modal.component';
 import {AdminSellerRequestsComponent} from '../request-seller-com/admin-seller-requests'
 import { FooterComponent } from '../footer-com/footer-component';
+import { BrandSliderComponent } from '../brand-com/brand-component';
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
 @Component({
@@ -37,6 +39,7 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     RequestSellerComponent,
     AdminSellerRequestsComponent,
     FormsModule,
+    BrandSliderComponent,
     FooterComponent,
     CommonModule
   ],

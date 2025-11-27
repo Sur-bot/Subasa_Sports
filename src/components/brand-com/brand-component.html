@@ -1,0 +1,15 @@
+<section class="section_brands">
+  <div class="container">
+    <div class="section-title side-left has-control">
+      <h2>Thương hiệu nổi bật</h2>
+    </div>
+
+    <div class="slider-wrapper">
+      <div class="slider-inner" [ngStyle]="{ transform: transformValue }">
+        <div class="brand-item" *ngFor="let b of brands">
+          <img [src]="b.img" [alt]="b.title" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

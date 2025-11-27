@@ -1,13 +1,16 @@
 <link href="./productPage-component.css" />
 <header-component></header-component>
 
-<div class="head-path">
+<app-breadcrumb 
+  [items]="[{ label: 'Sản phẩm' }]">
+</app-breadcrumb>
+<!-- <div class="head-path">
   <div class="path-container">
     <div class="path-content">
       <p class="path-text">đây là đường dẫn</p>
     </div>
   </div>
-</div>
+</div> -->
 
 <div class="bodywrap">
   <div class="banner">
@@ -675,6 +678,7 @@
       </div>
 
       <app-product-list></app-product-list>
+      
         
       </div>
     </div>

@@ -1,0 +1,23 @@
+<div class="breadcrumb-wrap">
+  <div class="container">
+    <ul class="breadcrumb-list">
+      
+      <li class="breadcrumb-item">
+        <a routerLink="/" class="breadcrumb-link">Trang chủ</a>
+        <span class="separator">›</span>
+      </li>
+
+      <li class="breadcrumb-item" *ngFor="let item of items; let last = last">
+        
+        <ng-container *ngIf="!last">
+          <a [routerLink]="item.url" class="breadcrumb-link">{{ item.label }}</a>
+          <span class="separator">›</span>
+        </ng-container>
+
+        <span *ngIf="last" class="current-page">{{ item.label }}</span>
+        
+      </li>
+
+    </ul>
+  </div>
+</div>
