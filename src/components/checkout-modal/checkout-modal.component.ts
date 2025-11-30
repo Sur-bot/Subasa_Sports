@@ -139,6 +139,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       customerAddress: this.customerAddress || '',
       paymentMethod: paymentMethod || 'unknown',
       totalPrice: this.totalSelectedPrice ?? 0,
+      status: 'PENDING',
       createdAt: new Date(),
       items: selectedItems.map(item => ({
         productId: item.product.id || 'unknown',

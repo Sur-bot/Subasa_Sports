@@ -1,6 +1,12 @@
-/* Màu nền đậm như trong hình (thường là màu nền của Header) */
 :host {
   display: block;
+  font-family: Arial, sans-serif;
+}
+
+/* --- Cart Button --- */
+.cart-container {
+  position: relative;
+  display: inline-block;
 }
 
 .cart-button {
@@ -9,15 +15,20 @@
   padding: 10px 15px;
   text-decoration: none;
   color: white;
-  font-family: Arial, sans-serif;
   font-size: 16px;
+  background-color: #002d3a;
+  border-radius: 6px;
   cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cart-button:hover {
+  background-color: #004452;
 }
 
 .cart-icon-wrapper {
   position: relative;
   margin-right: 8px;
-  line-height: 1;
 }
 
 .cart-icon {
@@ -29,7 +40,6 @@
 .cart-badge {
   position: absolute;
   top: -5px;
-  /* Điều chỉnh vị trí badge cho đẹp hơn */
   right: -8px;
   background-color: #a3cc00;
   color: black;
@@ -37,28 +47,26 @@
   padding: 2px 5px;
   font-size: 11px;
   font-weight: bold;
-  line-height: 1;
-  text-align: center;
-  z-index: 10;
   min-width: 18px;
-  white-space: nowrap;
+  text-align: center;
 }
 
-.cart-text {
-  color: white;
-  font-weight: 500;
-  line-height: 1.2;
-  white-space: nowrap;
-}
-
-.cart-button:hover {
-  opacity: 0.8;
-}
-
-.cart-container {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
+/* --- Dropdown --- */
+.cart-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 350px;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-top: 2px solid #a2ff00;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  z-index: 10;
 }
 
 .cart-container:hover .cart-dropdown {
@@ -67,26 +75,7 @@
   transform: translateY(0);
 }
 
-.cart-dropdown {
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 350px;
-  background: white;
-  color: #333;
-  border: 1px solid #ccc;
-  border-top: 2px solid #a2ff00;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-}
-
-.dropdown-header,
-.dropdown-footer,
-.empty-cart {
+.dropdown-header, .dropdown-footer, .empty-cart {
   padding: 10px 15px;
   border-bottom: 1px solid #eee;
 }
@@ -119,18 +108,18 @@
   padding: 8px;
   background-color: #a2ff00;
   color: #002d3a;
-  text-align: center;
-  text-decoration: none;
   border: none;
   font-weight: bold;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background 0.2s;
 }
 
 .btn-view-cart:hover {
   background-color: #8cde00;
 }
 
+/* --- Cart Items --- */
 .dropdown-items {
   max-height: 250px;
   overflow-y: auto;
@@ -142,7 +131,6 @@
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px dashed #eee;
-  /* ✅ THAY ĐỔI 1: Thêm position: relative để định vị nút xóa */
   position: relative;
 }
 
@@ -152,19 +140,18 @@
   object-fit: cover;
   margin-right: 10px;
   flex-shrink: 0;
-  /* Ngăn ảnh bị co lại */
+  border-radius: 4px;
 }
 
 .item-info {
   flex-grow: 1;
-  /* Cho phép phần info co giãn */
   padding-right: 20px;
-  /* Tạo khoảng trống cho nút xóa */
 }
 
 .item-info p {
   margin: 0;
   font-size: 13px;
+  font-weight: 500;
 }
 
 .item-info small {
@@ -172,22 +159,13 @@
   color: #666;
 }
 
-/* --- ✅ THAY ĐỔI 2: THÊM CSS CHO CÁC NÚT MỚI --- */
-
-/* Container cho các nút tăng giảm */
 .quantity-controls {
   display: flex;
   align-items: center;
   margin-top: 5px;
+  gap: 5px;
 }
 
-.quantity-controls span {
-  margin: 0 10px;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-/* Nút tăng/giảm số lượng */
 .btn-qty {
   width: 24px;
   height: 24px;
@@ -196,18 +174,16 @@
   cursor: pointer;
   border-radius: 50%;
   font-weight: bold;
-  font-size: 16px;
-  line-height: 1;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  transition: background 0.2s;
 }
 
 .btn-qty:hover {
   background-color: #eee;
 }
 
-/* Nút xóa sản phẩm (dấu X) */
 .btn-remove {
   position: absolute;
   top: 10px;
@@ -219,10 +195,230 @@
   font-size: 22px;
   color: #aaa;
   cursor: pointer;
-  line-height: 1;
-  padding: 0;
+  transition: color 0.2s;
 }
 
 .btn-remove:hover {
   color: #333;
+}
+
+/* --- Order History Popup --- */
+.order-history-popup {
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80%;
+  max-width: 600px;
+  background: #f7f7f7;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  z-index: 1000;
+  padding: 1rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.order-history-popup .popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #a2ff00;
+  border-radius: 8px 8px 0 0;
+  padding: 0.5rem 1rem;
+}
+
+.order-history-popup .popup-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #002d3a;
+}
+
+.order-history-popup .popup-header button {
+  background: #fff;
+  color: #002d3a;
+  border: none;
+  font-size: 20px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.order-history-popup .popup-header button:hover {
+  background-color: #002d3a;
+  color: #fff;
+}
+
+.order-history-popup .popup-body {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+.order-history-popup h4 {
+  margin: 10px 0 5px 0;
+  padding: 5px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.order-history-popup h4.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.order-history-popup h4.shipping {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.order-history-popup h4.delivered {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.order-history-popup h4.cancel {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.order-history-popup .order-item {
+  margin-bottom: 10px;
+  background: #fff;
+  padding: 0.5rem;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  color: #09042b;
+}
+
+.order-history-popup .order-product {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 5px;
+  background: #e8f5e9;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+.order-history-popup .thumb {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 4px;
+}
+/* --- Buttons inside dropdown header --- */
+.btn-history, .btn-seller {
+  padding: 6px 10px;
+  margin-left: 5px;
+  background-color: #a2ff00;
+  color: #002d3a;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-history:hover, .btn-seller:hover {
+  background-color: #8cde00;
+}
+
+/* --- Seller Orders Popup (match buyer popup style) --- */
+.order-history-popup.seller-popup {
+  background: #f0f8ff;
+}
+
+.order-history-popup.seller-popup .order-item {
+  background: #ffffff;
+  border: 1px solid #b0c4de;
+}
+
+.order-history-popup.seller-popup h4 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 5px 0;
+  padding: 5px;
+  border-radius: 4px;
+}
+
+.order-history-popup.seller-popup h4.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.order-history-popup.seller-popup h4.shipping {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.order-history-popup.seller-popup h4.delivered {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.order-history-popup.seller-popup h4.cancel {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.order-history-popup.seller-popup button {
+  margin-top: 5px;
+  padding: 5px 8px;
+  background-color: #a2ff00;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  color: #002d3a;
+  transition: background 0.2s;
+}
+
+.order-history-popup.seller-popup button:hover {
+  background-color: #8cde00;
+}
+/* --- Seller Action Buttons --- */
+.order-history-popup.seller-popup .status-btn {
+  width: 100%;
+  padding: 7px 10px;
+  margin-top: 8px;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.25s, opacity 0.25s;
+  font-size: 14px;
+}
+
+/* Pending → Xác nhận gửi hàng */
+.status-btn.pending {
+  background-color: #fff3cd;
+  color: #856404;
+}
+.status-btn.pending:hover {
+  background-color: #ffe8a1;
+}
+
+/* Shipping → Đã giao thành công */
+.status-btn.shipping {
+  background-color: #cce5ff;
+  color: #004085;
+}
+.status-btn.shipping:hover {
+  background-color: #b8dbff;
+}
+
+/* Delivered + Cancel → Disabled */
+.status-btn.disabled {
+  background-color: #e2e3e5;
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.7;
 }

@@ -129,6 +129,7 @@ export class ProductService {
       hasSize: product.hasSize === true, // Đảm bảo là boolean
       sizes: product.sizes || [],
       quantity: product.quantity || 0,
+      ownerEmail: product.ownerEmail || '',
     } as Product;
   }
 }

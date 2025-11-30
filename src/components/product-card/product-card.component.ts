@@ -32,7 +32,7 @@
     status: string; // Trạng thái sản phẩm
     soldCount: number;
     hasSize: boolean; 
-    ownerEmail?: string;
+    ownerEmail: string;
   }
 
   @Component({
