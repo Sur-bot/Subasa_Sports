@@ -92,6 +92,7 @@ export class HeaderComponent implements OnInit {
       console.log('[Logout] thành công');
       this.accountLabel = 'Tài khoản';
       this.isLoggedInEmail = false;
+      localStorage.setItem('isGuest', 'true');
     } catch (e) {
       console.error('Lỗi khi logout:', e);
     }
