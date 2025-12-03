@@ -62,9 +62,10 @@ export class HomeComponent implements OnInit {
     this.userService.role$.subscribe(r => this.role = r);
 
   }
-
+  
   ngOnInit() {
     onAuthStateChanged(this.auth, (user) => {
+      localStorage.setItem('isGuest', 'true');
       this.ngZone.run(() => {
         if (user) {
           this.currentUser = user;
