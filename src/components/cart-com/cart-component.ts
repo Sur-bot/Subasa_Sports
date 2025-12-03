@@ -7,6 +7,7 @@ import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.compone
 import { Firestore, collection, query, where, getDocs, doc, updateDoc, getDoc } from '@angular/fire/firestore';
 import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { UserService } from '../menu-com/UserService';
+import { Router } from '@angular/router'
 
 interface CartViewModel {
   items: CartItem[];
@@ -56,6 +57,7 @@ interface OrderHistoryGrouped {
 export class CartComponent implements OnInit {
   public readonly vm$: Observable<CartViewModel>;
   public isCheckoutModalVisible = false;
+  public isLoginRequestVisible = false;
   public isOrderHistoryVisible = false;
   public isSellerPopupVisible = false;
   public isSeller = false;
@@ -76,7 +78,8 @@ export class CartComponent implements OnInit {
     private auth: Auth,
     private userService: UserService,
     private firestore: Firestore,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {
     this.vm$ = combineLatest([
       this.cartService.items$,
@@ -111,6 +114,24 @@ export class CartComponent implements OnInit {
       this.cdr.detectChanges();
     });
   }
+
+  onProceedToCheckout() {
+    // Lấy giá trị isGuest từ Local Storage
+    const isGuest = localStorage.getItem('isGuest');
+
+    // Kiểm tra logic: Nếu là Guest (true) thì bắt đăng nhập
+    if (isGuest === 'true') {
+      this.isLoginRequestVisible = true; // Hiện modal yêu cầu login
+    } else {
+      // Nếu là User thật (hoặc không có key isGuest) -> Cho phép thanh toán
+      this.isCheckoutModalVisible = true; 
+    }
+  }
+  goToLogin() {
+    this.isLoginRequestVisible = false;
+    // Sửa đường dẫn '/login' thành đường dẫn thực tế của trang đăng nhập bên bạn
+    this.router.navigate(['/login']); 
+}
 
   // ===================
   // Buyer - load orders theo userId

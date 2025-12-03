@@ -49,13 +49,31 @@
           <span>Tổng cộng:</span>
           <span class="total-price">{{ vm.totalPrice | number:'1.0-0' }}₫</span>
         </div>
-        <button (click)="isCheckoutModalVisible = true" class="btn-view-cart">Thanh toán ngay</button>
+        <button (click)="onProceedToCheckout()" class="btn-view-cart">Thanh toán ngay</button>
       </div>
     </div>
   </div>
 
   <!-- Checkout Modal -->
-  <app-checkout-modal *ngIf="isCheckoutModalVisible" (closeModal)="isCheckoutModalVisible = false"></app-checkout-modal>
+  <app-checkout-modal
+  *ngIf="isCheckoutModalVisible"
+  (closeModal)="isCheckoutModalVisible = false">
+</app-checkout-modal>
+
+<div class="login-modal-overlay" *ngIf="isLoginRequestVisible" (click)="isLoginRequestVisible = false">
+  <div class="login-modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="login-icon">🔒</div>
+    <h3>Vui lòng đăng nhập</h3>
+    <p>Bạn cần đăng nhập tài khoản thành viên để tiếp tục thanh toán và tích điểm.</p>
+    
+    <div class="login-actions">
+      <button class="btn-cancel" (click)="isLoginRequestVisible = false">Để sau</button>
+      <button class="btn-login" (click)="goToLogin()">Đăng nhập ngay</button>
+    </div>
+
+  </div>
+</div>
 
   <!-- Buyer Order History Popup -->
   <div class="order-history-popup" *ngIf="isOrderHistoryVisible">

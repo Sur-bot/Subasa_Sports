@@ -11,6 +11,7 @@ import {
 } from '@angular/fire/auth';
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -56,6 +57,7 @@ export class LoginComponent {
 
   private auth = inject(Auth);
   private firestore = inject(Firestore);
+  private router = inject(Router);
 
   activate() { this.state = 'active'; }
   deactivate() { this.state = 'inactive'; }
@@ -77,6 +79,7 @@ export class LoginComponent {
 
       console.log('[Login] Thành công:', user.uid);
       this.loggedIn.emit({ email: user.email || this.email });
+      this.router.navigate(['/']);
     } catch (err) {
       alert('Email hoặc password không đúng!');
     }
@@ -93,6 +96,7 @@ export class LoginComponent {
 
       console.log('[Guest] Thành công:', user.uid);
       this.loggedIn.emit({ guestId: user.uid });
+      this.router.navigate(['/']);
     } catch (err) {
       alert('Không thể login guest!');
     }
@@ -125,7 +129,7 @@ export class LoginComponent {
 
       console.log('[Register] Thành công:', user.uid);
       this.loggedIn.emit({ email: user.email || this.email });
-
+      this.router.navigate(['/']);
       this.mode = 'login';
     } catch (err: any) {
       console.error('Lỗi khi đăng ký:', err);
