@@ -14,7 +14,8 @@ import {
   doc,
   getDoc,
   DocumentSnapshot,
-  Query // Thêm Query để tái sử dụng code
+  Query, // Thêm Query để tái sử dụng code
+  updateDoc
 } from '@angular/fire/firestore';
 import { Product } from '../product-card/product-card.component';
 
@@ -95,7 +96,29 @@ export class ProductService {
             );
           });
           
-          return forkJoin(productObservables);
+          return forkJoin(productObservables).pipe(
+            map((productList: Product[]) => {
+              // Lọc: Chỉ giữ lại những sản phẩm có tổng tồn kho > 0
+              return productList.filter(p => {
+                let realStock = p.quantity || 0;
+
+                // Nếu sản phẩm có size (Giày, Áo...), tính tổng tồn kho các size
+                if (p.hasSize && p.sizes && p.sizes.length > 0) {
+                  const totalSizeQty = p.sizes.reduce((sum, s) => sum + (s.quantity || 0), 0);
+                  // Nếu tổng size > 0 thì dùng tổng size làm mốc tồn kho
+                  if (totalSizeQty > 0) {
+                    realStock = totalSizeQty;
+                  } else {
+                    // Nếu có mảng size mà tổng bằng 0 -> Hết hàng
+                    realStock = 0;
+                  }
+                }
+
+                // Giữ lại sản phẩm nếu tồn kho > 0
+                return realStock > 0;
+              });
+            })
+          )
         })
       );
   }
@@ -131,5 +154,14 @@ export class ProductService {
       quantity: product.quantity || 0,
       ownerEmail: product.ownerEmail || '',
     } as Product;
+  }
+  updateProductStock(productId: string, newQuantity: number, newSoldCount: number): Observable<void> {
+    const productDocRef = doc(this.productsCollection, productId);
+    
+    // updateDoc trả về Promise, ta dùng 'from' để chuyển thành Observable
+    return from(updateDoc(productDocRef, {
+      quantity: newQuantity,
+      soldCount: newSoldCount
+    }));
   }
 }
