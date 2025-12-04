@@ -4,10 +4,11 @@ import { RouterLink } from '@angular/router';
 import { Observable, combineLatest, map } from 'rxjs';
 import { CartService, CartItem } from '../servives/cart.service';
 import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.component';
-import { Firestore, collection, query, where, getDocs, doc, updateDoc, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, query, where, getDocs, doc, updateDoc, getDoc,onSnapshot } from '@angular/fire/firestore';
 import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { UserService } from '../menu-com/UserService';
 import { Router } from '@angular/router'
+
 
 interface CartViewModel {
   items: CartItem[];
@@ -135,30 +136,35 @@ export class CartComponent implements OnInit {
 
   // ===================
   // Buyer - load orders theo userId
-  private async loadOrderHistoryForUser(userId: string) {
-    try {
-      const ordersRef = collection(this.firestore, 'orders');
-      const q = query(ordersRef, where('userId', '==', userId));
-      const snapshot = await getDocs(q);
+  // ===================
+  private unsubscribeOrderHistory: any = null;
 
-      const allOrders: Order[] = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        docId: doc.id,
-      } as Order));
+  private loadOrderHistoryForUser(userId: string) {
+  if (this.unsubscribeOrderHistory) this.unsubscribeOrderHistory();
 
-      this.orderHistory.pending = allOrders.filter(o => o.status === 'pending');
-      this.orderHistory.shipping = allOrders.filter(o => o.status === 'shipping');
-      this.orderHistory.delivered = allOrders.filter(o => o.status === 'delivered');
-      this.orderHistory.cancel = allOrders.filter(o => o.status === 'cancel');
+  const ordersRef = collection(this.firestore, 'orders');
+  const q = query(ordersRef, where('userId', '==', userId));
 
-      this.cdr.detectChanges();
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  this.unsubscribeOrderHistory = onSnapshot(q, (snapshot) => {
+    const allOrders: Order[] = snapshot.docs.map(doc => ({
+      ...doc.data(),
+      docId: doc.id
+    } as Order));
+
+    this.orderHistory.pending = allOrders.filter(o => o.status === 'pending');
+    this.orderHistory.shipping = allOrders.filter(o => o.status === 'shipping');
+    this.orderHistory.delivered = allOrders.filter(o => o.status === 'delivered');
+    this.orderHistory.cancel = allOrders.filter(o => o.status === 'cancel');
+
+    this.cdr.detectChanges();
+  });
+}
+
 
   // ===================
   // Seller - load orders theo email trực tiếp từ auth
+  // ===================
+  
   private async getUserEmailById(userId: string): Promise<string | null> {
   try {
     const userRef = doc(this.firestore, 'users', userId);

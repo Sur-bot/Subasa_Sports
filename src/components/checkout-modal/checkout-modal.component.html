@@ -29,29 +29,16 @@
               <p class="item-size" *ngIf="item.selectedSize">Size: {{ item.selectedSize }}</p>
 
               <div class="quantity-controls">
-                <button 
-                (mousedown)="startChangingQuantity(item, -1)" 
-                (mouseup)="stopChangingQuantity()" 
-                (mouseleave)="stopChangingQuantity()"
-                class="btn-qty" 
-                [disabled]="item.quantity <= 1">−</button>
-                
-              <input 
-                type="number" 
-                class="qty-input" 
-                [value]="item.quantity" 
-                (change)="onManualQuantityChange($event, item)"
-                min="1" 
-                [max]="getMaxStock(item)"
-              >
+                <button (mousedown)="startChangingQuantity(item, -1)" (mouseup)="stopChangingQuantity()"
+                  (mouseleave)="stopChangingQuantity()" class="btn-qty" [disabled]="item.quantity <= 1">−</button>
+
+                <input type="number" class="qty-input" [value]="item.quantity"
+                  (change)="onManualQuantityChange($event, item)" min="1" [max]="getMaxStock(item)">
                 <span>{{ item.quantity }}</span>
 
-                <button 
-                (mousedown)="startChangingQuantity(item, 1)" 
-                (mouseup)="stopChangingQuantity()" 
-                (mouseleave)="stopChangingQuantity()"
-                class="btn-qty" 
-                [disabled]="item.quantity >= getMaxStock(item)">+</button>
+                <button (mousedown)="startChangingQuantity(item, 1)" (mouseup)="stopChangingQuantity()"
+                  (mouseleave)="stopChangingQuantity()" class="btn-qty"
+                  [disabled]="item.quantity >= getMaxStock(item)">+</button>
               </div>
             </div>
 
@@ -63,21 +50,21 @@
           </div>
         </div>
       </div>
-<div class="customer-info">
-  <h4>Thông tin khách hàng</h4>
-  <div class="input-group">
-    <label>Tên:</label>
-    <input type="text" [(ngModel)]="customerName" placeholder="Họ tên">
-  </div>
-  <div class="input-group">
-    <label>SĐT:</label>
-    <input type="text" [(ngModel)]="customerPhone" placeholder="Số điện thoại">
-  </div>
-  <div class="input-group">
-    <label>Địa chỉ:</label>
-    <input type="text" [(ngModel)]="customerAddress" placeholder="Địa chỉ">
-  </div>
-</div>
+      <div class="customer-info">
+        <h4>Thông tin khách hàng</h4>
+        <div class="input-group">
+          <label>Tên:</label>
+          <input type="text" [(ngModel)]="customerName" placeholder="Họ tên">
+        </div>
+        <div class="input-group">
+          <label>SĐT:</label>
+          <input type="text" [(ngModel)]="customerPhone" placeholder="Số điện thoại">
+        </div>
+        <div class="input-group">
+          <label>Địa chỉ:</label>
+          <input type="text" [(ngModel)]="customerAddress" placeholder="Địa chỉ">
+        </div>
+      </div>
 
       <!-- ====================== THANH TOÁN ====================== -->
       <div class="payment-summary">
@@ -101,8 +88,8 @@
           </label>
 
           <label class="payment-option">
-            <input type="radio" name="payment" value="bank" [(ngModel)]="selectedPaymentMethod">
-            Chuyển khoản ngân hàng
+            <input type="radio" name="payment" value="stripe" [(ngModel)]="selectedPaymentMethod">
+            Thanh toán bằng thẻ VISA / MasterCard
           </label>
         </div>
 
@@ -125,19 +112,6 @@
 
         <button class="checkout-button" (click)="handleCheckout()">Thanh Toán</button>
 
-        <!-- ====================== HIỂN THỊ BANK TRANSFER ====================== -->
-        <div *ngIf="showBankInfo" class="bank-transfer-box">
-          <h3>HƯỚNG DẪN CHUYỂN KHOẢN</h3>
-
-          <div class="bank-box">
-            <p><strong>Ngân hàng:</strong> Vietcombank</p>
-            <p><strong>Chủ tài khoản:</strong> SUBASA SPORTS</p>
-            <p><strong>Số tài khoản:</strong> 0123456789</p>
-            <p><strong>Nội dung CK:</strong> {{ generatedOrderId }}</p>
-          </div>
-
-          <img src="assets/qr-vcb.png" class="qr-img" />
-        </div>
 
       </div>
     </div>

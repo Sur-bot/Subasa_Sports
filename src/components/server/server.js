@@ -6,6 +6,7 @@ import { momoIPN } from "./routes/momo-ipn.js";
 
 import { createVNPay } from "./routes/vnpay.js";
 import { vnpayIPN } from "./routes/vnpay-ipn.js";
+import { stripePayment } from "./routes/stripe.js";
 
 const app = express();
 
@@ -19,6 +20,8 @@ app.post("/api/payment/momo/ipn", momoIPN);
 // VNPAY
 app.get("/api/payment/vnpay", createVNPay);
 app.get("/api/payment/vnpay/ipn", vnpayIPN);
+// STRIPE
+app.post("/api/payment/stripe", stripePayment);
 
 const PORT = 3001;
 app.listen(PORT, () => console.log("🚀 Server chạy tại http://localhost:" + PORT));
