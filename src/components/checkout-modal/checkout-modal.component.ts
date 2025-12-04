@@ -335,12 +335,12 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
 
 
   /** ============================================================
-   *  BANK TRANSFER
+   *  Stripe
    * ============================================================ */
 
 
   async checkoutStripe() {
-    await this.saveOrderToFirestore("STRIPE");
+    await this.saveOrderToFirestore("VISA");
     await this.updateProductStockAfterOrder();
 
     const payload = {
@@ -354,33 +354,23 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       body: JSON.stringify(payload)
     })
       .then(res => res.json())
-      .then(async data => {
-        if (!data.clientSecret) {
-          alert("Stripe lỗi!");
+      .then(data => {
+        // Backend trả về payUrl
+        console.log("Stripe response:", data);
+
+        if (!data.checkoutUrl) {
+          alert("Stripe lỗi backend!");
           return;
         }
 
-        // Import Stripe từ CDN
-        const stripe = (window as any).Stripe(data.publishableKey);
-
-        const result = await stripe.redirectToCheckout({
-          lineItems: [{
-            price_data: {
-              currency: "usd",
-              product_data: {
-                name: "Thanh toán đơn hàng"
-              },
-              unit_amount: Math.round(payload.amount / 25000 * 100)
-            },
-            quantity: 1
-          }],
-          mode: "payment",
-          successUrl: "http://localhost:4200/home",
-          cancelUrl: "http://localhost:4200/cancel"
-        });
-
-        if (result.error) console.error(result.error);
+        // 👉 Chuyển hướng sang trang thanh toán của Stripe
+        window.location.href = data.checkoutUrl;
+      })
+      .catch(err => {
+        console.error("Stripe error: ", err);
+        alert("Không gọi được Stripe server!");
       });
+    this.removeCheckedItems();
   }
 
 
