@@ -9,6 +9,7 @@
       </div>
 
       <div class="product-options-column">
+        
         <div class="modal-header-details">
           <h3 class="product-name">SẢN PHẨM {{ product.productName }}</h3>
           <div class="price-details">
@@ -18,6 +19,7 @@
         </div>
 
         <div class="modal-body-options">
+
           @if (product.colors && product.colors.length > 0) {
             <div class="option-group color-select">
               <h4 class="option-title">Màu sắc:</h4>
@@ -38,8 +40,11 @@
               <h4 class="option-title">Kích thước:</h4>
               <div class="option-list size-options">
                 @for (option of availableSizeOptions; track option.size) {
-                  <button class="size-button" (click)="selectSize(option.size)"
-                    [class.selected]="selectedSize === String(option.size)">
+                  <button class="size-button" 
+                    (click)="selectSize(option.size)"
+                    [class.selected]="selectedSize === String(option.size)"
+                    [disabled]="(option.quantity || 0) <= 0"
+                    [class.out-of-stock]="(option.quantity || 0) <= 0">
                     {{ option.size }}
                   </button>
                 } @empty {
@@ -49,16 +54,25 @@
             </div>
           }
 
-          @if (product.hasSize) {
-            @if (selectedSize) {
-              <p class="stock-info">Còn lại: {{ maxQuantity }} sản phẩm (Size {{ selectedSize }})</p>
-            } @else if (availableSizeOptions.length > 0) {
-              <p class="stock-info select-size-prompt">Vui lòng chọn kích thước.</p>
+          <div class="stock-message-area">
+            @if (product.hasSize) {
+              @if (selectedSize) {
+                @if (maxQuantity > 0) {
+                  <p class="stock-info">Còn lại: {{ maxQuantity }} sản phẩm (Size {{ selectedSize }})</p>
+                } @else {
+                  <p class="stock-info text-danger">Sản phẩm tạm hết hàng</p>
+                }
+              } @else if (availableSizeOptions.length > 0) {
+                <p class="stock-info select-size-prompt">Vui lòng chọn kích thước.</p>
+              }
+            } @else {
+              @if (maxQuantity > 0) {
+                <p class="stock-info">Còn lại: {{ maxQuantity }} sản phẩm</p>
+              } @else {
+                <p class="stock-info text-danger">Sản phẩm đã hết hàng</p>
+              }
             }
-          } @else {
-            <p class="stock-info">Còn lại: {{ maxQuantity }} sản phẩm</p>
-          }
-
+          </div>
           @if (errorMessage) {
             <div class="error-message">{{ errorMessage }}</div>
           }
@@ -73,9 +87,6 @@
           (mousedown)="startChanging(-1)" 
           (mouseup)="stopChanging()" 
           (mouseleave)="stopChanging()"
-          (touchstart)="startChanging(-1)" 
-          (touchend)="stopChanging()"
-          (contextmenu)="$event.preventDefault()" 
           [disabled]="selectedQuantity <= 1 || maxQuantity === 0">
           -
         </button>
@@ -94,9 +105,6 @@
           (mousedown)="startChanging(1)" 
           (mouseup)="stopChanging()" 
           (mouseleave)="stopChanging()"
-          (touchstart)="startChanging(1)" 
-          (touchend)="stopChanging()"
-          (contextmenu)="$event.preventDefault()"
           [disabled]="selectedQuantity >= maxQuantity || maxQuantity === 0">
           +
         </button>

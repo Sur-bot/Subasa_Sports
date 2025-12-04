@@ -98,23 +98,17 @@ export class ProductService {
           return forkJoin(productObservables).pipe(
             map((productList: Product[]) => {
               // Lọc: Chỉ giữ lại những sản phẩm có tổng tồn kho > 0
-              return productList.filter(p => {
-                let realStock = p.quantity || 0;
-
-                // Nếu sản phẩm có size (Giày, Áo...), tính tổng tồn kho các size
+            return productList.filter(p => {
+                // TRƯỜNG HỢP 1: SẢN PHẨM CÓ SIZE (Giày, Quần áo...)
                 if (p.hasSize && p.sizes && p.sizes.length > 0) {
-                  const totalSizeQty = p.sizes.reduce((sum, s) => sum + (s.quantity || 0), 0);
-                  // Nếu tổng size > 0 thì dùng tổng size làm mốc tồn kho
-                  if (totalSizeQty > 0) {
-                    realStock = totalSizeQty;
-                  } else {
-                    // Nếu có mảng size mà tổng bằng 0 -> Hết hàng
-                    realStock = 0;
-                  }
+                  const totalSizeQty = p.sizes.reduce((sum, s) => sum + (Number(s.quantity) || 0), 0);
+                  return totalSizeQty > 0; // Trả về true nếu tổng > 0
                 }
-
-                // Giữ lại sản phẩm nếu tồn kho > 0
-                return realStock > 0;
+                // TRƯỜNG HỢP 2: SẢN PHẨM KHÔNG CÓ SIZE (Phụ kiện...)
+                // Chỉ kiểm tra biến quantity chính
+                const mainQuantity = Number(p.quantity) || 0;
+                return mainQuantity > 0;
+                
               });
             })
           )

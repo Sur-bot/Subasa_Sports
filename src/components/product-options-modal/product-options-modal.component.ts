@@ -40,10 +40,8 @@ export class ProductOptionsModalComponent implements OnInit {
   }
 
   get availableSizeOptions(): ProductSizeOption[] {
-    return Array.isArray(this.product.sizes)
-      ? this.product.sizes.filter(opt => (opt.quantity || 0) > 0)
-      : [];
-  }
+  return Array.isArray(this.product.sizes) ? this.product.sizes : [];
+}
 
   selectColor(colorHex: string): void {
     this.selectedColor = colorHex;
