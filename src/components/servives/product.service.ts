@@ -15,7 +15,6 @@ import {
   getDoc,
   DocumentSnapshot,
   Query, // Thêm Query để tái sử dụng code
-  updateDoc
 } from '@angular/fire/firestore';
 import { Product } from '../product-card/product-card.component';
 
@@ -154,14 +153,5 @@ export class ProductService {
       quantity: product.quantity || 0,
       ownerEmail: product.ownerEmail || '',
     } as Product;
-  }
-  updateProductStock(productId: string, newQuantity: number, newSoldCount: number): Observable<void> {
-    const productDocRef = doc(this.productsCollection, productId);
-    
-    // updateDoc trả về Promise, ta dùng 'from' để chuyển thành Observable
-    return from(updateDoc(productDocRef, {
-      quantity: newQuantity,
-      soldCount: newSoldCount
-    }));
   }
 }
