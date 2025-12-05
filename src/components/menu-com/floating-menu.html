@@ -73,6 +73,64 @@
 
   <button (click)="closeDeleteModal()">Đóng</button>
 </div>
+<!-- modal doanh thu  -->
+<div class="modal revenue-modal" *ngIf="showRevenueModal">
+  <h3>Doanh thu tháng {{ filterMonth }}/{{ filterYear }}</h3>
+
+  <div class="revenue-filter">
+    <label>
+      Tháng:
+      <input type="number" [(ngModel)]="filterMonth" min="1" max="12" />
+    </label>
+
+    <label>
+      Năm:
+      <input type="number" [(ngModel)]="filterYear" />
+    </label>
+  </div>
+
+  <button class="filter-btn" (click)="loadRevenue()">Lọc</button>
+
+  <table class="revenue-table">
+    <tr>
+      <th>Ngày</th>
+      <th>Sản phẩm</th>
+      <th>SL</th>
+      <th>Giá</th>
+      <th>Thành tiền</th>
+    </tr>
+
+    <tr *ngFor="let r of revenueData">
+      <td>{{ r.date }}</td>
+      <td>{{ r.productName }}</td>
+      <td>{{ r.quantity }}</td>
+      <td>{{ r.price | currency:'VND' }}</td>
+      <td>{{ r.amount | currency:'VND' }}</td>
+    </tr>
+  </table>
+
+  <div class="revenue-total">
+    Tổng doanh thu: {{ totalRevenue | currency:'VND' }}
+  </div>
+  <!-- Mode view -->
+<div class="view-mode">
+  <button (click)="setViewMode('month')" [class.active]="viewMode==='month'">Theo tháng</button>
+  <button (click)="setViewMode('week')" [class.active]="viewMode==='week'">Theo 7 ngày</button>
+</div>
+<canvas id="revenueChart" width="100" height="50"></canvas>
+
+
+  <div class="export-buttons">
+    <button class="export-excel" (click)="exportExcel()">
+      Xuất Excel
+    </button>
+    <button class="export-pdf" (click)="exportPDF()">
+      Xuất PDF
+    </button>
+  </div>
+
+  <button class="close-btn" (click)="closeRevenueModal()">Đóng</button>
+</div>
 
 <!-- Form popup (tạo + chỉnh sửa) -->
 <app-product-form

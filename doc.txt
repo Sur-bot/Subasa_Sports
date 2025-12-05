@@ -6,7 +6,10 @@ npm run cleanup
 npm install @fortawesome/fontawesome-free
 npm install @angular/material  
 npm install stripe
-
+npm install chart.js
+npm install xlsx jspdf
+npm install --save-dev @types/xlsx
+npm install jspdf jspdf-autotable
 #####################################
 ##  Test thanh toán VISA (Stripe)  ##
 #####################################
