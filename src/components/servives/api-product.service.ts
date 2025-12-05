@@ -20,7 +20,7 @@ export interface ApiProduct {
 })
 export class ApiProductService {
 
-  private apiUrl = 'https://subasa-sports-1.onrender.com/api/products';
+  private apiUrl = 'https://subasa-sports-hjzs.onrender.com/api/products';
 
   constructor(private http: HttpClient) { }
 
