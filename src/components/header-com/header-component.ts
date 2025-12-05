@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Output, EventEmitter } from '@angular/core'; // 1. Thêm Output, EventEmitter
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from '../login-com/login-component';
 import { Router } from '@angular/router';
@@ -13,9 +13,12 @@ import { CartComponent } from '../cart-com/cart-component';
   imports: [CommonModule, LoginComponent, CartComponent],
   templateUrl: './header-component.html',
   styleUrls: ['./header-component.css'],
- 
 })
 export class HeaderComponent implements OnInit {
+  
+  // --- THÊM MỚI: Khai báo sự kiện bắn ra ngoài ---
+  @Output() searchChange = new EventEmitter<string>();
+
   isOpen = false;
   private auth = inject(Auth);
   private firestore = inject(Firestore);
@@ -28,22 +31,18 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    // Dùng authState (Observable) → không bị mất user khi đổi routes
     authState(this.auth).subscribe(async (user) => {
       console.log('[Header] authState user:', user);
 
       if (user) {
         if (user.email) {
-          // Login bằng email
           this.accountLabel = user.email;
           this.isLoggedInEmail = true;
         } else {
-          // Guest
           this.accountLabel = `Guest ${user.uid}`;
           this.isLoggedInEmail = false;
         }
 
-        // 🔹 Nếu bạn muốn lấy thêm dữ liệu từ Firestore (VD: firstName + lastName)
         try {
           const snap = await getDoc(doc(this.firestore, 'users', user.uid));
           if (snap.exists()) {
@@ -60,6 +59,14 @@ export class HeaderComponent implements OnInit {
         this.isLoggedInEmail = false;
       }
     });
+  }
+
+  // --- THÊM MỚI: Hàm xử lý khi gõ phím ---
+  onSearchInput(event: Event) {
+    const inputElement = event.target as HTMLInputElement;
+    const keyword = inputElement.value;
+    // Gửi từ khóa ra ngoài cho ProductPage nhận
+    this.searchChange.emit(keyword);
   }
 
   toggleSidebar() {
@@ -83,7 +90,6 @@ export class HeaderComponent implements OnInit {
   onLoggedIn(data: { email?: string; guestId?: string }) {
     console.log('[Header] onLoggedIn nhận data:', data);
     this.showLogin = false;
-    // Không cần set label thủ công nữa vì authState sẽ tự cập nhật
   }
 
   async logout() {

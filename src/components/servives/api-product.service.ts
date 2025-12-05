@@ -13,6 +13,9 @@ export interface ApiProduct {
   rating?: number;
   quantity?: number;
   sizes?: any[];
+  //them 
+  brand?: string;
+  category?: string;
 }
 
 @Injectable({
@@ -20,7 +23,7 @@ export interface ApiProduct {
 })
 export class ApiProductService {
 
-  private apiUrl = 'https://subasa-sports-1.onrender.com/api/products';
+  private apiUrl = 'https://subasa-sports-hjzs.onrender.com/api/products';
 
   constructor(private http: HttpClient) { }
 
@@ -74,14 +77,18 @@ export class ApiProductService {
             discount: discountStr,
             rating: item.productRating || 5, // SỬA: Lấy đúng key 'productRating'
             quantity: Number(item.quantity) || 0,
-            sizes: item.sizes || []
+            sizes: item.sizes || [],
+            
+            // --- BẮT BUỘC PHẢI THÊM 2 DÒNG NÀY ĐỂ LỌC ĐƯỢC ---
+            brand: item.brand || 'Khác',
+            category: item.category || 'other'
 
           } as ApiProduct;
         });
       }),
       catchError(error => {
         console.error('Lỗi API:', error);
-        return of([]);
+        return of([]); 
       })
     );
   }

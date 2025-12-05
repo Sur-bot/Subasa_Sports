@@ -39,9 +39,19 @@
           </div>
           <div class="header-mid">
             <div class="header-timKiem">
-              <form action="/seach" method="get" class="header-search-form">
-                <input name="query" required class="input-group" placeholder="Tìm kiếm sản phẩm..." autocomplete="off"
-                  type="text" />
+              
+              <form action="/seach" method="get" class="header-search-form" (submit)="$event.preventDefault()">
+                
+                <input 
+                  name="query" 
+                  required 
+                  class="input-group" 
+                  placeholder="Tìm kiếm sản phẩm..." 
+                  autocomplete="off"
+                  type="text" 
+                  (input)="onSearchInput($event)"
+                />
+
                 <input type="hidden" name="type" value="product" />
                 <button type="submit" class="btn-timkiem" aria-label="Tìm kiếm" title="Tìm kiếm">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
@@ -153,7 +163,6 @@
                     <path fill-rule="evenodd" d="M8 9a5 5 0 0 0-5 5 .5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5 5 5 0 0 0-5-5" />
                   </svg>
                 </span>
-                <!-- <svg></svg> -->
                 <div class="text-box">
                   <span class="acc-text-small">Thông tin </span>
 
@@ -177,18 +186,17 @@
             <div class="header-cart">
                <div class="frame-fix">
                 <app-cart></app-cart>
-                </div>
-              </div>
+               </div>
+             </div>
           </div>
 
-       
+        
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- SIDE-BAR -->
 <aside class="sidebar" [class.show]="isOpen">
   <div class="sb-container">
     <div class="sb-title">
