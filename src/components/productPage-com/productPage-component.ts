@@ -14,7 +14,7 @@ type FilterKey = 'price' | 'brand' | 'type';
   styleUrl: './productPage-component.css',
 })
 export class ProductPageComponent {
-  
+    
   // 1. Biến tìm kiếm
   searchText = ''; 
   
@@ -25,7 +25,7 @@ export class ProductPageComponent {
 
   // 3. Biến Filter chính (Truyền xuống con)
   filters: Record<FilterKey, string[]> = { price: [], brand: [], type: [] };
-
+  
   // 4. Biến Filter tạm (Lưu trạng thái tick khi chưa bấm nút "Lọc")
   tempFilters: Record<FilterKey, string[]> = { price: [], brand: [], type: [] };
 

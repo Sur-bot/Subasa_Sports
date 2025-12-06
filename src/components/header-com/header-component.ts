@@ -6,6 +6,7 @@ import { Auth, signOut } from '@angular/fire/auth';
 import { authState } from 'rxfire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { CartComponent } from '../cart-com/cart-component';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'header-component',
@@ -31,35 +32,44 @@ export class HeaderComponent implements OnInit {
   constructor(private router: Router) {}
 
   ngOnInit() {
-    authState(this.auth).subscribe(async (user) => {
-      console.log('[Header] authState user:', user);
+  this.loadUser();
 
-      if (user) {
-        if (user.email) {
-          this.accountLabel = user.email;
-          this.isLoggedInEmail = true;
-        } else {
-          this.accountLabel = `Guest ${user.uid}`;
-          this.isLoggedInEmail = false;
-        }
+  this.router.events.subscribe(() => {
+    this.loadUser();
+  });
 
-        try {
-          const snap = await getDoc(doc(this.firestore, 'users', user.uid));
-          if (snap.exists()) {
-            const data = snap.data();
-            if (data['firstName'] && data['lastName']) {
-              this.accountLabel = `${data['email']}`;
-            }
-          }
-        } catch (e) {
-          console.error('[Header] Lỗi khi đọc Firestore:', e);
-        }
-      } else {
-        this.accountLabel = 'Tài khoản';
-        this.isLoggedInEmail = false;
-      }
-    });
+  authState(this.auth).subscribe(() => {
+    this.loadUser();
+  });
+}
+
+private async loadUser() {
+  const user = this.auth.currentUser;
+
+  if (!user) {
+    this.accountLabel = 'Tài khoản';
+    this.isLoggedInEmail = false;
+    return;
   }
+
+  if (user.email) {
+    this.accountLabel = user.email;
+    this.isLoggedInEmail = true;
+  } else {
+    this.accountLabel = `Guest ${user.uid}`;
+    this.isLoggedInEmail = false;
+  }
+
+  try {
+    const snap = await getDoc(doc(this.firestore, 'users', user.uid));
+    if (snap.exists()) {
+      const data = snap.data();
+      this.accountLabel = data['email'] ?? this.accountLabel;
+    }
+  } catch (e) {
+    console.error('[Header] Firestore error:', e);
+  }
+}
 
   // --- THÊM MỚI: Hàm xử lý khi gõ phím ---
   onSearchInput(event: Event) {
