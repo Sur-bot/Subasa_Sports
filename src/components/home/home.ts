@@ -6,7 +6,6 @@ import { CommonModule } from '@angular/common';
 
 
 //components
-import { HeaderComponent } from '../header-com/header-component';
 import { CategoryComponent } from '../category-com/category-component';
 import { BannerComponent } from '../banner-com/banner-component';
 import { ChatSupportComponent } from '../chat-com/chat-component';
@@ -19,7 +18,6 @@ import { FlashSaleSectionComponent } from '../flashsalesection-com/flash-sale-se
 import { Product } from '../product-card/product-card.component';
 import { ProductOptionsModalComponent } from '../product-options-modal/product-options-modal.component';
 import {AdminSellerRequestsComponent} from '../request-seller-com/admin-seller-requests'
-import { FooterComponent } from '../footer-com/footer-component';
 import { BrandSliderComponent } from '../brand-com/brand-component';
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
@@ -28,7 +26,6 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
   standalone: true,
   imports: [
     BannerComponent,
-    HeaderComponent,
     CategoryComponent,
     ChatSupportComponent,
     AdminDashboardComponent,
@@ -40,7 +37,6 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     AdminSellerRequestsComponent,
     FormsModule,
     BrandSliderComponent,
-    FooterComponent,
     CommonModule
   ],
   templateUrl: './home.html',
