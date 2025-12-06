@@ -1,0 +1,165 @@
+<link rel="stylesheet" href="./product-details.component.css" />
+
+<div class="breadcrumb-container">
+  <nav class="breadcrumb">
+    <a href="/" class="breadcrumb-item">Trang chủ</a>
+    <span class="breadcrumb-separator">></span>
+    <a href="/products" class="breadcrumb-item">Sản Phẩm</a>
+    <span class="breadcrumb-separator">></span>
+    <span class="breadcrumb-current">{{ product?.name || 'Chi tiết sản phẩm' }}</span>
+  </nav>
+</div>
+
+<div *ngIf="isLoading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Đang tải thông tin sản phẩm...</p>
+</div>
+
+<div *ngIf="errorMessage && !isLoading" class="error-message">
+  {{ errorMessage }}
+</div>
+
+<div *ngIf="product as p" class="product-details-container">
+  
+  <div class="image-section" *ngIf="p.image">
+    <img [src]="p.image" [alt]="p.name || 'Sản phẩm'" class="product-image" />
+  </div>
+
+  <div class="info-section">
+    <h1 class="product-title">{{ p.name || 'Tên sản phẩm' }}</h1>
+
+    <div class="product-meta">
+      <span class="brand">Thương hiệu: {{ p.brand }}</span>
+    </div>
+
+    <div class="price-box">
+      <span class="current-price">{{ p.price | number : '1.0-0' }}đ</span>
+      <span *ngIf="p.oldPrice != null" class="old-price">{{ p.oldPrice | number : '1.0-0' }}đ</span>
+      <span *ngIf="p.discount && p.discount !== '-0%'" class="discount-badge">
+        {{ p.discount }}
+      </span>
+    </div>
+
+    <div *ngIf="(p.sizes ?? []).length > 0" class="sizes-section">
+      <p class="size-label">
+        Size: <span *ngIf="selectedSize" class="selected-label">{{ selectedSize }}</span>
+      </p>
+      
+      <div class="size-list">
+        <button 
+          *ngFor="let s of p.sizes ?? []" 
+          class="size-item-btn"
+          [class.active]="selectedSize === s.size"
+          [disabled]="(s.quantity || 0) <= 0"
+          (click)="selectSize(s.size)"
+        >
+          {{ s.size }}
+        </button>
+      </div>
+      
+      <p *ngIf="selectedSize" class="size-stock-info">
+        Còn lại: {{ maxQuantity }} sản phẩm
+      </p>
+    </div>
+    <div class="quantity-selector">
+      <label>Số lượng:</label>
+      <div class="qty-control-box">
+        <button class="qty-btn" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+        <input
+          type="number"
+          [(ngModel)]="quantity"
+          (change)="onQuantityChange()"
+          [min]="1"
+          [max]="maxQuantity"
+          class="qty-input"
+        />
+        <button class="qty-btn" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">
+          +
+        </button>
+      </div>
+      <span class="qty-info" *ngIf="maxQuantity > 0">(Kho: {{ maxQuantity }})</span>
+    </div>
+
+    <div class="action-buttons">
+      <button class="btn-wishlist" (click)="onAddToCart()">THÊM VÀO GIỎ</button>
+      
+      <button class="btn-buy" (click)="onBuyNow()">MUA NGAY</button>
+    </div>
+
+    <div class="shipping-info">
+      <div class="info-item"><span class="icon">✓</span> <span>Cam kết chính hãng 100%</span></div>
+      <div class="info-item"><span class="icon">✓</span> <span>Bảo hành 12 tháng</span></div>
+      <div class="info-item"><span class="icon">✓</span> <span>Đổi trả trong 7 ngày</span></div>
+      <div class="info-item"><span class="icon">✓</span> <span>Giao hàng nhanh toàn quốc</span></div>
+    </div>
+
+  </div>
+</div>
+
+<section class="related-section" *ngIf="relatedProducts.length">
+  <h2>THƯỜNG ĐƯỢC MUA CÙNG</h2>
+  <button class="slider-arrow left" (click)="prevSlide()" [disabled]="currentIndex === 0">&#10094;</button>
+  <button class="slider-arrow right" (click)="nextSlide()" [disabled]="currentIndex === maxIndex">&#10095;</button>
+
+  <div class="related-slider-wrapper" #relatedSliderWrapper>
+    <div
+      class="related-slider"
+      [style.width.px]="slideWidth * totalSlides"
+      [style.transform]="'translateX(-' + currentIndex * slideWidth + 'px)'"
+    >
+      <div *ngFor="let r of relatedProducts" class="related-card">
+        <img [src]="r.image" [alt]="r.name" />
+        <p class="related-name">{{ r.name }}</p>
+        <p class="related-price">{{ r.price | number:'1.0-0' }}đ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section
+  *ngIf="product?.description"
+  class="desc-wrapper"
+  [class.expanded]="showFullDesc">
+
+  <h2 class="desc-title">Mô tả sản phẩm</h2>
+
+  <div class="desc-box">
+    <div class="desc-content" [innerHTML]="product?.description"></div>
+    <div class="desc-overlay" *ngIf="!showFullDesc"></div>
+  </div>
+
+  <button class="desc-toggle" (click)="toggleDesc()">
+    {{ showFullDesc ? 'Thu gọn ▲' : 'Xem thêm ▼' }}
+  </button>
+</section>
+
+<app-product-review [productId]="product?.id"></app-product-review>
+
+<app-notification-modal
+  [isVisible]="modalVisible"
+  [title]="modalTitle"
+  [message]="modalMessage"
+  [type]="modalType"
+  (closeEvent)="closeModal()"
+></app-notification-modal>
+
+<app-checkout-modal
+  *ngIf="isCheckoutVisible"
+  (closeModal)="isCheckoutVisible = false">
+</app-checkout-modal>
+
+
+<div class="login-modal-overlay" *ngIf="isLoginRequestVisible" (click)="isLoginRequestVisible = false">
+  <div class="login-modal-content" (click)="$event.stopPropagation()">
+    
+    <div class="login-icon">🔒</div>
+    <h3>Vui lòng đăng nhập</h3>
+    <p>Bạn cần đăng nhập tài khoản thành viên để tiếp tục thanh toán và tích điểm.</p>
+    
+    <div class="login-actions">
+      <button class="btn-cancel" (click)="isLoginRequestVisible = false">Để sau</button>
+      <button class="btn-login" (click)="goToLogin()">Đăng nhập ngay</button>
+    </div>
+
+  </div>
+</div>

@@ -14,7 +14,7 @@
     
     <!-- (Phần hiển thị sản phẩm giữ nguyên code cũ của bạn) -->
     <div class="product-thumbnail">
-      <a href="#" class="image_link display_block">
+      <a [routerLink]="['/product', item.id]" class="image_link display_block">
         <img [src]="item.image" [alt]="item.name" loading="lazy">
       </a>
       
@@ -25,7 +25,7 @@
 
     <div class="product-info">
       <h3 class="product-name">
-        <a href="#" [title]="item.name">{{ item.name }}</a>
+        <a [routerLink]="['/product', item.id]" [title]="item.name">{{ item.name }}</a>
       </h3>
       
       <div class="price-box">

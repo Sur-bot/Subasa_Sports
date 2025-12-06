@@ -1,0 +1,131 @@
+<div class="review-wrapper">
+  <h3 class="section-title">Đánh giá sản phẩm</h3>
+
+  <!-- Product Rating Summary - Enhanced -->
+  <div class="rating-summary">
+    <div class="rating-main">
+      <!-- Left: Rating Score & Stars -->
+      <div class="rating-score-box">
+        <div class="rating-score-large">{{ averageRating || productRating || 0 }}</div>
+        <div class="rating-stars-large">
+          <span *ngFor="let s of [1,2,3,4,5]" class="star" [class.filled]="(averageRating || productRating) >= s">★</span>
+        </div>
+        <div class="rating-meta">
+          <span class="total-reviews">{{ totalReviews }} đánh giá</span>
+          <span class="product-rating" *ngIf="productRating > 0">(Sản phẩm: {{ productRating }}★)</span>
+        </div>
+      </div>
+
+      <!-- Right: Rating Distribution -->
+      <div class="rating-distribution">
+        <div class="rating-row" *ngFor="let stars of [5,4,3,2,1]">
+          <span class="star-label">{{ stars }}★</span>
+          <div class="progress-bar">
+            <div class="progress-fill" [style.width.%]="getStarPercentage(stars)"></div>
+          </div>
+          <span class="count">{{ getStarCount(stars) }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form gửi đánh giá -->
+  <div class="review-form">
+    <h4 class="form-title">Bạn đã mua sản phẩm này? Hãy chia sẻ cảm nhận!</h4>
+    
+    <div class="rating-row">
+      <label class="rating-label">Đánh giá của bạn:</label>
+      <div class="stars" (mouseleave)="onStarLeave()">
+        <span
+          *ngFor="let s of [1,2,3,4,5]; let i = index"
+          class="star interactive"
+          [class.filled]="(hoverRating || rating) >= s"
+          (mouseenter)="onStarEnter(s)"
+          (click)="setRating(s)"
+          role="button"
+          aria-label="Chọn {{s}} sao"
+          >★</span
+        >
+      </div>
+      <div class="rating-note" *ngIf="rating">Bạn chọn: <strong>{{ rating }} sao</strong></div>
+    </div>
+
+    <textarea
+      [(ngModel)]="comment"
+      placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
+      rows="4"
+      class="comment-input"
+      [disabled]="isSubmitting"
+      maxlength="500"
+    ></textarea>
+    <div class="char-count">{{ comment.length }}/500</div>
+
+    <div class="upload-row">
+      <label class="upload-btn" [class.disabled]="isSubmitting">
+        <input type="file" accept="image/*" multiple (change)="onFilesChange($event)" hidden [disabled]="isSubmitting" />
+        📷 Chèn ảnh ({{ images.length }}/{{ maxImages }})
+      </label>
+      <div class="image-previews">
+        <div class="preview" *ngFor="let img of images; let idx = index">
+          <img [src]="img" alt="preview" />
+          <button class="remove" (click)="removeImage(idx)" title="Xóa ảnh" [disabled]="isSubmitting">×</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-submit" (click)="submitReview()" [disabled]="isSubmitting || rating === 0">
+        <span *ngIf="!isSubmitting">✓ Gửi đánh giá</span>
+        <span *ngIf="isSubmitting">⏳ Đang gửi...</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Danh sách đánh giá -->
+  <div class="reviews-list" *ngIf="reviews.length">
+    <h4 class="sub-title">Nhận xét từ khách hàng ({{ reviews.length }})</h4>
+    
+    <!-- Filter/Sort Options -->
+    <div class="filter-options">
+      <button class="filter-btn" *ngFor="let stars of [5,4,3,2,1]" 
+        (click)="filterByRating(stars)"
+        [class.active]="selectedRatingFilter === stars">
+        {{ stars }}★ ({{ getStarCount(stars) }})
+      </button>
+      <button class="filter-btn" (click)="clearFilter()" [class.active]="selectedRatingFilter === 0">
+        Tất cả
+      </button>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="review-item" *ngFor="let r of getFilteredReviews()">
+      <div class="avatar">
+        <img *ngIf="r.avatar" [src]="r.avatar" alt="{{ r.name }}" />
+        <div *ngIf="!r.avatar" class="avatar-fallback">{{ r.name.charAt(0) || 'U' }}</div>
+      </div>
+      <div class="review-body">
+        <div class="review-head">
+          <div class="name-rating">
+            <span class="name">{{ r.name }}</span>
+            <span class="stars-inline">
+              <span *ngFor="let s of [1,2,3,4,5]" class="star small" [class.filled]="r.rating >= s">★</span>
+            </span>
+          </div>
+          <div class="time">{{ timeAgo(r.createdAt) }} trước</div>
+        </div>
+        <div class="comment">{{ r.comment }}</div>
+        <div class="review-images" *ngIf="r.images && r.images.length">
+          <img *ngFor="let im of r.images" [src]="im" alt="user-image" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="no-reviews" *ngIf="!reviews.length && !isLoading">
+    <p>👥 Chưa có đánh giá nào. Hãy là người đầu tiên đánh giá sản phẩm này!</p>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <p>⏳ Đang tải dữ liệu...</p>
+  </div>
+</div>

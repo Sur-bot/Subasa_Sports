@@ -12,6 +12,7 @@ import {
 import { Firestore, doc, setDoc } from '@angular/fire/firestore';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CartService } from '../servives/cart.service';
 
 @Component({
   selector: 'app-login',
@@ -58,6 +59,7 @@ export class LoginComponent {
   private auth = inject(Auth);
   private firestore = inject(Firestore);
   private router = inject(Router);
+  private cartService = inject(CartService);
 
   activate() { this.state = 'active'; }
   deactivate() { this.state = 'inactive'; }
@@ -78,6 +80,7 @@ export class LoginComponent {
       localStorage.setItem('userId', user.uid);
 
       console.log('[Login] Thành công:', user.uid);
+      this.cartService.loadUserCart();
       this.loggedIn.emit({ email: user.email || this.email });
       this.router.navigate(['/']);
     } catch (err) {
@@ -95,6 +98,7 @@ export class LoginComponent {
       localStorage.setItem('isGuest', 'true');
 
       console.log('[Guest] Thành công:', user.uid);
+      this.cartService.loadUserCart();
       this.loggedIn.emit({ guestId: user.uid });
       this.router.navigate(['/']);
     } catch (err) {
@@ -128,6 +132,7 @@ export class LoginComponent {
       });
 
       console.log('[Register] Thành công:', user.uid);
+      this.cartService.loadUserCart();
       this.loggedIn.emit({ email: user.email || this.email });
       this.router.navigate(['/']);
       this.mode = 'login';

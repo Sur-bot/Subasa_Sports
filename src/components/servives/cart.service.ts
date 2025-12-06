@@ -1,28 +1,61 @@
-// src/services/cart.service.ts
-
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Product } from '../product-card/product-card.component';
 
-// Định nghĩa CartItem + ownerEmail
+
 export interface CartItem {
   product: Product;
   selectedColor: string;
   selectedSize: string;
   quantity: number;
   uniqueId: string;
-  ownerEmail: string; // 🔥 thêm email chủ shop
+  ownerEmail: string; 
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class CartService {
-  private itemsSubject = new BehaviorSubject<CartItem[]>(this.getCartFromLocalStorage());
+  
+  private itemsSubject = new BehaviorSubject<CartItem[]>([]);
   public items$: Observable<CartItem[]> = this.itemsSubject.asObservable();
 
-  constructor() {}
+  constructor() {
+   
+    this.loadUserCart();
+  }
+
+ 
+
+  
+  private getCartKey(): string {
+    
+    if (typeof localStorage === 'undefined') return 'cart_guest';
+
+    const userId = localStorage.getItem('userId');
+    return userId ? `cart_${userId}` : 'cart_guest';
+  }
+
+ 
+  public loadUserCart(): void {
+    const key = this.getCartKey();
+    let items: CartItem[] = [];
+    
+    if (typeof localStorage !== 'undefined') {
+      const cartJson = localStorage.getItem(key);
+      try {
+        items = cartJson ? JSON.parse(cartJson) : [];
+      } catch {
+        items = [];
+      }
+    }
+    
+   
+    this.itemsSubject.next(items);
+  }
+
+ 
 
   addToCart(itemToAdd: { product: Product, selectedColor: string, selectedSize: string, quantity: number }): void {
     const currentItems = [...this.itemsSubject.getValue()];
@@ -30,9 +63,8 @@ export class CartService {
     const existingItem = currentItems.find(item => item.uniqueId === uniqueId);
     const quantityAlreadyInCart = existingItem ? existingItem.quantity : 0;
 
+    
     let maxStock = 0;
-
-    // Kiểm tra có size hay không
     if (itemToAdd.product.hasSize && itemToAdd.product.sizes) {
       const sizeOption = itemToAdd.product.sizes.find(s => String(s.size) === itemToAdd.selectedSize);
       maxStock = sizeOption ? sizeOption.quantity : 0;
@@ -40,9 +72,10 @@ export class CartService {
       maxStock = itemToAdd.product.quantity || 0;
     }
 
+    
     const canBeAdded = maxStock - quantityAlreadyInCart;
     if (canBeAdded <= 0) {
-      console.warn('Đã đạt số lượng tối đa.');
+      console.warn('Đã đạt số lượng tối đa trong kho.');
       return;
     }
 
@@ -55,53 +88,11 @@ export class CartService {
         ...itemToAdd, 
         quantity: quantityToAdd, 
         uniqueId: uniqueId,
-        ownerEmail: itemToAdd.product.ownerEmail // 🔥 Thêm email vào CartItem
+        ownerEmail: itemToAdd.product.ownerEmail || '' // Lưu email chủ shop
       };
       currentItems.push(newItem);
     }
 
-    this.itemsSubject.next(currentItems);
-    this.saveCartToLocalStorage(currentItems);
-  }
-
-  increaseQuantity(uniqueId: string): void {
-    const currentItems = [...this.itemsSubject.getValue()];
-    const item = currentItems.find(i => i.uniqueId === uniqueId);
-    if (!item) return;
-
-    let maxStock = 0;
-    if (item.product.hasSize && item.product.sizes) {
-      const sizeOption = item.product.sizes.find(s => String(s.size) === item.selectedSize);
-      maxStock = sizeOption ? sizeOption.quantity : 0;
-    } else {
-      maxStock = item.product.quantity || 0;
-    }
-
-    if (item.quantity < maxStock) {
-      item.quantity += 1;
-      this.itemsSubject.next(currentItems);
-      this.saveCartToLocalStorage(currentItems);
-    } else {
-      console.warn('Đã đạt số lượng tối đa.');
-    }
-  }
-
-  decreaseQuantity(uniqueId: string): void {
-    let currentItems = [...this.itemsSubject.getValue()];
-    const item = currentItems.find(i => i.uniqueId === uniqueId);
-
-    if (item && item.quantity > 1) {
-      item.quantity -= 1;
-    } else {
-      currentItems = currentItems.filter(i => i.uniqueId !== uniqueId);
-    }
-
-    this.itemsSubject.next(currentItems);
-    this.saveCartToLocalStorage(currentItems);
-  }
-
-  removeFromCart(uniqueId: string): void {
-    const currentItems = this.itemsSubject.getValue().filter(i => i.uniqueId !== uniqueId);
     this.itemsSubject.next(currentItems);
     this.saveCartToLocalStorage(currentItems);
   }
@@ -112,7 +103,6 @@ export class CartService {
     if (!item) return;
 
     let maxStock = 0;
-
     if (item.product.hasSize && item.product.sizes) {
       const sizeOption = item.product.sizes.find(s => String(s.size) === item.selectedSize);
       maxStock = sizeOption ? sizeOption.quantity : 0;
@@ -124,7 +114,6 @@ export class CartService {
       item.quantity = 1;
     } else if (newQuantity > maxStock) {
       item.quantity = maxStock;
-      console.warn(`Vượt quá tồn kho, reset về ${maxStock}.`);
     } else {
       item.quantity = newQuantity;
     }
@@ -132,6 +121,40 @@ export class CartService {
     this.itemsSubject.next(currentItems);
     this.saveCartToLocalStorage(currentItems);
   }
+
+  increaseQuantity(uniqueId: string): void {
+    const currentItems = [...this.itemsSubject.getValue()];
+    const item = currentItems.find(i => i.uniqueId === uniqueId);
+    if (!item) return;
+    
+    this.updateQuantity(uniqueId, item.quantity + 1);
+  }
+
+  decreaseQuantity(uniqueId: string): void {
+    const currentItems = [...this.itemsSubject.getValue()];
+    const item = currentItems.find(i => i.uniqueId === uniqueId);
+    if (item && item.quantity > 1) {
+      this.updateQuantity(uniqueId, item.quantity - 1);
+    } else {
+      this.removeFromCart(uniqueId);
+    }
+  }
+
+  removeFromCart(uniqueId: string): void {
+    const currentItems = this.itemsSubject.getValue().filter(i => i.uniqueId !== uniqueId);
+    this.itemsSubject.next(currentItems);
+    this.saveCartToLocalStorage(currentItems);
+  }
+
+  
+  clearCart(): void {
+    this.itemsSubject.next([]);
+    if (typeof localStorage !== 'undefined') {
+      const key = this.getCartKey();
+      localStorage.removeItem(key);
+    }
+  }
+
 
   public getItems(): CartItem[] {
     return this.itemsSubject.getValue();
@@ -146,16 +169,11 @@ export class CartService {
       total + (item.product.salePrice * item.quantity), 0)));
   }
 
-  private getCartFromLocalStorage(): CartItem[] {
-    try {
-      const cartJson = localStorage.getItem('my_cart');
-      return cartJson ? JSON.parse(cartJson) : [];
-    } catch {
-      return [];
-    }
-  }
-
+  
   private saveCartToLocalStorage(items: CartItem[]): void {
-    localStorage.setItem('my_cart', JSON.stringify(items));
+    if (typeof localStorage !== 'undefined') {
+      const key = this.getCartKey();
+      localStorage.setItem(key, JSON.stringify(items));
+    }
   }
 }

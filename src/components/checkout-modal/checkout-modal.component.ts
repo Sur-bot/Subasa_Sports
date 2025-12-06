@@ -6,7 +6,6 @@ import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { Firestore, collection, addDoc, CollectionReference, serverTimestamp, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 
-
 interface CheckoutItem extends CartItem {
   isSelected: boolean;
 }
@@ -62,12 +61,12 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       .filter(i => i.isSelected)
       .reduce((sum, i) => sum + (i.product.salePrice * i.quantity), 0);
   }
+
   onManualQuantityChange(event: Event, item: CartItem): void {
     const inputElement = event.target as HTMLInputElement;
     let newValue = parseInt(inputElement.value, 10);
     const maxStock = this.getMaxStock(item);
 
-    // Validate
     if (isNaN(newValue) || newValue < 1) {
       newValue = 1;
     }
@@ -76,37 +75,28 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     }
 
     this.cartService.updateQuantity(item.uniqueId, newValue);
-
-
     inputElement.value = newValue.toString();
   }
 
-  // --- LOGIC ẤN GIỮ (LONG PRESS) ---
-
-  // Bắt đầu ấn giữ
+  // Long press logic
   startChangingQuantity(item: CartItem, delta: number) {
     const maxStock = this.getMaxStock(item);
 
-    // Kiểm tra điều kiện giới hạn
     if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= maxStock)) return;
 
-    // 1. Thay đổi ngay 1 lần (Click đơn)
     this.changeOne(item, delta);
 
-    // 2. Đợi 400ms, nếu vẫn giữ chuột thì chạy liên tục
     this.timer = setTimeout(() => {
       this.timer = setInterval(() => {
-        // Kiểm tra lại trong vòng lặp
         if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= maxStock)) {
           this.stopChangingQuantity();
           return;
         }
         this.changeOne(item, delta);
-      }, 100); // Tốc độ 100ms
+      }, 100);
     }, 400);
   }
 
-  // Thả tay ra -> Dừng lại
   stopChangingQuantity() {
     if (this.timer) {
       clearTimeout(this.timer);
@@ -115,7 +105,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Hàm phụ trợ để gọi service và vẽ lại màn hình
   private changeOne(item: CartItem, delta: number) {
     if (delta > 0) {
       this.cartService.increaseQuantity(item.uniqueId);
@@ -131,7 +120,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
   private async saveOrderToFirestore(paymentMethod: string) {
     const selectedItems = this.displayItems.filter(i => i.isSelected);
 
-    // GROUP BY ownerEmail
     const groups: Record<string, any[]> = {};
 
     selectedItems.forEach(item => {
@@ -140,10 +128,8 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       groups[owner].push(item);
     });
 
-    // Firestore collection
     const orderRef = collection(this.firestore, "orders");
 
-    // Tạo 1 order doc cho mỗi owner
     for (const ownerEmail in groups) {
       const items = groups[ownerEmail];
 
@@ -189,7 +175,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
 
         const productData: any = productSnap.data();
 
-        // Nếu sản phẩm có size
         if (item.selectedSize && productData.sizes) {
           const updatedSizes = productData.sizes.map((s: any) => {
             if (String(s.size) === String(item.selectedSize)) {
@@ -204,7 +189,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
           await updateDoc(productRef, { sizes: updatedSizes });
         }
         else {
-          // Không có size → trừ vào quantity tổng
           const newQuantity = Math.max(0, (productData.quantity || 0) - item.quantity);
           await updateDoc(productRef, { quantity: newQuantity });
         }
@@ -214,6 +198,41 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+
+  /** ============================================================
+   *  GỬI EMAIL
+   * ============================================================ */
+  private async sendOrderEmail() {
+  const userId = localStorage.getItem("userId");
+
+  let email = "";
+  if (userId) {
+    email = await this.getUserEmailById(userId) || "";
+  }
+
+  if (!email) {
+    console.error("❌ Cannot send email: user email not found");
+    return;
+  }
+
+  const selectedItems = this.displayItems.filter(i => i.isSelected);
+
+  await fetch("http://localhost:3001/api/order/send-email", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email,
+      customerName: this.customerName,
+      orderId: this.generatedOrderId,
+      items: selectedItems,
+      total: this.totalSelectedPrice,
+      address: this.customerAddress,
+      phone: this.customerPhone
+    })
+  });
+}
+
 
 
 
@@ -255,12 +274,15 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
   async checkoutCOD() {
     await this.saveOrderToFirestore("COD");
     await this.updateProductStockAfterOrder();
-    this.removeCheckedItems(); // Xoá item đã chọn
+
+    await this.sendOrderEmail(); // ⭐️ THÊM DÒNG NÀY
+
+    this.removeCheckedItems();
 
     alert("Đặt hàng thành công! Thanh toán khi nhận hàng.");
 
     this.onClose();
-    this.router.navigate(['/']); // về trang chủ
+    this.router.navigate(['/']);
   }
 
 
@@ -271,6 +293,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     await this.saveOrderToFirestore("MOMO");
     await this.updateProductStockAfterOrder();
 
+    await this.sendOrderEmail(); // ⭐️ THÊM DÒNG NÀY
 
     const payload = {
       amount: this.totalSelectedPrice,
@@ -281,7 +304,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload)
-
     })
       .then(res => res.json())
       .then(data => {
@@ -297,7 +319,9 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error(err);
         alert("Không thể tạo thanh toán MoMo");
       });
+
     this.removeCheckedItems();
+
     setTimeout(() => {
       this.onClose();
       this.router.navigate(['/']);
@@ -312,6 +336,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     await this.saveOrderToFirestore("VNPAY");
     await this.updateProductStockAfterOrder();
 
+    await this.sendOrderEmail(); // ⭐️ THÊM DÒNG NÀY
 
     const url = `http://localhost:3001/api/payment/vnpay?orderId=${this.generatedOrderId}&amount=${this.totalSelectedPrice}`;
 
@@ -330,6 +355,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error(err);
         alert("Không thể tạo thanh toán VNPay");
       });
+
     this.removeCheckedItems();
   }
 
@@ -337,11 +363,11 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
   /** ============================================================
    *  Stripe
    * ============================================================ */
-
-
   async checkoutStripe() {
     await this.saveOrderToFirestore("VISA");
     await this.updateProductStockAfterOrder();
+
+    await this.sendOrderEmail(); // ⭐️ THÊM DÒNG NÀY
 
     const payload = {
       amount: this.totalSelectedPrice,
@@ -355,7 +381,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     })
       .then(res => res.json())
       .then(data => {
-        // Backend trả về payUrl
         console.log("Stripe response:", data);
 
         if (!data.checkoutUrl) {
@@ -363,13 +388,13 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
           return;
         }
 
-        // 👉 Chuyển hướng sang trang thanh toán của Stripe
         window.location.href = data.checkoutUrl;
       })
       .catch(err => {
-        console.error("Stripe error: ", err);
+        console.error("Stripe error:", err);
         alert("Không gọi được Stripe server!");
       });
+
     this.removeCheckedItems();
   }
 
@@ -386,6 +411,16 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       return item.product.quantity || 0;
     }
   }
+private async getUserEmailById(userId: string): Promise<string | null> {
+  const userRef = doc(this.firestore, "users", userId);
+  const snap = await getDoc(userRef);
+
+  if (snap.exists()) {
+    return snap.data()['email'] || null;
+  }
+
+  return null;
+}
 
   private removeCheckedItems() {
     this.displayItems
@@ -394,5 +429,4 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         this.cartService.removeFromCart(item.uniqueId);
       });
   }
-
 }

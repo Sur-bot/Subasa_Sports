@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router'; // 1. Thêm Router vào đây
+import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../header-com/header-component';
 import { ProductListComponent } from '../product-list/product-list.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
@@ -14,7 +14,7 @@ type FilterKey = 'price' | 'brand' | 'type';
   templateUrl: './productPage-component.html',
   styleUrl: './productPage-component.css',
 })
-export class ProductPageComponent implements OnInit {
+export class ProductPageComponent implements OnInit { // Đảm bảo implement OnInit
   
   // 1. Biến tìm kiếm
   searchText = ''; 
@@ -26,26 +26,25 @@ export class ProductPageComponent implements OnInit {
 
   // 3. Biến Filter chính (Truyền xuống con)
   filters: Record<FilterKey, string[]> = { price: [], brand: [], type: [] };
-
+  
   // 4. Biến Filter tạm (Lưu trạng thái tick khi chưa bấm nút "Lọc")
   tempFilters: Record<FilterKey, string[]> = { price: [], brand: [], type: [] };
 
-  // 2. Inject thêm Router vào constructor
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit() {
     // Lắng nghe thay đổi trên URL
     this.route.queryParams.subscribe(params => {
       
-      // Lấy tham số tìm kiếm (hỗ trợ cả 'search' của bạn và 'q' của header cũ)
+      // Lấy tham số tìm kiếm (hỗ trợ cả 'search' và 'q')
       const searchKey = params['search'] || params['q'];
-      // Lấy tham số danh mục (khi bấm menu sidebar)
+      // Lấy tham số danh mục
       const categoryKey = params['category'];
 
-      // Reset trạng thái mỗi khi URL đổi để tránh bị lẫn lộn
+      // Reset trạng thái
       this.searchText = '';
       this.tempFilters = { price: [], brand: [], type: [] };
-      this.filters = { price: [], brand: [], type: [] }; // Reset luôn filter chính
+      this.filters = { price: [], brand: [], type: [] };
 
       // Trường hợp 1: Có từ khóa tìm kiếm
       if (searchKey) {
@@ -62,12 +61,10 @@ export class ProductPageComponent implements OnInit {
     });
   }
 
-  // --- HÀM 1: Nhận từ khóa tìm kiếm từ Header ---
   handleSearchFromHeader(keyword: any) {
     this.searchText = keyword; 
   }
   
-  // --- HÀM 2: Xử lý khi tick Checkbox (Lưu vào biến tạm) ---
   onFilterChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const group = input.dataset['group'] as FilterKey;
@@ -87,13 +84,10 @@ export class ProductPageComponent implements OnInit {
     this.tempFilters = { ...this.tempFilters, [group]: newGroupArray };
   }
 
-  // --- HÀM 3: Bấm nút "Lọc sản phẩm" ---
   applyFilters() {
-    // Copy từ biến tạm sang biến chính -> Kích hoạt ngOnChanges ở con
     this.filters = { ...this.tempFilters };
   }
 
-  // --- HÀM 4: Logic Dropdown Sắp xếp ---
   toggleSortMenu() {
     this.isSortOpen = !this.isSortOpen;
   }
@@ -102,30 +96,26 @@ export class ProductPageComponent implements OnInit {
     event.preventDefault(); 
     this.currentSort = sortType;
     this.currentLabel = label;
-    this.isSortOpen = false; // Đóng menu sau khi chọn
+    this.isSortOpen = false;
   }
 
-  // --- HÀM 5: Xóa tìm kiếm (Được cập nhật để xóa trên URL) ---
   clearSearch() {
     this.searchText = '';
     
-    // Xóa tham số trên URL để trang web sạch sẽ
+    // Xóa tham số trên URL
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { search: null, q: null }, // Xóa cả 'search' và 'q'
+      queryParams: { search: null, q: null, category: null },
       queryParamsHandling: 'merge'
     });
     
     this.applyFilters();
   }
 
-  // --- HÀM 6: (MỚI) Reset tất cả - Dùng cho nút "Xóa chọn" ---
   resetAll() {
     this.searchText = '';
     this.tempFilters = { price: [], brand: [], type: [] };
     this.filters = { price: [], brand: [], type: [] };
-    
-    // Điều hướng về trang gốc /products (không có ? gì hết)
     this.router.navigate(['/products']);
   }
 }
