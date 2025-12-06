@@ -15,7 +15,13 @@
       
       <div class="filter-actions">
         <button class="btn-filter-apply" (click)="applyFilters()">Lọc sản phẩm</button>
-      </div>
+      
+  </div>
+  
+  <div class="current-search" *ngIf="searchText">
+    <p>Đang tìm: <strong>"{{ searchText }}"</strong></p>
+    <span class="remove-search" (click)="clearSearch()">✕ Bỏ tìm kiếm</span>
+  </div>
 
       <div class="filter-group">
         <h3>Mức giá</h3>
@@ -55,9 +61,7 @@
         </ul>
       </div>
 
-      <div class="filter-actions" style="margin-top: 20px;">
-        <button class="btn-filter-apply" (click)="applyFilters()">Xác nhận</button>
-      </div>
+      
     </aside>
 
     <div class="main-content">

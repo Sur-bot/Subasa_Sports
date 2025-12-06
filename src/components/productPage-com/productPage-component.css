@@ -40,7 +40,29 @@
 .current-label { font-weight: 700; color: #000; }
 .arrow-icon { transition: transform 0.3s; }
 .arrow-icon.rotate { transform: rotate(180deg); }
-
+.btn-filter-reset {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-weight: bold;
+}
+.current-search {
+  margin: 15px 0;
+  padding: 10px;
+  background: #e8f4ff;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.remove-search {
+  color: red;
+  cursor: pointer;
+  font-size: 12px;
+  display: block;
+  margin-top: 5px;
+}
 .sort-list { display: none; position: absolute; top: 100%; right: 0; background: #fff; width: 200px; border: 1px solid #ddd; border-radius: 4px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); padding: 5px 0; list-style: none; margin-top: 5px; }
 .sort-list.open { display: block; animation: fadeIn 0.2s; }
 .sort-list li a { display: block; padding: 10px 15px; color: #555; cursor: pointer; }

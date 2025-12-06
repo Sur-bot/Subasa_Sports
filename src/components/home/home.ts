@@ -3,6 +3,7 @@ import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 
 
 //components
@@ -57,7 +58,8 @@ export class HomeComponent implements OnInit {
     private auth: Auth,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
-    private userService: UserService
+    private userService: UserService,
+    private router: Router
   ) {
     this.userService.role$.subscribe(r => this.role = r);
 

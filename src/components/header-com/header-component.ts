@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Output, EventEmitter } from '@angular/core'; // 1. Thêm Output, EventEmitter
+import { Component, inject, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from '../login-com/login-component';
 import { Router } from '@angular/router';
@@ -16,7 +16,6 @@ import { CartComponent } from '../cart-com/cart-component';
 })
 export class HeaderComponent implements OnInit {
   
-  // --- THÊM MỚI: Khai báo sự kiện bắn ra ngoài ---
   @Output() searchChange = new EventEmitter<string>();
 
   isOpen = false;
@@ -28,12 +27,17 @@ export class HeaderComponent implements OnInit {
   showLogin = false;
   openCategory: string | null = null;
 
+  // --- 1. BIẾN CHỨA LỊCH SỬ TÌM KIẾM ---
+  recentSearches: string[] = [];
+
   constructor(private router: Router) {}
 
   ngOnInit() {
-    authState(this.auth).subscribe(async (user) => {
-      console.log('[Header] authState user:', user);
+    // --- 2. LOAD LỊCH SỬ KHI VÀO WEB ---
+    this.loadRecentSearches();
 
+    authState(this.auth).subscribe(async (user) => {
+      // (Code Auth cũ giữ nguyên)
       if (user) {
         if (user.email) {
           this.accountLabel = user.email;
@@ -42,7 +46,6 @@ export class HeaderComponent implements OnInit {
           this.accountLabel = `Guest ${user.uid}`;
           this.isLoggedInEmail = false;
         }
-
         try {
           const snap = await getDoc(doc(this.firestore, 'users', user.uid));
           if (snap.exists()) {
@@ -61,52 +64,96 @@ export class HeaderComponent implements OnInit {
     });
   }
 
-  // --- THÊM MỚI: Hàm xử lý khi gõ phím ---
-  onSearchInput(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    const keyword = inputElement.value;
-    // Gửi từ khóa ra ngoài cho ProductPage nhận
-    this.searchChange.emit(keyword);
-  }
-
-  toggleSidebar() {
-    this.isOpen = !this.isOpen;
-  }
-
-  toggleCategory(category: string) {
-    this.openCategory = this.openCategory === category ? null : category;
-  }
-
-  toggleLogin() {
-    if (!this.isLoggedInEmail) {
-      this.showLogin = !this.showLogin;
+  // --- HÀM QUẢN LÝ LOCAL STORAGE ---
+  loadRecentSearches() {
+    const history = localStorage.getItem('searchHistory');
+    if (history) {
+      try {
+        this.recentSearches = JSON.parse(history);
+      } catch (e) {
+        this.recentSearches = [];
+      }
     }
   }
 
-  closeLogin() {
-    this.showLogin = false;
+  saveToRecentSearches(keyword: string) {
+    if (!keyword) return;
+    
+    // 1. Xóa từ khóa cũ nếu trùng (để đưa lên đầu)
+    this.recentSearches = this.recentSearches.filter(item => item.toLowerCase() !== keyword.toLowerCase());
+    
+    // 2. Thêm vào đầu mảng
+    this.recentSearches.unshift(keyword);
+    
+    // 3. Giới hạn 10 phần tử (First In First Out thực tế là cái mới nhất ở đầu, cái cũ nhất ở cuối bị đẩy ra)
+    if (this.recentSearches.length > 10) {
+      this.recentSearches.pop();
+    }
+
+    // 4. Lưu vào máy
+    localStorage.setItem('searchHistory', JSON.stringify(this.recentSearches));
   }
 
-  onLoggedIn(data: { email?: string; guestId?: string }) {
-    console.log('[Header] onLoggedIn nhận data:', data);
-    this.showLogin = false;
+  // Xóa 1 từ khóa khỏi lịch sử
+  removeRecentSearch(item: string, event: Event) {
+    event.stopPropagation(); // Chặn sự kiện click lan ra ngoài
+    this.recentSearches = this.recentSearches.filter(k => k !== item);
+    localStorage.setItem('searchHistory', JSON.stringify(this.recentSearches));
   }
 
-  async logout() {
-    try {
-      await signOut(this.auth);
-      console.log('[Logout] thành công');
-      this.accountLabel = 'Tài khoản';
-      this.isLoggedInEmail = false;
-      localStorage.setItem('isGuest', 'true');
-    } catch (e) {
-      console.error('Lỗi khi logout:', e);
+  // --- CẬP NHẬT CÁC HÀM TÌM KIẾM ---
+
+  onSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const inputElement = event.target as HTMLInputElement;
+      const keyword = inputElement?.value?.trim();
+      
+      if (keyword) {
+        this.saveToRecentSearches(keyword); // <--- LƯU LỊCH SỬ
+        this.router.navigate(['/products'], { queryParams: { search: keyword } });
+        this.isOpen = false; 
+      }
     }
   }
 
+  onSearchButtonClick() {
+    const inputElement = document.querySelector('.input-group') as HTMLInputElement;
+    const keyword = inputElement?.value?.trim();
+    
+    if (keyword) {
+      this.saveToRecentSearches(keyword); // <--- LƯU LỊCH SỬ
+      this.router.navigate(['/products'], { queryParams: { search: keyword } });
+      this.isOpen = false;
+    }
+  }
+
+  // Bấm vào danh sách lịch sử -> Tìm kiếm lại
+  handleRecentClick(keyword: string) {
+    this.saveToRecentSearches(keyword); // Đưa lên đầu lại
+    this.router.navigate(['/products'], { queryParams: { search: keyword } });
+    this.isOpen = false;
+  }
+
+  // Bấm vào gợi ý có sẵn (Giày chạy, bóng đá...) -> Tùy bạn có muốn lưu không
+  handleSearchSuggestion(keyword: string) {
+    if (keyword) {
+      // this.saveToRecentSearches(keyword); // Bỏ comment nếu muốn lưu cả cái này
+      this.router.navigate(['/products'], { queryParams: { category: keyword } }); // Chú ý: dùng 'category' theo logic trước
+      this.isOpen = false;
+    }
+  }
+
+  // --- CÁC HÀM KHÁC GIỮ NGUYÊN ---
+  toggleSidebar() { this.isOpen = !this.isOpen; }
+  toggleCategory(category: string) { this.openCategory = this.openCategory === category ? null : category; }
+  toggleLogin() { if (!this.isLoggedInEmail) this.showLogin = !this.showLogin; }
+  closeLogin() { this.showLogin = false; }
+  onLoggedIn(data: any) { this.showLogin = false; }
   closeOnOverlay(event: MouseEvent) {
-    if ((event.target as HTMLElement).classList.contains('overlay')) {
-      this.closeLogin();
-    }
+    if ((event.target as HTMLElement).classList.contains('overlay')) this.closeLogin();
+  }
+  async logout() {
+    try { await signOut(this.auth); this.accountLabel = 'Tài khoản'; this.isLoggedInEmail = false; localStorage.setItem('isGuest', 'true'); window.location.reload(); } catch (e) {}
   }
 }
