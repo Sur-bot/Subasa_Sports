@@ -134,7 +134,9 @@ export class ApiProductService {
         quantity: Number(item.quantity) || 0,
         sizes: item.sizes || [],
         description: String(item.productDescription || item.description || ''),
-        reviews: item.reviews || []
+        reviews: item.reviews || [],
+        brand: item.brand || 'Khác',
+        category: item.category || 'other'
       } as ApiProduct;
     }),
     catchError(error => {

@@ -8,20 +8,36 @@ import {
   AfterViewInit,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { ApiProductService, ApiProduct } from '../servives/api-product.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Subscription, interval } from 'rxjs';
 import { ProductReviewComponent } from '../product-review-com/product-review.component';
+import { CartService } from '../servives/cart.service';
+import { NotificationModalComponent } from '../notification-modal/notification-modal.component';
+import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.component';
+
 
 @Component({
   selector: 'app-product-details',
   standalone: true,
   templateUrl: './product-details.component.html',
   styleUrls: ['./product-details.component.css'],
-  imports: [FormsModule, CommonModule, ProductReviewComponent],
+  imports: [FormsModule, CommonModule, ProductReviewComponent, NotificationModalComponent, CheckoutModalComponent],
 })
+
+
 export class ProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit {
+  selectedSize: string | number | null = null;
+  modalVisible: boolean = false;
+  modalTitle: string = '';
+  modalMessage: string = '';
+  modalType: 'success' | 'error' = 'success';
+
+  isCheckoutVisible: boolean = false;
+  isLoginRequestVisible: boolean = false;
+
   product: ApiProduct | null = null;
   isLoading = true;
   errorMessage = '';
@@ -30,7 +46,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit
   relatedProducts: ApiProduct[] = [];
   showFullDesc: boolean = false;
 
-  // Slider
+  
   currentIndex = 0;
   slideWidth = 0;
   maxIndex = 0;
@@ -43,8 +59,141 @@ export class ProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit
   constructor(
     private route: ActivatedRoute,
     private apiProductService: ApiProductService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private cartService: CartService,
+    private router: Router
   ) {}
+
+  selectSize(size: string | number) {
+    this.selectedSize = size;
+    
+    if (this.product && this.product.sizes) {
+      const selectedOption = this.product.sizes.find(s => s.size === size);
+      if (selectedOption) {
+        this.maxQuantity = Number(selectedOption.quantity) || 0;
+        
+        if (this.quantity > this.maxQuantity) this.quantity = 1;
+      }
+    }
+  }
+  showModal(title: string, message: string, type: 'success' | 'error') {
+    this.modalTitle = title;
+    this.modalMessage = message;
+    this.modalType = type;
+    this.modalVisible = true;
+  }
+
+  closeModal() {
+    this.modalVisible = false;
+  }
+onAddToCart(): void {
+    if (!this.product) return;
+
+    const hasSize = this.product.sizes && this.product.sizes.length > 0;
+    
+    if (hasSize && !this.selectedSize) {
+      this.showModal('Thông báo', 'Vui lòng chọn kích thước (Size) trước khi mua!', 'error');
+      return;
+    }
+
+
+    let currentStock = this.product.quantity || 0;
+    
+    if (hasSize && this.selectedSize) {
+       const sizeOpt = this.product.sizes?.find(s => s.size === this.selectedSize);
+       currentStock = sizeOpt ? (Number(sizeOpt.quantity) || 0) : 0;
+    }
+
+    if (currentStock <= 0) {
+      this.showModal('Rất tiếc', 'Sản phẩm này (hoặc size này) đã hết hàng!', 'error');
+      return;
+    }
+
+    
+    const productForCart: any = {
+      id: this.product.id,
+      productName: this.product.name,
+      salePrice: this.product.price,
+      imageUrl: this.product.image,
+      originalPrice: this.product.oldPrice,
+      
+     
+      hasSize: hasSize, 
+      sizes: this.product.sizes || [],
+      quantity: currentStock,
+      discount: 0
+    };
+
+   
+    this.cartService.addToCart({
+      product: productForCart,
+     
+      selectedSize: this.selectedSize ? String(this.selectedSize) : 'Mặc định',
+      selectedColor: 'Mặc định', 
+      quantity: this.quantity
+    });
+
+    this.showModal('Thành công', `Đã thêm sản phẩm vào giỏ hàng!`, 'success');
+  }
+
+ onBuyNow(): void {
+    if (!this.product) return;
+
+    // A. VALIDATE SIZE & TỒN KHO
+    const hasSize = this.product.sizes && this.product.sizes.length > 0;
+    
+    if (hasSize && !this.selectedSize) {
+      this.showModal('Thông báo', 'Vui lòng chọn kích thước (Size) trước khi mua!', 'error');
+      return;
+    }
+
+    let currentStock = this.product.quantity || 0;
+    if (hasSize && this.selectedSize) {
+       const sizeOpt = this.product.sizes?.find(s => s.size === this.selectedSize);
+       currentStock = sizeOpt ? (Number(sizeOpt.quantity) || 0) : 0;
+    }
+
+    if (currentStock <= 0) {
+      this.showModal('Rất tiếc', 'Sản phẩm này tạm hết hàng!', 'error');
+      return;
+    }
+
+    // B. THÊM VÀO GIỎ HÀNG (Âm thầm)
+    const productForCart: any = {
+      id: this.product.id,
+      productName: this.product.name,
+      salePrice: this.product.price,
+      imageUrl: this.product.image,
+      originalPrice: this.product.oldPrice,
+      hasSize: hasSize, 
+      sizes: this.product.sizes || [],
+      quantity: currentStock,
+      discount: 0
+    };
+
+    this.cartService.addToCart({
+      product: productForCart,
+      selectedSize: this.selectedSize ? String(this.selectedSize) : 'Mặc định',
+      selectedColor: 'Mặc định',
+      quantity: this.quantity
+    });
+
+    // C. KIỂM TRA ĐĂNG NHẬP (SỬA LẠI ĐOẠN NÀY)
+    const userId = localStorage.getItem('userId'); // Kiểm tra xem có ID người dùng không
+    const isGuest = localStorage.getItem('isGuest');
+    
+    // Logic mới: Bắt đăng nhập nếu là Guest (true) HOẶC chưa có userId (đã đăng xuất)
+    if (isGuest === 'true' || !userId) {
+      this.isLoginRequestVisible = true; // Hiện modal bắt đăng nhập
+    } else {
+      this.isCheckoutVisible = true; // Đã là thành viên -> Hiện Checkout
+    }
+  }
+
+  goToLogin() {
+    this.isLoginRequestVisible = false;
+    this.router.navigate(['/login']); 
+  }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');

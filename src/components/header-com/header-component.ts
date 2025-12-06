@@ -7,6 +7,7 @@ import { authState } from 'rxfire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { CartComponent } from '../cart-com/cart-component';
 import { ChangeDetectorRef } from '@angular/core';
+import { CartService } from '../servives/cart.service';
 
 @Component({
   selector: 'header-component',
@@ -29,7 +30,10 @@ export class HeaderComponent implements OnInit {
   showLogin = false;
   openCategory: string | null = null;
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private cartService: CartService
+  ) {}
 
   ngOnInit() {
   this.loadUser();
@@ -100,15 +104,19 @@ private async loadUser() {
   onLoggedIn(data: { email?: string; guestId?: string }) {
     console.log('[Header] onLoggedIn nhận data:', data);
     this.showLogin = false;
+    this.cartService.loadUserCart();
   }
 
   async logout() {
     try {
       await signOut(this.auth);
       console.log('[Logout] thành công');
+      localStorage.removeItem('userId');
+      this.cartService.loadUserCart();
       this.accountLabel = 'Tài khoản';
       this.isLoggedInEmail = false;
       localStorage.setItem('isGuest', 'true');
+      this.router.navigate(['/']);
     } catch (e) {
       console.error('Lỗi khi logout:', e);
     }

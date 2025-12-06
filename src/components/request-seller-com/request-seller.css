@@ -1,8 +1,8 @@
 /* Nút nổi */
 .fab-wrapper {
   position: fixed;
-  bottom: 80px;
-  right: 15px;
+  bottom: 100px;
+  right: 20px;
   z-index: 1000;
 }
 
