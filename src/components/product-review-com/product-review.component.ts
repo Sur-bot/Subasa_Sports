@@ -40,13 +40,14 @@ export interface ProductReview {
 export class ProductReviewComponent implements OnInit, OnDestroy {
   @Input() set productId(value: string | number | undefined) {
     const newId = value ? String(value) : '';
-    
+
     // ✅ Only reinit if productId actually changed and is not empty
     if (newId && newId !== this.productIdStr) {
       console.log('[ProductReview] Product ID changed from', this.productIdStr, 'to', newId);
       this.productIdStr = newId;
       this.cleanupListeners();
       this.initializeListeners();
+      this.tryCheckPurchased();
     }
   }
 
@@ -77,11 +78,12 @@ export class ProductReviewComponent implements OnInit, OnDestroy {
   private retryCount: number = 0;
   private maxRetries: number = 3;
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
     console.log('[ProductReview] Component initialized');
     this.setupAuthListener();
+
   }
 
   private setupAuthListener(): void {
@@ -118,7 +120,41 @@ export class ProductReviewComponent implements OnInit, OnDestroy {
       this.unsubscribeProductRating = null;
     }
   }
+  canReview: boolean = false;
+  private checkUserPurchased(): void {
+    console.log("đang check đã mua");
+    const userId = localStorage.getItem('userId') || this.currentUser?.uid;
+    if (!userId || !this.productIdStr) {
+      this.canReview = false;
+      return;
+    }
 
+    const ordersRef = collection(this.firestore, 'orders');
+    const q = query(ordersRef); 
+    getDocs(q).then((snapshot) => {
+      let purchased = false;
+      snapshot.forEach((docSnap) => {
+        const data = docSnap.data(); // data: DocumentData
+        if (data['userId'] === userId && Array.isArray(data['items'])) {
+          if (data['items'].some((item: any) => item['productId'] === this.productIdStr)) {
+            purchased = true;
+          }
+        }
+      });
+
+      this.canReview = purchased;
+      this.cdr.detectChanges();
+    }).catch((err) => {
+      console.error('[ProductReview] Error checking orders:', err);
+      this.canReview = false;
+    });
+  }
+  private tryCheckPurchased(): void {
+    if (!this.productIdStr) return;
+    if (!this.currentUser && !localStorage.getItem('userId')) return;
+
+    this.checkUserPurchased();
+  }
   private setupProductRatingListener(): void {
     if (!this.productIdStr) return;
 
@@ -128,7 +164,7 @@ export class ProductReviewComponent implements OnInit, OnDestroy {
       productDoc,
       (snapshot) => {
         console.log('[ProductReview] Product snapshot received, exists:', snapshot.exists());
-        
+
         if (snapshot.exists()) {
           const data = snapshot.data() as DocumentData;
           this.productRating = data['productRating'] ?? 0;
@@ -140,7 +176,7 @@ export class ProductReviewComponent implements OnInit, OnDestroy {
             this.productRating = 0;
           }
         }
-        
+
         this.isLoading = false;
         this.calculateAverageRating();
         this.cdr.detectChanges();
@@ -164,7 +200,7 @@ export class ProductReviewComponent implements OnInit, OnDestroy {
       q,
       (snapshot: QuerySnapshot<DocumentData>) => {
         console.log('[ProductReview] Reviews snapshot received, count:', snapshot.size);
-        
+
         this.reviews = snapshot.docs.map((doc) => {
           const data = doc.data() as DocumentData;
           return {
@@ -187,12 +223,12 @@ export class ProductReviewComponent implements OnInit, OnDestroy {
       },
       (error: any) => {
         console.error('[ProductReview] Error in reviews listener (with orderBy):', error?.code);
-        
+
         // Retry with fallback query
         if (this.retryCount < this.maxRetries) {
           this.retryCount++;
           console.log(`[ProductReview] Retrying with fallback (attempt ${this.retryCount}/${this.maxRetries})...`);
-          
+
           // Small delay before retry
           setTimeout(() => {
             this.setupReviewsListenerFallback(reviewsRef);
@@ -217,7 +253,7 @@ export class ProductReviewComponent implements OnInit, OnDestroy {
       reviewsRef,
       (snapshot: QuerySnapshot<DocumentData>) => {
         console.log('[ProductReview] Reviews snapshot (fallback), count:', snapshot.size);
-        
+
         this.reviews = snapshot.docs
           .map((doc) => {
             const data = doc.data() as DocumentData;

@@ -46,7 +46,7 @@ export class ProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit
   relatedProducts: ApiProduct[] = [];
   showFullDesc: boolean = false;
 
-  
+
   currentIndex = 0;
   slideWidth = 0;
   maxIndex = 0;
@@ -62,16 +62,16 @@ export class ProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit
     private cdr: ChangeDetectorRef,
     private cartService: CartService,
     private router: Router
-  ) {}
+  ) { }
 
   selectSize(size: string | number) {
     this.selectedSize = size;
-    
+
     if (this.product && this.product.sizes) {
       const selectedOption = this.product.sizes.find(s => s.size === size);
       if (selectedOption) {
         this.maxQuantity = Number(selectedOption.quantity) || 0;
-        
+
         if (this.quantity > this.maxQuantity) this.quantity = 1;
       }
     }
@@ -86,11 +86,11 @@ export class ProductDetailsComponent implements OnInit, OnDestroy, AfterViewInit
   closeModal() {
     this.modalVisible = false;
   }
-onAddToCart(): void {
+  onAddToCart(): void {
     if (!this.product) return;
 
     const hasSize = this.product.sizes && this.product.sizes.length > 0;
-    
+
     if (hasSize && !this.selectedSize) {
       this.showModal('Thông báo', 'Vui lòng chọn kích thước (Size) trước khi mua!', 'error');
       return;
@@ -98,10 +98,10 @@ onAddToCart(): void {
 
 
     let currentStock = this.product.quantity || 0;
-    
+
     if (hasSize && this.selectedSize) {
-       const sizeOpt = this.product.sizes?.find(s => s.size === this.selectedSize);
-       currentStock = sizeOpt ? (Number(sizeOpt.quantity) || 0) : 0;
+      const sizeOpt = this.product.sizes?.find(s => s.size === this.selectedSize);
+      currentStock = sizeOpt ? (Number(sizeOpt.quantity) || 0) : 0;
     }
 
     if (currentStock <= 0) {
@@ -109,39 +109,39 @@ onAddToCart(): void {
       return;
     }
 
-    
+
     const productForCart: any = {
       id: this.product.id,
       productName: this.product.name,
       salePrice: this.product.price,
       imageUrl: this.product.image,
       originalPrice: this.product.oldPrice,
-      
-     
-      hasSize: hasSize, 
+
+
+      hasSize: hasSize,
       sizes: this.product.sizes || [],
       quantity: currentStock,
       discount: 0
     };
-
    
+
     this.cartService.addToCart({
       product: productForCart,
-     
+
       selectedSize: this.selectedSize ? String(this.selectedSize) : 'Mặc định',
-      selectedColor: 'Mặc định', 
+      selectedColor: 'Mặc định',
       quantity: this.quantity
     });
 
     this.showModal('Thành công', `Đã thêm sản phẩm vào giỏ hàng!`, 'success');
   }
 
- onBuyNow(): void {
+  onBuyNow(): void {
     if (!this.product) return;
 
     // A. VALIDATE SIZE & TỒN KHO
     const hasSize = this.product.sizes && this.product.sizes.length > 0;
-    
+
     if (hasSize && !this.selectedSize) {
       this.showModal('Thông báo', 'Vui lòng chọn kích thước (Size) trước khi mua!', 'error');
       return;
@@ -149,8 +149,8 @@ onAddToCart(): void {
 
     let currentStock = this.product.quantity || 0;
     if (hasSize && this.selectedSize) {
-       const sizeOpt = this.product.sizes?.find(s => s.size === this.selectedSize);
-       currentStock = sizeOpt ? (Number(sizeOpt.quantity) || 0) : 0;
+      const sizeOpt = this.product.sizes?.find(s => s.size === this.selectedSize);
+      currentStock = sizeOpt ? (Number(sizeOpt.quantity) || 0) : 0;
     }
 
     if (currentStock <= 0) {
@@ -165,7 +165,7 @@ onAddToCart(): void {
       salePrice: this.product.price,
       imageUrl: this.product.image,
       originalPrice: this.product.oldPrice,
-      hasSize: hasSize, 
+      hasSize: hasSize,
       sizes: this.product.sizes || [],
       quantity: currentStock,
       discount: 0
@@ -181,7 +181,7 @@ onAddToCart(): void {
     // C. KIỂM TRA ĐĂNG NHẬP (SỬA LẠI ĐOẠN NÀY)
     const userId = localStorage.getItem('userId'); // Kiểm tra xem có ID người dùng không
     const isGuest = localStorage.getItem('isGuest');
-    
+
     // Logic mới: Bắt đăng nhập nếu là Guest (true) HOẶC chưa có userId (đã đăng xuất)
     if (isGuest === 'true' || !userId) {
       this.isLoginRequestVisible = true; // Hiện modal bắt đăng nhập
@@ -192,11 +192,16 @@ onAddToCart(): void {
 
   goToLogin() {
     this.isLoginRequestVisible = false;
-    this.router.navigate(['/login']); 
+    this.router.navigate(['/login']);
   }
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    if (id) {
+      localStorage.setItem('productId', id);
+      console.log('Saved productId to localStorage:', id);
+    }
+
     if (!id) {
       this.errorMessage = 'Không tìm thấy sản phẩm';
       this.isLoading = false;
