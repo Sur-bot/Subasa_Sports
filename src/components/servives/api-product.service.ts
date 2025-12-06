@@ -16,6 +16,7 @@ export interface ApiProduct {
   //them 
   brand?: string;
   category?: string;
+  description?: string;
 }
 
 @Injectable({
@@ -92,4 +93,54 @@ export class ApiProductService {
       })
     );
   }
+  getProductById(id: string | number): Observable<ApiProduct | null> {
+  const idStr = String(id);
+  const url = `${this.apiUrl}/${encodeURIComponent(idStr)}`;
+
+  return this.http.get<any>(url).pipe(
+    map(response => {
+      let item: any = Array.isArray(response) ? response[0] : response.data || response;
+      if (!item) return null;
+
+      let imageUrl = '';
+      if (Array.isArray(item.productImage) && item.productImage.length > 0) {
+        imageUrl = item.productImage[0];
+      } else if (typeof item.productImage === 'string') {
+        imageUrl = item.productImage;
+      } else {
+        imageUrl = 'https://via.placeholder.com/300x300?text=No+Image';
+      }
+
+      const originalPrice = Number(item.price) || 0;
+      const discountPercent = Number(item.discount) || 0;
+      let finalPrice = originalPrice;
+      let displayOldPrice = null;
+
+      if (discountPercent > 0) {
+        finalPrice = originalPrice * (1 - discountPercent / 100);
+        displayOldPrice = originalPrice;
+      }
+
+      let discountStr = discountPercent > 0 ? `-${discountPercent}%` : '';
+
+      return {
+        id: item.id,
+        name: item.productName,
+        price: finalPrice,
+        oldPrice: displayOldPrice,
+        image: imageUrl,
+        discount: discountStr,
+        rating: item.productRating || 5,
+        quantity: Number(item.quantity) || 0,
+        sizes: item.sizes || [],
+        description: String(item.productDescription || item.description || ''),
+        reviews: item.reviews || []
+      } as ApiProduct;
+    }),
+    catchError(error => {
+      console.error('Lỗi getProductById:', error);
+      return of(null);
+    })
+  );
+}
 }

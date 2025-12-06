@@ -1,0 +1,158 @@
+<link rel="stylesheet" href="./product-details.component.css" />
+
+<!-- Breadcrumb Navigation -->
+<div class="breadcrumb-container">
+  <nav class="breadcrumb">
+    <a href="/" class="breadcrumb-item">Trang chủ</a>
+    <span class="breadcrumb-separator">></span>
+    <a href="/products" class="breadcrumb-item">Sản Phẩm</a>
+    <span class="breadcrumb-separator">></span>
+    <span class="breadcrumb-current">{{ product?.name || 'Chi tiết sản phẩm' }}</span>
+  </nav>
+</div>
+
+<div *ngIf="isLoading" class="loading-container">
+  <div class="spinner"></div>
+  <p>Đang tải thông tin sản phẩm...</p>
+</div>
+
+<div *ngIf="errorMessage && !isLoading" class="error-message">
+  {{ errorMessage }}
+</div>
+
+<div *ngIf="product as p" class="product-details-container">
+  <!-- Left: Image Section -->
+  <div class="image-section" *ngIf="p.image">
+    <img [src]="p.image" [alt]="p.name || 'Sản phẩm'" class="product-image" />
+  </div>
+
+  <!-- Right: Info Section -->
+  <div class="info-section">
+    <!-- Title -->
+    <h1 class="product-title">{{ p.name || 'Tên sản phẩm' }}</h1>
+
+    <!-- Brand & Status -->
+    <div class="product-meta">
+      <span class="brand">Thương hiệu: TARMAK</span>
+      <span class="status">Tình trạng: Còn hàng</span>
+    </div>
+
+    <!-- Price Box -->
+    <div class="price-box">
+      <span class="current-price">{{ p.price | number : '1.0-0' }}đ</span>
+      <span *ngIf="p.oldPrice != null" class="old-price">{{ p.oldPrice | number : '1.0-0' }}đ</span>
+      <span *ngIf="p.discount && p.discount !== '-0%'" class="discount-badge">{{
+        p.discount
+      }}</span>
+    </div>
+
+    <!-- Promotions -->
+    <div class="promo-codes">
+      <span class="promo-badge">50k</span>
+      <span class="promo-badge">100k</span>
+    </div>
+
+    <!-- Quantity Selector -->
+    <div class="quantity-selector">
+      <label>Số lượng:</label>
+      <button class="qty-btn" (click)="decreaseQuantity()" [disabled]="quantity <= 1">-</button>
+      <input
+        type="number"
+        [(ngModel)]="quantity"
+        (change)="onQuantityChange()"
+        [min]="1"
+        [max]="maxQuantity"
+        class="qty-input"
+      />
+      <button class="qty-btn" (click)="increaseQuantity()" [disabled]="quantity >= maxQuantity">
+        +
+      </button>
+      <span class="qty-info">(Tối đa: {{ maxQuantity }})</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="btn-wishlist">THÊM VÀO GIỎ</button>
+      <button class="btn-buy">MUA NGAY</button>
+    </div>
+
+    <!-- Shipping Info -->
+    <div class="shipping-info">
+      <div class="info-item">
+        <span class="icon">✓</span>
+        <span>Cam kết chính hãng 100%</span>
+      </div>
+      <div class="info-item">
+        <span class="icon">✓</span>
+        <span>Bảo hành 12 tháng</span>
+      </div>
+      <div class="info-item">
+        <span class="icon">✓</span>
+        <span>Đổi trả trong 7 ngày</span>
+      </div>
+      <div class="info-item">
+        <span class="icon">✓</span>
+        <span>Giao hàng nhanh toàn quốc</span>
+      </div>
+    </div>
+
+    <!-- Sizes (if available) -->
+    <div *ngIf="(p.sizes ?? []).length > 0" class="sizes-section">
+      <p class="size-label">Size:</p>
+      <div class="size-list">
+        <span *ngFor="let s of p.sizes ?? []" class="size-item">
+          {{ s.size }}
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Related products: THƯỜNG ĐƯỢC MUA CÙNG -->
+<section class="related-section" *ngIf="relatedProducts.length">
+  <h2>THƯỜNG ĐƯỢC MUA CÙNG</h2>
+  <button class="slider-arrow left" (click)="prevSlide()" [disabled]="currentIndex === 0">&#10094;</button>
+  <button class="slider-arrow right" (click)="nextSlide()" [disabled]="currentIndex === maxIndex">&#10095;</button>
+
+  <div class="related-slider-wrapper" #relatedSliderWrapper>
+    <div
+      class="related-slider"
+      [style.width.px]="slideWidth * totalSlides"
+      [style.transform]="'translateX(-' + currentIndex * slideWidth + 'px)'"
+    >
+      <div *ngFor="let r of relatedProducts" class="related-card">
+        <img [src]="r.image" [alt]="r.name" />
+        <p>{{ r.name }}</p>
+        <p>{{ r.price | number:'1.0-0' }}đ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- mo ta san pham -->
+<section
+  *ngIf="product?.description"
+  class="desc-wrapper"
+  [class.expanded]="showFullDesc">
+
+  <h2 class="desc-title">Mô tả sản phẩm</h2>
+
+  <!-- Box nội dung mô tả -->
+  <div class="desc-box">
+    <div class="desc-content" [innerHTML]="product?.description"></div>
+
+    <!-- Layer che mờ giống Shopee -->
+    <div class="desc-overlay" *ngIf="!showFullDesc"></div>
+  </div>
+
+  <!-- Nút hành động -->
+  <button class="desc-toggle" (click)="toggleDesc()">
+    {{ showFullDesc ? 'Thu gọn ▲' : 'Xem thêm ▼' }}
+  </button>
+</section>
+
+<app-product-review [productId]="product?.id"></app-product-review>
+
+
+
+

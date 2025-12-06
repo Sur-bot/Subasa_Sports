@@ -1,13 +1,14 @@
 import { Component, OnInit, ChangeDetectorRef, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiProductService, ApiProduct } from '../servives/api-product.service';
-
+import { RouterLink } from "@angular/router";
+import { RouterModule } from '@angular/router';
 type FilterKey = 'price' | 'brand' | 'type';
 
 @Component({
   selector: 'app-product-list',
   standalone: true,
-  imports: [CommonModule], 
+  imports: [CommonModule, RouterLink, RouterModule  ], 
   templateUrl: './product-list.component.html',
   styleUrl: './product-list.component.css'
 })
