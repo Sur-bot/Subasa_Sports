@@ -27,9 +27,12 @@ export class HeaderComponent implements OnInit {
   showLogin = false;
   openCategory: string | null = null;
 
+  // --- CỦA BẠN: Biến chứa lịch sử tìm kiếm ---
+  recentSearches: string[] = [];
+
   constructor(
     private router: Router,
-    private cartService: CartService
+    private cartService: CartService // Giữ lại CartService của người kia
   ) {}
 
   ngOnInit() {
@@ -76,6 +79,72 @@ export class HeaderComponent implements OnInit {
     this.searchChange.emit(keyword);
   }
 
+  // --- CÁC HÀM LOCAL STORAGE (Của bạn) ---
+  loadRecentSearches() {
+    const history = localStorage.getItem('searchHistory');
+    if (history) {
+      try {
+        this.recentSearches = JSON.parse(history);
+      } catch (e) {
+        this.recentSearches = [];
+      }
+    }
+  }
+
+  saveToRecentSearches(keyword: string) {
+    if (!keyword) return;
+    this.recentSearches = this.recentSearches.filter(item => item.toLowerCase() !== keyword.toLowerCase());
+    this.recentSearches.unshift(keyword);
+    if (this.recentSearches.length > 10) this.recentSearches.pop();
+    localStorage.setItem('searchHistory', JSON.stringify(this.recentSearches));
+  }
+
+  removeRecentSearch(item: string, event: Event) {
+    event.stopPropagation();
+    this.recentSearches = this.recentSearches.filter(k => k !== item);
+    localStorage.setItem('searchHistory', JSON.stringify(this.recentSearches));
+  }
+
+  // --- CÁC HÀM TÌM KIẾM (Của bạn) ---
+  onSearchKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      const inputElement = event.target as HTMLInputElement;
+      const keyword = inputElement?.value?.trim();
+      
+      if (keyword) {
+        this.saveToRecentSearches(keyword);
+        this.router.navigate(['/products'], { queryParams: { search: keyword } });
+        this.isOpen = false; 
+      }
+    }
+  }
+
+  onSearchButtonClick() {
+    const inputElement = document.querySelector('.input-group') as HTMLInputElement;
+    const keyword = inputElement?.value?.trim();
+    
+    if (keyword) {
+      this.saveToRecentSearches(keyword);
+      this.router.navigate(['/products'], { queryParams: { search: keyword } });
+      this.isOpen = false;
+    }
+  }
+
+  handleRecentClick(keyword: string) {
+    this.saveToRecentSearches(keyword);
+    this.router.navigate(['/products'], { queryParams: { search: keyword } });
+    this.isOpen = false;
+  }
+
+  handleSearchSuggestion(keyword: string) {
+    if (keyword) {
+      this.router.navigate(['/products'], { queryParams: { category: keyword } });
+      this.isOpen = false;
+    }
+  }
+
+  // --- CÁC HÀM CHUNG ---
   toggleSidebar() {
     this.isOpen = !this.isOpen;
   }
@@ -95,10 +164,11 @@ export class HeaderComponent implements OnInit {
     this.showLogin = false;
   }
 
+  // Hàm Login/Logout (Hợp nhất: Có gọi thêm cartService của người kia)
   onLoggedIn(data: { email?: string; guestId?: string }) {
     console.log('[Header] onLoggedIn nhận data:', data);
     this.showLogin = false;
-    this.cartService.loadUserCart();
+    this.cartService.loadUserCart(); // Gọi CartService
   }
 
   // 🔴 LOGOUT
@@ -106,12 +176,12 @@ export class HeaderComponent implements OnInit {
     try {
       await signOut(this.auth);
       console.log('[Logout] thành công');
-      localStorage.removeItem('userId');
-      this.cartService.loadUserCart();
+      localStorage.removeItem('userId'); // Xóa user ID
+      this.cartService.loadUserCart();   // Reset giỏ hàng
       this.accountLabel = 'Tài khoản';
       this.isLoggedInEmail = false;
       localStorage.setItem('isGuest', 'true');
-      this.router.navigate(['/']);
+      this.router.navigate(['/']);       // Về trang chủ
     } catch (e) {
       console.error('Lỗi khi logout:', e);
     }

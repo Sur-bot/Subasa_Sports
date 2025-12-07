@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../header-com/header-component';
 import { ProductListComponent } from '../product-list/product-list.component';
 import { BreadcrumbComponent } from '../breadcrumb/breadcrumb.component';
@@ -13,8 +14,8 @@ type FilterKey = 'price' | 'brand' | 'type';
   templateUrl: './productPage-component.html',
   styleUrl: './productPage-component.css',
 })
-export class ProductPageComponent {
-    
+export class ProductPageComponent implements OnInit { // Đảm bảo implement OnInit
+  
   // 1. Biến tìm kiếm
   searchText = ''; 
   
@@ -29,12 +30,41 @@ export class ProductPageComponent {
   // 4. Biến Filter tạm (Lưu trạng thái tick khi chưa bấm nút "Lọc")
   tempFilters: Record<FilterKey, string[]> = { price: [], brand: [], type: [] };
 
-  // --- HÀM 1: Nhận từ khóa tìm kiếm từ Header ---
+  constructor(private route: ActivatedRoute, private router: Router) {}
+
+  ngOnInit() {
+    // Lắng nghe thay đổi trên URL
+    this.route.queryParams.subscribe(params => {
+      
+      // Lấy tham số tìm kiếm (hỗ trợ cả 'search' và 'q')
+      const searchKey = params['search'] || params['q'];
+      // Lấy tham số danh mục
+      const categoryKey = params['category'];
+
+      // Reset trạng thái
+      this.searchText = '';
+      this.tempFilters = { price: [], brand: [], type: [] };
+      this.filters = { price: [], brand: [], type: [] };
+
+      // Trường hợp 1: Có từ khóa tìm kiếm
+      if (searchKey) {
+        this.searchText = searchKey;
+      }
+      
+      // Trường hợp 2: Có chọn danh mục (Balo, Găng tay...)
+      else if (categoryKey) {
+        this.tempFilters.type = [categoryKey]; // Tự động tick vào loại đó
+      }
+
+      // Áp dụng bộ lọc ngay lập tức
+      this.applyFilters();
+    });
+  }
+
   handleSearchFromHeader(keyword: any) {
     this.searchText = keyword; 
   }
-
-  // --- HÀM 2: Xử lý khi tick Checkbox (Lưu vào biến tạm) ---
+  
   onFilterChange(event: Event) {
     const input = event.target as HTMLInputElement;
     const group = input.dataset['group'] as FilterKey;
@@ -54,13 +84,10 @@ export class ProductPageComponent {
     this.tempFilters = { ...this.tempFilters, [group]: newGroupArray };
   }
 
-  // --- HÀM 3: Bấm nút "Lọc sản phẩm" ---
   applyFilters() {
-    // Copy từ biến tạm sang biến chính -> Kích hoạt ngOnChanges ở con
     this.filters = { ...this.tempFilters };
   }
 
-  // --- HÀM 4: Logic Dropdown Sắp xếp ---
   toggleSortMenu() {
     this.isSortOpen = !this.isSortOpen;
   }
@@ -69,6 +96,26 @@ export class ProductPageComponent {
     event.preventDefault(); 
     this.currentSort = sortType;
     this.currentLabel = label;
-    this.isSortOpen = false; // Đóng menu sau khi chọn
+    this.isSortOpen = false;
+  }
+
+  clearSearch() {
+    this.searchText = '';
+    
+    // Xóa tham số trên URL
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { search: null, q: null, category: null },
+      queryParamsHandling: 'merge'
+    });
+    
+    this.applyFilters();
+  }
+
+  resetAll() {
+    this.searchText = '';
+    this.tempFilters = { price: [], brand: [], type: [] };
+    this.filters = { price: [], brand: [], type: [] };
+    this.router.navigate(['/products']);
   }
 }

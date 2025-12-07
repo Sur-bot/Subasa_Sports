@@ -14,7 +14,29 @@
     'Segoe UI Symbol', 'Noto Color Emoji';
   z-index: 600; /* đảm bảo đứng trên các thành phần khác */
 }
+/* Thêm vào cuối file css */
 
+.history-item {
+  display: inline-flex !important; /* Để chữ và nút X nằm ngang */
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 5px;
+}
+
+.history-item .close-btn {
+  margin-left: 8px;
+  color: #999;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 4px;
+  border-radius: 50%;
+}
+
+.history-item .close-btn:hover {
+  color: #ff0000;
+  background-color: #eee;
+}
 /* TOPBAR-CSS */
 .topbar {
   height: 40px;
