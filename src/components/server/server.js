@@ -3,10 +3,9 @@ import cors from "cors";
 
 import { momoPayment } from "./routes/momo.js";
 import { momoIPN } from "./routes/momo-ipn.js";
-
 import { createVNPay } from "./routes/vnpay.js";
 import { vnpayIPN } from "./routes/vnpay-ipn.js";
-import { stripePayment } from "./routes/stripe.js";
+import stripeRoutes from "./routes/stripe.js"; 
 import orderEmailRoutes from "./email/order.js";
 
 const app = express();
@@ -21,8 +20,11 @@ app.post("/api/payment/momo/ipn", momoIPN);
 // VNPAY
 app.get("/api/payment/vnpay", createVNPay);
 app.get("/api/payment/vnpay/ipn", vnpayIPN);
+
 // STRIPE
-app.post("/api/payment/stripe", stripePayment);
+app.use("/api/payment", stripeRoutes); 
+
+// EMAIL
 app.use("/api/order", orderEmailRoutes);
 
 const PORT = 3001;

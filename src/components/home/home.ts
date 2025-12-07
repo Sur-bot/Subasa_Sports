@@ -1,12 +1,10 @@
 import { Component, OnInit, NgZone, ChangeDetectorRef } from '@angular/core';
-
 import { Auth, onAuthStateChanged, User } from '@angular/fire/auth';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
-
-//components
+// components
 import { CategoryComponent } from '../category-com/category-component';
 import { BannerComponent } from '../banner-com/banner-component';
 import { ChatSupportComponent } from '../chat-com/chat-component';
@@ -18,8 +16,12 @@ import { UserService } from '../menu-com/UserService';
 import { FlashSaleSectionComponent } from '../flashsalesection-com/flash-sale-section.component';
 import { Product } from '../product-card/product-card.component';
 import { ProductOptionsModalComponent } from '../product-options-modal/product-options-modal.component';
-import {AdminSellerRequestsComponent} from '../request-seller-com/admin-seller-requests'
+import { AdminSellerRequestsComponent } from '../request-seller-com/admin-seller-requests';
 import { BrandSliderComponent } from '../brand-com/brand-component';
+import { CartService } from '../servives/cart.service';
+import { CheckoutModalService } from '../servives/checkout-modal.service';
+import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.component';
+
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
 @Component({
@@ -38,7 +40,8 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     AdminSellerRequestsComponent,
     FormsModule,
     BrandSliderComponent,
-    CommonModule
+    CommonModule,
+    CheckoutModalComponent
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
@@ -47,20 +50,25 @@ export class HomeComponent implements OnInit {
   currentUser: User | null = null;
   userId: string = '';
   isAdmin = false;
-  showRequestPopup = false;
   role: string | null = null;
-  
+
+  // Modal logic
+  selectedProductForModal: Product | null = null;
+  isModalOpen: boolean = false;
+
   constructor(
     private auth: Auth,
     private ngZone: NgZone,
     private cdr: ChangeDetectorRef,
     private userService: UserService,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute,
+    private cartService: CartService,
+    private checkoutService: CheckoutModalService
   ) {
     this.userService.role$.subscribe(r => this.role = r);
-
   }
-  
+
   ngOnInit() {
     onAuthStateChanged(this.auth, (user) => {
       localStorage.setItem('isGuest', 'true');
@@ -85,18 +93,40 @@ export class HomeComponent implements OnInit {
           console.log('Render check:', this.userId, this.isAdmin);
         }
 
-        // ép Angular render lại
         this.cdr.detectChanges();
       });
     });
+
+    // Subscribe modal instance ready
+    this.checkoutService.modalInstance$.subscribe(modal => {
+      if (!modal) return;
+      const params = this.route.snapshot.queryParams;
+      const sessionId = params['session_id'];
+      const resultCode = params['resultCode'];
+      const orderId = params['orderId'];
+
+      if (sessionId || (resultCode === '0' && orderId)) {
+        this.ngZone.run(async () => {
+          if (sessionId) {
+            await modal.checkStripePayment(sessionId);
+          } else if (resultCode === '0' && orderId) {
+            await modal.handlePaymentSuccess();
+          }
+
+          // Clear cart sau khi thanh toán thành công
+          this.cartService.clearCart();
+
+          // Xóa query params
+          this.router.navigate([], { queryParams: {} });
+        });
+      }
+    });
   }
-    // Modal logic
-    selectedProductForModal: Product | null = null;
-    isModalOpen: boolean = false; 
-    handleProductOptionSelected(product: Product) {
+
+  handleProductOptionSelected(product: Product) {
     this.selectedProductForModal = product;
     this.isModalOpen = true;
-    document.body.classList.add('modal-open'); 
+    document.body.classList.add('modal-open');
     this.cdr.detectChanges();
   }
 
