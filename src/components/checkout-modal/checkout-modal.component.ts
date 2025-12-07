@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CartService, CartItem } from '../servives/cart.service';
 import { Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router,ActivatedRoute } from '@angular/router';
 import { Firestore, collection, addDoc, CollectionReference, serverTimestamp, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 
 interface CheckoutItem extends CartItem {
@@ -39,18 +39,62 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     public cartService: CartService,
     private cdr: ChangeDetectorRef,
     private firestore: Firestore,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
-    this.cartSubscription = this.cartService.items$.subscribe(items => {
-      this.displayItems = items.map(item => ({
-        ...item,
-        isSelected: true
-      }));
-      this.updateSelectedTotal();
-    });
+  // Giữ logic cũ để hiển thị giỏ hàng
+  this.cartSubscription = this.cartService.items$.subscribe(items => {
+    this.displayItems = items.map(item => ({
+      ...item,
+      isSelected: true
+    }));
+    this.updateSelectedTotal();
+  });
+
+  // Thêm logic MOMO / VNPay redirect
+  const params = new URLSearchParams(window.location.search);
+  const resultCode = params.get("resultCode"); // MoMo / VNPay
+  const orderId = params.get("orderId");       // MoMo / VNPay
+  const session_id = params.get("session_id"); // Stripe
+
+  // MoMo hoặc VNPay thành công
+  if (resultCode === "0" && orderId) {
+    this.handlePaymentSuccess();
   }
+
+  // Stripe check bằng session_id từ query param
+  if (session_id) {
+    this.checkStripePayment(session_id);
+  }
+}
+// Hàm xử lý sau khi thanh toán thành công
+async handlePaymentSuccess() {
+  try {
+    await this.sendOrderEmail();
+    this.removeCheckedItems();
+    this.router.navigate(['/home']);
+  } catch (err) {
+    console.error("Lỗi khi xử lý sau thanh toán:", err);
+    this.router.navigate(['/home']);
+  }
+
+}
+
+// Stripe check payment server-side
+async checkStripePayment(sessionId: string) {
+  try {
+    const res = await fetch(`http://localhost:3001/api/payment/stripe/status?sessionId=${sessionId}`);
+    const data = await res.json();
+    if (data.paid) {
+      this.handlePaymentSuccess();
+    }
+  } catch (err) {
+    console.error("Stripe status error:", err);
+  }
+}
+
 
   ngOnDestroy(): void {
     if (this.cartSubscription) this.cartSubscription.unsubscribe();
@@ -318,8 +362,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error(err);
         alert("Không thể tạo thanh toán MoMo");
       });
-    await this.sendOrderEmail();
-    this.removeCheckedItems();
+    
 
     setTimeout(() => {
       this.onClose();
@@ -354,8 +397,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error(err);
         alert("Không thể tạo thanh toán VNPay");
       });
-    await this.sendOrderEmail();
-    this.removeCheckedItems();
+    
   }
 
 
@@ -392,8 +434,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error("Stripe error:", err);
         alert("Không gọi được Stripe server!");
       });
-    await this.sendOrderEmail();
-    this.removeCheckedItems();
+  
   }
 
 

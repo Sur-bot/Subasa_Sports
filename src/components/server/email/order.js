@@ -14,7 +14,7 @@ function generateInvoicePDF(orderId, customerName, items, total, address, phone)
     const stream = fs.createWriteStream(pdfPath);
     doc.pipe(stream);
 
-    const fontRegular = path.join(process.cwd(), "font", "NotoSans-Regular.ttf");
+    const fontRegular = path.join(process.cwd(), "componets","server","font", "NotoSans-Regular.ttf");
     doc.font(fontRegular);
 
     /* ===========================

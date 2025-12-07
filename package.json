@@ -10,7 +10,7 @@
     "test": "ng test",
     "serve:ssr:Subasa_Sport": "node dist/Subasa_Sport/server/server.mjs",
     "cleanup": "node src/components/cleanup/cleanup-guest.js",
-    "server": "node src/components/backend/server.js"
+    "server": "node src/components/server/server.js"
   },
   "prettier": {
     "printWidth": 100,
