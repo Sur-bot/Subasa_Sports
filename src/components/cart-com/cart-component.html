@@ -42,15 +42,20 @@
         </div>
       </div>
 
-      <div *ngIf="vm.totalItems > 0" class="dropdown-footer">
-        <div class="total-row">
+      <div class="dropdown-footer">
+
+        <div *ngIf="vm.totalItems > 0" class="total-row">
           <span>Tổng cộng:</span>
           <span class="total-price">{{ vm.totalPrice | number:'1.0-0' }}₫</span>
         </div>
+
         <div class="footer-buttons">
-        <button class="btn-view-cart" (click)="openOrderHistory()">Đơn hàng đã mua</button>
-        <button (click)="onProceedToCheckout()" class="btn-view-cart">Thanh toán ngay</button>
+          <button class="btn-view-cart" (click)="openOrderHistory()">Đơn hàng đã mua</button>
+
+          <button *ngIf="vm.totalItems > 0" (click)="onProceedToCheckout()" class="btn-view-cart">Thanh toán
+            ngay</button>
         </div>
+
         <button *ngIf="isSeller" class="btn-view-seller" (click)="openSellerOrders()">Quản lý đơn hàng</button>
       </div>
     </div>
@@ -62,20 +67,20 @@
   (closeModal)="isCheckoutModalVisible = false">
 </app-checkout-modal>
 
-<div class="login-modal-overlay" *ngIf="isLoginRequestVisible" (click)="isLoginRequestVisible = false">
-  <div class="login-modal-content" (click)="$event.stopPropagation()">
-    
-    <div class="login-icon">🔒</div>
-    <h3>Vui lòng đăng nhập</h3>
-    <p>Bạn cần đăng nhập tài khoản thành viên để tiếp tục thanh toán và tích điểm.</p>
-    
-    <div class="login-actions">
-      <button class="btn-cancel" (click)="isLoginRequestVisible = false">Để sau</button>
-      <button class="btn-login" (click)="goToLogin()">Đăng nhập ngay</button>
-    </div>
+  <div class="login-modal-overlay" *ngIf="isLoginRequestVisible" (click)="isLoginRequestVisible = false">
+    <div class="login-modal-content" (click)="$event.stopPropagation()">
 
+      <div class="login-icon">🔒</div>
+      <h3>Vui lòng đăng nhập</h3>
+      <p>Bạn cần đăng nhập tài khoản thành viên để tiếp tục thanh toán và tích điểm.</p>
+
+      <div class="login-actions">
+        <button class="btn-cancel" (click)="isLoginRequestVisible = false">Để sau</button>
+        <button class="btn-login" (click)="goToLogin()">Đăng nhập ngay</button>
+      </div>
+
+    </div>
   </div>
-</div>
 
   <!-- Buyer Order History Popup -->
   <div class="order-history-popup" *ngIf="isOrderHistoryVisible">
