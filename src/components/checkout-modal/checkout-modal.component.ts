@@ -204,34 +204,34 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
    *  GỬI EMAIL
    * ============================================================ */
   private async sendOrderEmail() {
-  const userId = localStorage.getItem("userId");
+    const userId = localStorage.getItem("userId");
 
-  let email = "";
-  if (userId) {
-    email = await this.getUserEmailById(userId) || "";
+    let email = "";
+    if (userId) {
+      email = await this.getUserEmailById(userId) || "";
+    }
+
+    if (!email) {
+      console.error("❌ Cannot send email: user email not found");
+      return;
+    }
+
+    const selectedItems = this.displayItems.filter(i => i.isSelected);
+
+    await fetch("http://localhost:3001/api/order/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        customerName: this.customerName,
+        orderId: this.generatedOrderId,
+        items: selectedItems,
+        total: this.totalSelectedPrice,
+        address: this.customerAddress,
+        phone: this.customerPhone
+      })
+    });
   }
-
-  if (!email) {
-    console.error("❌ Cannot send email: user email not found");
-    return;
-  }
-
-  const selectedItems = this.displayItems.filter(i => i.isSelected);
-
-  await fetch("http://localhost:3001/api/order/send-email", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email,
-      customerName: this.customerName,
-      orderId: this.generatedOrderId,
-      items: selectedItems,
-      total: this.totalSelectedPrice,
-      address: this.customerAddress,
-      phone: this.customerPhone
-    })
-  });
-}
 
 
 
@@ -293,7 +293,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     await this.saveOrderToFirestore("MOMO");
     await this.updateProductStockAfterOrder();
 
-    await this.sendOrderEmail(); // ⭐️ THÊM DÒNG NÀY
 
     const payload = {
       amount: this.totalSelectedPrice,
@@ -319,7 +318,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error(err);
         alert("Không thể tạo thanh toán MoMo");
       });
-
+    await this.sendOrderEmail();
     this.removeCheckedItems();
 
     setTimeout(() => {
@@ -336,7 +335,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     await this.saveOrderToFirestore("VNPAY");
     await this.updateProductStockAfterOrder();
 
-    await this.sendOrderEmail(); // ⭐️ THÊM DÒNG NÀY
+
 
     const url = `http://localhost:3001/api/payment/vnpay?orderId=${this.generatedOrderId}&amount=${this.totalSelectedPrice}`;
 
@@ -355,7 +354,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error(err);
         alert("Không thể tạo thanh toán VNPay");
       });
-
+    await this.sendOrderEmail();
     this.removeCheckedItems();
   }
 
@@ -367,7 +366,6 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     await this.saveOrderToFirestore("VISA");
     await this.updateProductStockAfterOrder();
 
-    await this.sendOrderEmail(); // ⭐️ THÊM DÒNG NÀY
 
     const payload = {
       amount: this.totalSelectedPrice,
@@ -394,7 +392,7 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
         console.error("Stripe error:", err);
         alert("Không gọi được Stripe server!");
       });
-
+    await this.sendOrderEmail();
     this.removeCheckedItems();
   }
 
@@ -411,16 +409,16 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       return item.product.quantity || 0;
     }
   }
-private async getUserEmailById(userId: string): Promise<string | null> {
-  const userRef = doc(this.firestore, "users", userId);
-  const snap = await getDoc(userRef);
+  private async getUserEmailById(userId: string): Promise<string | null> {
+    const userRef = doc(this.firestore, "users", userId);
+    const snap = await getDoc(userRef);
 
-  if (snap.exists()) {
-    return snap.data()['email'] || null;
+    if (snap.exists()) {
+      return snap.data()['email'] || null;
+    }
+
+    return null;
   }
-
-  return null;
-}
 
   private removeCheckedItems() {
     this.displayItems
