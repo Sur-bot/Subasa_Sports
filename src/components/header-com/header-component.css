@@ -513,29 +513,10 @@ li.sub-tab {
   background: transparent; /* giữ style login bên trong */
   border-radius: 12px;
 }
-.logout-btn {
-  margin-left: 12px;
-  padding: 10px 20px;
-  font-size: 14px;
-  font-weight: bold;
-  color: #fff;
-  background: linear-gradient(90deg, #f7971e, #ff512f); /* gradient cam-đỏ */
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
-  transition: all 0.3s ease-in-out;
-}
 
-.logout-btn:hover {
-  background: linear-gradient(90deg, #ff512f, #f7971e); /* đảo ngược gradient */
-  transform: scale(1.05);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.35);
-}
 
-.logout-btn:active {
-  transform: scale(0.95);
-}
+
+
 .box-icon svg {
   fill: #ffffff; /* icon trắng */
   width: 30px;
@@ -549,3 +530,50 @@ li.sub-tab {
     padding: 0; /* loại bỏ padding nếu có, để frame-fix kiểm soát */
 }
 
+/* CHỈNH SỬA */
+
+.header-account {
+  position: relative;
+  cursor: pointer;
+}
+
+.dropdown-logout {
+   position: absolute;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+  background: #fff;
+  top: 50px;
+  left: 9px;
+  padding: 8px 10px;
+  width: 150px;
+  border: 1px solid #eee;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+}
+
+.header-account:hover .dropdown-logout {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  color: #333;
+  padding: 8px 12px;
+  width: 100%;
+  cursor: pointer;
+  text-align: left;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+}
+
+.logout-btn:hover {
+  background: #002d3a;
+  color: white;
+}

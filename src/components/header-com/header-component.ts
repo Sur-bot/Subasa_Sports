@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, Output, EventEmitter } from '@angular/core'; // 1. Thêm Output, EventEmitter
+import { Component, inject, OnInit, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from '../login-com/login-component';
 import { Router } from '@angular/router';
@@ -6,19 +6,16 @@ import { Auth, signOut } from '@angular/fire/auth';
 import { authState } from 'rxfire/auth';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { CartComponent } from '../cart-com/cart-component';
-import { ChangeDetectorRef } from '@angular/core';
 import { CartService } from '../servives/cart.service';
 
 @Component({
   selector: 'header-component',
   standalone: true,
-  imports: [CommonModule, LoginComponent, CartComponent],
+  imports: [CommonModule,LoginComponent ,CartComponent],
   templateUrl: './header-component.html',
   styleUrls: ['./header-component.css'],
 })
 export class HeaderComponent implements OnInit {
-  
-  // --- THÊM MỚI: Khai báo sự kiện bắn ra ngoài ---
   @Output() searchChange = new EventEmitter<string>();
 
   isOpen = false;
@@ -36,50 +33,46 @@ export class HeaderComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-  this.loadUser();
-
-  this.router.events.subscribe(() => {
     this.loadUser();
-  });
 
-  authState(this.auth).subscribe(() => {
-    this.loadUser();
-  });
-}
+    this.router.events.subscribe(() => {
+      this.loadUser();
+    });
 
-private async loadUser() {
-  const user = this.auth.currentUser;
-
-  if (!user) {
-    this.accountLabel = 'Tài khoản';
-    this.isLoggedInEmail = false;
-    return;
+    authState(this.auth).subscribe(() => {
+      this.loadUser();
+    });
   }
 
-  if (user.email) {
-    this.accountLabel = user.email;
-    this.isLoggedInEmail = true;
-  } else {
-    this.accountLabel = `Guest ${user.uid}`;
-    this.isLoggedInEmail = false;
-  }
+  // 📌 LẤY THÔNG TIN USER
+  private async loadUser() {
+    const user = this.auth.currentUser;
 
-  try {
-    const snap = await getDoc(doc(this.firestore, 'users', user.uid));
-    if (snap.exists()) {
-      const data = snap.data();
-      this.accountLabel = data['email'] ?? this.accountLabel;
+    if (!user) {
+      this.accountLabel = 'Tài khoản';
+      this.isLoggedInEmail = false;
+      return;
     }
-  } catch (e) {
-    console.error('[Header] Firestore error:', e);
-  }
-}
 
-  // --- THÊM MỚI: Hàm xử lý khi gõ phím ---
+    this.isLoggedInEmail = !!user.email;
+    this.accountLabel = user.email ?? `Guest ${user.uid}`;
+
+    // 🔎 Lấy thêm email ở Firestore (nếu có)
+    try {
+      const snap = await getDoc(doc(this.firestore, 'users', user.uid));
+      if (snap.exists()) {
+        const data = snap.data();
+        this.accountLabel = data['email'] ?? this.accountLabel;
+      }
+    } catch (e) {
+      console.error('[Header] Firestore error:', e);
+    }
+  }
+
+  // 🔍 SEARCH
   onSearchInput(event: Event) {
     const inputElement = event.target as HTMLInputElement;
     const keyword = inputElement.value;
-    // Gửi từ khóa ra ngoài cho ProductPage nhận
     this.searchChange.emit(keyword);
   }
 
@@ -91,6 +84,7 @@ private async loadUser() {
     this.openCategory = this.openCategory === category ? null : category;
   }
 
+  // 🚫 Popup chỉ mở nếu chưa đăng nhập
   toggleLogin() {
     if (!this.isLoggedInEmail) {
       this.showLogin = !this.showLogin;
@@ -107,6 +101,7 @@ private async loadUser() {
     this.cartService.loadUserCart();
   }
 
+  // 🔴 LOGOUT
   async logout() {
     try {
       await signOut(this.auth);

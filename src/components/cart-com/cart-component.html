@@ -15,8 +15,6 @@
     <div class="cart-dropdown">
       <div class="dropdown-header">
         <h4>Giỏ hàng của bạn ({{ vm.totalItems }} sản phẩm)</h4>
-        <button class="btn-history" (click)="openOrderHistory()">Đơn hàng đã mua</button>
-        <button *ngIf="isSeller" class="btn-seller" (click)="openSellerOrders()">Quản lý đơn hàng</button>
       </div>
 
       <div *ngIf="vm.totalItems === 0" class="empty-cart">
@@ -29,7 +27,7 @@
           <div class="item-info">
             <p class="item-name">{{ item.product.productName }}</p>
             <small *ngIf="item.selectedSize !== 'Mặc định'">Size: {{ item.selectedSize }}</small>
-            <small *ngIf="item.selectedColor !== 'Mặc định'"> | Màu: {{ item.selectedColor }}</small>
+            <!-- <small *ngIf="item.selectedColor !== 'Mặc định'"> | Màu: {{ item.selectedColor }}</small> -->
             <div class="quantity-controls">
               <button (mousedown)="startChangingQuantity(item, -1)" (mouseup)="stopChangingQuantity()"
                 (mouseleave)="stopChangingQuantity()" class="btn-qty" [disabled]="item.quantity <= 1">-</button>
@@ -49,7 +47,11 @@
           <span>Tổng cộng:</span>
           <span class="total-price">{{ vm.totalPrice | number:'1.0-0' }}₫</span>
         </div>
+        <div class="footer-buttons">
+        <button class="btn-view-cart" (click)="openOrderHistory()">Đơn hàng đã mua</button>
         <button (click)="onProceedToCheckout()" class="btn-view-cart">Thanh toán ngay</button>
+        </div>
+        <button *ngIf="isSeller" class="btn-view-seller" (click)="openSellerOrders()">Quản lý đơn hàng</button>
       </div>
     </div>
   </div>
@@ -109,7 +111,7 @@
   <!-- Seller Order Management Popup -->
   <div class="order-history-popup" *ngIf="isSellerPopupVisible">
     <div class="popup-header">
-      <h3>Quản lý đơn hàng (Seller)</h3>
+      <h3>QUẢN LÝ ĐƠN HÀNG</h3>
       <button (click)="closeSellerOrders()">×</button>
     </div>
     <div class="popup-body">
@@ -134,19 +136,18 @@
 
         <!-- Nút cập nhật trạng thái theo trạng thái hiện tại -->
         <div class="order-actions">
-          <button *ngIf="order.status==='pending'" class="status-btn pending" (click)="updateOrderStatus(order)">
-            Xác nhận gửi hàng
+          <button *ngIf="order.status==='pending'" class="status-btn" (click)="updateOrderStatus(order)">
+            XÁC NHẬN GỬI HÀNG
           </button>
 
-          <button *ngIf="order.status==='shipping'" class="status-btn shipping" (click)="updateOrderStatus(order)">
-            Đã giao thành công
+          <button *ngIf="order.status==='shipping'" class="status-btn" (click)="updateOrderStatus(order)">
+            ĐÃ GIAO THÀNH CÔNG
           </button>
 
-          <button *ngIf="order.status==='delivered' || order.status==='cancel'" class="status-btn disabled" disabled>
-            {{ order.status === 'delivered' ? 'Đã giao' : 'Đã hủy' }}
+          <button *ngIf="order.status==='delivered' || order.status==='cancel'" class="status-btn-disable" disabled>
+            {{ order.status === 'delivered' ? 'ĐÃ GIAO' : 'ĐÃ HỦY' }}
           </button>
         </div>
-        <hr>
       </div>
     </div>
   </div>
