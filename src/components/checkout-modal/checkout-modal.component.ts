@@ -22,16 +22,17 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
   @Output() closeModal = new EventEmitter<void>();
 
   public displayItems: CheckoutItem[] = [];
-  public totalSelectedPrice = 0;
+  public totalSelectedPrice: number = 0;
 
   customerName = '';
   customerPhone = '';
   customerAddress = '';
-
-  selectedPaymentMethod = 'cod';
+  selectedPaymentMethod: string = 'cod';
+  showBankInfo = false;
   generatedOrderId = 'ORDER-' + Date.now();
   private cartSubscription!: Subscription;
   private timer: any;
+  public showModal: boolean = false;
 
   constructor(
     public cartService: CartService,
@@ -43,9 +44,10 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // đăng ký instance modal
     this.checkoutService.setModalInstance(this);
 
-    // Load cart & customer info từ localStorage nếu quay về sau thanh toán
+    // load cart + customer từ localStorage
     const savedCart = JSON.parse(localStorage.getItem('stripeCart') || '[]');
     const savedCustomer = JSON.parse(localStorage.getItem('stripeCustomer') || '{}');
     if (savedCart.length) {
@@ -55,44 +57,61 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       this.customerAddress = savedCustomer.address || '';
     }
 
+    // Subscribe cart changes
     this.cartSubscription = this.cartService.items$.subscribe(items => {
-      this.displayItems = items.map(i => ({ ...i, isSelected: true }));
+      this.displayItems = items.map(item => ({ ...item, isSelected: true }));
       this.updateSelectedTotal();
     });
 
-    // Xử lý query params hoặc localStorage flags sau khi thanh toán
-    this.route.queryParams.subscribe(params => this.handlePaymentParams(params));
-    this.checkLocalStoragePayment();
-  }
-
-  ngOnDestroy(): void {
-    this.cartSubscription?.unsubscribe();
-    this.stopChangingQuantity();
-    this.checkoutService.setModalInstance(null);
-  }
-
-  private async handlePaymentParams(params: any) {
-    const sessionId = params['session_id']; // Stripe
-    const resultCode = params['resultCode']; // MoMo / VNPay
-    const orderId = params['orderId'];
-
-    if (sessionId) await this.checkStripePayment(sessionId);
-    else if (resultCode === '0' && orderId) await this.handlePaymentSuccess();
-
-    if (sessionId || (resultCode === '0' && orderId)) this.clearPaymentFlags();
-    this.router.navigate([], { queryParams: {} });
-  }
-
-  private checkLocalStoragePayment() {
+    // **check localStorage payment_done ngay khi load**
     const paymentDone = localStorage.getItem('payment_done');
     const paymentMethod = localStorage.getItem('payment_method');
     const paymentSessionId = localStorage.getItem('payment_session_id');
 
-    if (!paymentDone || !paymentMethod) return;
-    switch (paymentMethod) {
-      case 'stripe': if (paymentSessionId) this.checkStripePayment(paymentSessionId).finally(() => this.clearPaymentFlags()); break;
+    if (paymentDone === 'true' && paymentMethod) {
+      // bật modal và handle ngay
+      if (this.checkoutService.modalInstance) {
+        this.checkoutService.modalInstance.showModal = true;
+        this.handleAfterPayment(paymentMethod, paymentSessionId);
+      }
+    }
+
+    // xử lý query params Stripe / MoMo / VNPay
+    this.route.queryParams.subscribe(async params => {
+      const sessionId = params['session_id']; // Stripe
+      const resultCode = params['resultCode']; // MoMo/VNPay
+      const orderId = params['orderId'];
+
+      if (sessionId) {
+        this.showModalAndHandle('stripe', sessionId);
+      } else if (resultCode === "0" && orderId) {
+        this.showModalAndHandle('momo', null);
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.cartSubscription) this.cartSubscription.unsubscribe();
+    this.stopChangingQuantity();
+  }
+
+  private async handleAfterPayment(method: string, sessionId: string | null) {
+    switch (method) {
+      case 'stripe':
+        if (sessionId) await this.checkStripePayment(sessionId);
+        break;
       case 'momo':
-      case 'vnpay': this.handlePaymentSuccess().finally(() => this.clearPaymentFlags()); break;
+      case 'vnpay':
+        await this.handlePaymentSuccess();
+        break;
+    }
+    this.clearPaymentFlags();
+  }
+
+  private showModalAndHandle(method: string, sessionId: string | null) {
+    if (this.checkoutService.modalInstance) {
+      this.checkoutService.modalInstance.showModal = true;
+      this.handleAfterPayment(method, sessionId);
     }
   }
 
@@ -100,15 +119,17 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     try {
       await this.sendOrderEmail();
       this.removeCheckedItems();
-      this.cartService.clearCart();
-      alert("Thanh toán thành công!");
     } catch (err) {
-      console.error("Lỗi xử lý sau thanh toán:", err);
+      console.error("Lỗi khi xử lý sau thanh toán:", err);
     }
   }
 
   private clearPaymentFlags() {
-    ['payment_done','payment_method','payment_session_id','stripeCart','stripeCustomer'].forEach(k => localStorage.removeItem(k));
+    localStorage.removeItem('payment_done');
+    localStorage.removeItem('payment_method');
+    localStorage.removeItem('payment_session_id');
+    localStorage.removeItem('stripeCart');
+    localStorage.removeItem('stripeCustomer');
   }
 
   async checkStripePayment(sessionId: string) {
@@ -117,35 +138,48 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
       const data = await res.json();
       if (data.paid) await this.handlePaymentSuccess();
       else alert("Thanh toán Stripe chưa hoàn tất!");
-    } catch (err) { console.error("Stripe check failed:", err); }
+    } catch (err) {
+      console.error("Stripe check failed:", err);
+    }
   }
 
-  updateSelectedTotal() {
+  updateSelectedTotal(): void {
     this.totalSelectedPrice = this.displayItems
       .filter(i => i.isSelected)
-      .reduce((sum, i) => sum + i.product.salePrice * i.quantity, 0);
+      .reduce((sum, i) => sum + (i.product.salePrice * i.quantity), 0);
   }
 
-  onManualQuantityChange(event: Event, item: CartItem) {
+  onManualQuantityChange(event: Event, item: CartItem): void {
     const input = event.target as HTMLInputElement;
-    let value = Math.max(1, Math.min(parseInt(input.value) || 1, this.getMaxStock(item)));
+    let value = parseInt(input.value, 10);
+    const max = this.getMaxStock(item);
+    if (isNaN(value) || value < 1) value = 1;
+    if (value > max) value = max;
     this.cartService.updateQuantity(item.uniqueId, value);
     input.value = value.toString();
   }
 
   startChangingQuantity(item: CartItem, delta: number) {
-    if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= this.getMaxStock(item))) return;
+    const maxStock = this.getMaxStock(item);
+    if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= maxStock)) return;
     this.changeOne(item, delta);
     this.timer = setTimeout(() => {
       this.timer = setInterval(() => {
-        if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= this.getMaxStock(item))) this.stopChangingQuantity();
-        else this.changeOne(item, delta);
+        if ((delta < 0 && item.quantity <= 1) || (delta > 0 && item.quantity >= maxStock)) {
+          this.stopChangingQuantity();
+          return;
+        }
+        this.changeOne(item, delta);
       }, 100);
     }, 400);
   }
 
   stopChangingQuantity() {
-    if (this.timer) { clearTimeout(this.timer); clearInterval(this.timer); this.timer = null; }
+    if (this.timer) {
+      clearTimeout(this.timer);
+      clearInterval(this.timer);
+      this.timer = null;
+    }
   }
 
   private changeOne(item: CartItem, delta: number) {
@@ -153,96 +187,204 @@ export class CheckoutModalComponent implements OnInit, OnDestroy {
     this.cdr.detectChanges();
   }
 
-  async handleCheckout() {
-    if (!this.customerName || !this.customerPhone || !this.customerAddress) return alert("Vui lòng nhập đầy đủ thông tin");
-    if (!this.displayItems.some(i => i.isSelected)) return alert("Chưa chọn sản phẩm!");
-    switch (this.selectedPaymentMethod) {
-      case "cod": return this.checkoutCOD();
-      case "momo": return this.checkoutMomo();
-      case "vnpay": return this.checkoutVNPay();
-      case "stripe": return this.checkoutStripe();
-    }
-  }
-
-  private async checkoutCOD() { await this.processOrder("COD"); alert("Đặt hàng thành công! Thanh toán khi nhận hàng."); this.onClose(); }
-  private async checkoutMomo() { await this.processOnlinePayment("MOMO", "http://localhost:3001/api/payment/momo"); }
-  private async checkoutVNPay() { await this.processOnlinePayment("VNPAY", `http://localhost:3001/api/payment/vnpay?orderId=${this.generatedOrderId}&amount=${this.totalSelectedPrice}`); }
-  private async checkoutStripe() { await this.processOnlinePayment("VISA", "http://localhost:3001/api/payment/stripe"); }
-
-  private async processOrder(method: string) {
-    await this.saveOrderToFirestore(method);
-    await this.updateProductStockAfterOrder();
-    await this.sendOrderEmail();
-    this.removeCheckedItems();
-  }
-
-  private async processOnlinePayment(method: string, url: string) {
-    await this.processOrder(method);
-    localStorage.setItem('stripeCart', JSON.stringify(this.displayItems));
-    localStorage.setItem('stripeCustomer', JSON.stringify({ name: this.customerName, phone: this.customerPhone, address: this.customerAddress }));
-    fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount: this.totalSelectedPrice, orderId: this.generatedOrderId }) })
-      .then(res => res.json())
-      .then(data => {
-        const payUrl = data.payUrl || data.checkoutUrl;
-        const sessionId = data.sessionId;
-        if (!payUrl) return alert(`${method} lỗi backend!`);
-        localStorage.setItem('payment_done', 'true');
-        localStorage.setItem('payment_method', method.toLowerCase());
-        if (sessionId) localStorage.setItem('payment_session_id', sessionId);
-        window.location.href = payUrl;
-      })
-      .catch(err => { console.error(err); alert(`Không thể tạo thanh toán ${method}`); });
-  }
-
   async saveOrderToFirestore(paymentMethod: string) {
     const selectedItems = this.displayItems.filter(i => i.isSelected);
     const groups: Record<string, any[]> = {};
-    selectedItems.forEach(item => { const owner = item.product.ownerEmail || "unknown"; if (!groups[owner]) groups[owner] = []; groups[owner].push(item); });
+    selectedItems.forEach(item => {
+      const owner = item.product.ownerEmail || "unknown";
+      if (!groups[owner]) groups[owner] = [];
+      groups[owner].push(item);
+    });
+
     const orderRef = collection(this.firestore, "orders");
-    for (const owner in groups) {
-      const items = groups[owner];
+    for (const ownerEmail in groups) {
+      const items = groups[ownerEmail];
       const orderData = {
         createdAt: new Date(),
         customerAddress: this.customerAddress,
         customerName: this.customerName,
         customerPhone: this.customerPhone,
-        orderId: this.generatedOrderId + "-" + owner,
+        orderId: this.generatedOrderId + "-" + ownerEmail,
         paymentMethod,
         totalPrice: items.reduce((sum, i) => sum + i.product.salePrice * i.quantity, 0),
         userId: localStorage.getItem("userId") || null,
-        sellerEmail: owner,
+        sellerEmail: ownerEmail,
         status: "pending",
-        items: items.map(i => ({ imageUrl:i.product.imageUrl, name:i.product.productName, ownerEmail:owner, price:i.product.salePrice, productId:i.product.id, quantity:i.quantity, size:i.selectedSize||null }))
+        items: items.map(i => ({
+          imageUrl: i.product.imageUrl,
+          name: i.product.productName,
+          ownerEmail,
+          price: i.product.salePrice,
+          productId: i.product.id,
+          quantity: i.quantity,
+          size: i.selectedSize || null,
+        }))
       };
       await addDoc(orderRef, orderData);
     }
   }
 
   async updateProductStockAfterOrder() {
-    for (const item of this.displayItems.filter(i => i.isSelected)) {
+    const selectedItems = this.displayItems.filter(i => i.isSelected);
+    for (const item of selectedItems) {
       try {
         const productRef = doc(this.firestore, "products", item.product.id);
         const snap = await getDoc(productRef);
         if (!snap.exists()) continue;
-        const data: any = snap.data();
-        if (item.selectedSize && data.sizes) await updateDoc(productRef, { sizes: data.sizes.map((s:any) => s.size == item.selectedSize ? { ...s, quantity: Math.max(0, s.quantity - item.quantity) } : s) });
-        else await updateDoc(productRef, { quantity: Math.max(0, (data.quantity||0)-item.quantity) });
-      } catch(e){ console.error("Lỗi cập nhật tồn kho:", e); }
+        const productData: any = snap.data();
+        if (item.selectedSize && productData.sizes) {
+          const updatedSizes = productData.sizes.map((s: any) =>
+            s.size == item.selectedSize ? { ...s, quantity: Math.max(0, s.quantity - item.quantity) } : s
+          );
+          await updateDoc(productRef, { sizes: updatedSizes });
+        } else {
+          const newQty = Math.max(0, (productData.quantity || 0) - item.quantity);
+          await updateDoc(productRef, { quantity: newQty });
+        }
+      } catch (err) {
+        console.error(err);
+      }
     }
   }
 
   async sendOrderEmail() {
     const userId = localStorage.getItem("userId");
-    if (!userId) return console.error("User email not found");
-    const snap = await getDoc(doc(this.firestore,"users",userId));
-    const email = snap.exists() ? snap.data()['email'] : null;
-    if (!email) return console.error("User email not found");
-    await fetch("http://localhost:3001/api/order/send-email", { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ email, customerName:this.customerName, orderId:this.generatedOrderId, items:this.displayItems.filter(i=>i.isSelected), total:this.totalSelectedPrice, address:this.customerAddress, phone:this.customerPhone }) });
+    let email = "";
+    if (userId) email = await this.getUserEmailById(userId) || "";
+    if (!email) return;
+
+    const selectedItems = this.displayItems.filter(i => i.isSelected);
+    await fetch("http://localhost:3001/api/order/send-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email,
+        customerName: this.customerName,
+        orderId: this.generatedOrderId,
+        items: selectedItems,
+        total: this.totalSelectedPrice,
+        address: this.customerAddress,
+        phone: this.customerPhone
+      })
+    });
   }
 
-  onClose(){ this.closeModal.emit(); }
+  handleCheckout(): void {
+    if (!this.customerName || !this.customerPhone || !this.customerAddress) return alert("Vui lòng nhập đầy đủ thông tin");
+    if (!this.displayItems.some(i => i.isSelected)) return alert("Chưa chọn sản phẩm!");
+    switch (this.selectedPaymentMethod) {
+      case "cod": this.checkoutCOD(); break;
+      case "momo": this.checkoutMomo(); break;
+      case "vnpay": this.checkoutVNPay(); break;
+      case "stripe": this.checkoutStripe(); break;
+    }
+  }
 
-  getMaxStock(item: CartItem) { return item.product.hasSize && item.product.sizes ? (item.product.sizes.find(s=>String(s.size)===item.selectedSize)?.quantity||0) : (item.product.quantity||0); }
+  async checkoutCOD() {
+    await this.saveOrderToFirestore("COD");
+    await this.updateProductStockAfterOrder();
+    await this.sendOrderEmail();
+    this.removeCheckedItems();
+    alert("Đặt hàng thành công! Thanh toán khi nhận hàng.");
+    this.onClose();
+  }
 
-  private removeCheckedItems() { this.displayItems.filter(i=>i.isSelected).forEach(i=>this.cartService.removeFromCart(i.uniqueId)); }
+  async checkoutMomo() {
+    await this.saveOrderToFirestore("MOMO");
+    await this.updateProductStockAfterOrder();
+    localStorage.setItem('stripeCart', JSON.stringify(this.displayItems));
+    localStorage.setItem('stripeCustomer', JSON.stringify({
+      name: this.customerName,
+      phone: this.customerPhone,
+      address: this.customerAddress
+    }));
+
+    const payload = { amount: this.totalSelectedPrice, orderId: this.generatedOrderId };
+    fetch("http://localhost:3001/api/payment/momo", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(res => res.json())
+      .then(data => {
+        if (!data.payUrl) return alert("Không tìm thấy MoMo payUrl");
+        localStorage.setItem('payment_done', 'true');
+        localStorage.setItem('payment_method', 'momo');
+        window.location.href = data.payUrl;
+      }).catch(err => {
+        console.error(err);
+        alert("Không thể tạo thanh toán MoMo");
+      });
+  }
+
+  async checkoutVNPay() {
+    await this.saveOrderToFirestore("VNPAY");
+    await this.updateProductStockAfterOrder();
+    localStorage.setItem('stripeCart', JSON.stringify(this.displayItems));
+    localStorage.setItem('stripeCustomer', JSON.stringify({
+      name: this.customerName,
+      phone: this.customerPhone,
+      address: this.customerAddress
+    }));
+
+    const url = `http://localhost:3001/api/payment/vnpay?orderId=${this.generatedOrderId}&amount=${this.totalSelectedPrice}`;
+    fetch(url).then(res => res.json())
+      .then(data => {
+        if (!data.payUrl) return alert("Không tìm thấy VNPay payUrl");
+        localStorage.setItem('payment_done', 'true');
+        localStorage.setItem('payment_method', 'vnpay');
+        window.location.href = data.payUrl;
+      }).catch(err => {
+        console.error(err);
+        alert("Không thể tạo thanh toán VNPay");
+      });
+  }
+
+  async checkoutStripe() {
+    await this.saveOrderToFirestore("VISA");
+    await this.updateProductStockAfterOrder();
+    localStorage.setItem('stripeCart', JSON.stringify(this.displayItems));
+    localStorage.setItem('stripeCustomer', JSON.stringify({
+      name: this.customerName,
+      phone: this.customerPhone,
+      address: this.customerAddress
+    }));
+
+    const payload = { amount: this.totalSelectedPrice, orderId: this.generatedOrderId };
+    fetch("http://localhost:3001/api/payment/stripe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    }).then(res => res.json())
+      .then(data => {
+        if (!data.checkoutUrl || !data.sessionId) return alert("Stripe lỗi backend!");
+        localStorage.setItem('payment_done', 'true');
+        localStorage.setItem('payment_method', 'stripe');
+        localStorage.setItem('payment_session_id', data.sessionId);
+        window.location.href = data.checkoutUrl;
+      }).catch(err => {
+        console.error("Stripe error:", err);
+        alert("Không gọi được Stripe server!");
+      });
+  }
+
+  onClose() {
+    this.closeModal.emit();
+  }
+
+  public getMaxStock(item: CartItem): number {
+    if (item.product.hasSize && item.product.sizes) {
+      const s = item.product.sizes.find(s => String(s.size) === item.selectedSize);
+      return s ? s.quantity : 0;
+    }
+    return item.product.quantity || 0;
+  }
+
+  private async getUserEmailById(userId: string): Promise<string | null> {
+    const snap = await getDoc(doc(this.firestore, "users", userId));
+    return snap.exists() ? snap.data()['email'] || null : null;
+  }
+
+  private removeCheckedItems() {
+    this.displayItems.filter(i => i.isSelected).forEach(i => this.cartService.removeFromCart(i.uniqueId));
+  }
 }

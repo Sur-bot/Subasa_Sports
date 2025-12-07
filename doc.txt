@@ -10,6 +10,9 @@ npm install chart.js
 npm install xlsx jspdf
 npm install --save-dev @types/xlsx
 npm install jspdf jspdf-autotable
+
+npm install nodemailer
+npm install pdfkit
 #####################################
 ##  Test thanh toán VISA (Stripe)  ##
 #####################################

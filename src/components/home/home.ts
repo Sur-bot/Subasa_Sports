@@ -52,7 +52,6 @@ export class HomeComponent implements OnInit {
   isAdmin = false;
   role: string | null = null;
 
-  // Modal logic
   selectedProductForModal: Product | null = null;
   isModalOpen: boolean = false;
 
@@ -70,55 +69,77 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
+    // --- Auth state ---
     onAuthStateChanged(this.auth, (user) => {
       localStorage.setItem('isGuest', 'true');
       this.ngZone.run(() => {
         if (user) {
           this.currentUser = user;
-
           let storedId = localStorage.getItem('userId');
           if (!storedId) {
             storedId = user.uid;
             localStorage.setItem('userId', storedId);
           }
-
           this.userId = storedId;
           this.isAdmin = (this.userId === ADMIN_UID);
-
-          console.log('Render check:', this.userId, this.isAdmin);
         } else {
           this.currentUser = null;
           this.userId = '';
           this.isAdmin = false;
-          console.log('Render check:', this.userId, this.isAdmin);
         }
-
         this.cdr.detectChanges();
       });
     });
 
-    // Subscribe modal instance ready
-    this.checkoutService.modalInstance$.subscribe(modal => {
+    // --- Handle redirect from Stripe/MoMo/VNPay ---
+    this.ngZone.run(async () => {
+      const modal = this.checkoutService.modalInstance;
       if (!modal) return;
-      const params = this.route.snapshot.queryParams;
-      const sessionId = params['session_id'];
-      const resultCode = params['resultCode'];
-      const orderId = params['orderId'];
+
+      // Kiểm tra localStorage payment_done
+      const paymentDone = localStorage.getItem('payment_done');
+      const paymentMethod = localStorage.getItem('payment_method');
+      const paymentSession = localStorage.getItem('payment_session_id');
+
+      if (paymentDone === 'true' && paymentMethod) {
+        modal.showModal = true; // mở modal
+        switch (paymentMethod) {
+          case 'stripe':
+            if (paymentSession) await modal.checkStripePayment(paymentSession);
+            break;
+          case 'momo':
+          case 'vnpay':
+            await modal.handlePaymentSuccess();
+            break;
+        }
+
+        // Clear cart và flags
+        this.cartService.clearCart();
+        localStorage.removeItem('payment_done');
+        localStorage.removeItem('payment_method');
+        localStorage.removeItem('payment_session_id');
+        localStorage.removeItem('stripeCart');
+        localStorage.removeItem('stripeCustomer');
+
+        this.router.navigate([], { queryParams: {} });
+        return;
+      }
+
+      // fallback nếu query params trực tiếp
+      const query = this.route.snapshot.queryParams;
+      const sessionId = query['session_id'];
+      const resultCode = query['resultCode'];
+      const orderId = query['orderId'];
 
       if (sessionId || (resultCode === '0' && orderId)) {
-        this.ngZone.run(async () => {
-          if (sessionId) {
-            await modal.checkStripePayment(sessionId);
-          } else if (resultCode === '0' && orderId) {
-            await modal.handlePaymentSuccess();
-          }
-
-          // Clear cart sau khi thanh toán thành công
-          this.cartService.clearCart();
-
-          // Xóa query params
-          this.router.navigate([], { queryParams: {} });
-        });
+        modal.showModal = true;
+        if (sessionId) {
+          await modal.checkStripePayment(sessionId);
+        } else if (resultCode === '0' && orderId) {
+          await modal.handlePaymentSuccess();
+        }
+        this.cartService.clearCart();
+        this.router.navigate([], { queryParams: {} });
       }
     });
   }
