@@ -19,7 +19,7 @@ import { ProductOptionsModalComponent } from '../product-options-modal/product-o
 import { AdminSellerRequestsComponent } from '../request-seller-com/admin-seller-requests';
 import { BrandSliderComponent } from '../brand-com/brand-component';
 import { CartService } from '../servives/cart.service';
-import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.component';
+
 
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
@@ -40,7 +40,6 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     FormsModule,
     BrandSliderComponent,
     CommonModule,
-    CheckoutModalComponent
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
