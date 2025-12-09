@@ -91,5 +91,17 @@ export class HomeComponent implements OnInit {
 
   }
 
-  
+  handleProductOptionSelected(product: Product) {
+    this.selectedProductForModal = product;
+    this.isModalOpen = true;
+    document.body.classList.add('modal-open');
+    this.cdr.detectChanges();
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.selectedProductForModal = null;
+    document.body.classList.remove('modal-open');
+    this.cdr.detectChanges();
+  }
 }

@@ -19,7 +19,7 @@ export class ProductFormComponent implements OnInit, OnChanges {
   @Input() productList: any[] = [];
   @Output() productChange = new EventEmitter<any>();
 
-  private apiUrl = 'https://subasa-sports-1.onrender.com/api/products'; // 🔹 API của bạn
+  private apiUrl = 'https://subasa-sports-hjzs.onrender.com/api/products'; // 🔹 API của bạn
 
   product: any = {
     productName: '',
