@@ -435,7 +435,6 @@
 }
 
 .status-btn:hover {
-  background-color: #002d3a;
   color: white;
 }
 
@@ -557,4 +556,25 @@
 .item-info p,
 .item-name {
   font-weight: bold;
+}
+
+.btn-cancel-order {
+  margin-top: 10px;
+  display: block;
+  width: 100%;
+  padding: 8px;
+  background: linear-gradient(to right, #ff4d4d 50%, #ff9999 50%);
+  background-size: 200% 100%;
+  background-position: right bottom;
+  color: black;
+  border: 2px solid black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-position 0.3s ease-in-out;
+}
+
+.btn-cancel-order:hover {
+  border-color: black;
+  color: white;
+
 }

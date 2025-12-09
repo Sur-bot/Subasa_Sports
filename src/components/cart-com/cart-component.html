@@ -153,6 +153,11 @@
             {{ order.status === 'delivered' ? 'ĐÃ GIAO' : 'ĐÃ HỦY' }}
           </button>
         </div>
+        <div>
+          <button class="btn-cancel-order" (click)="cancelOrder(order)" *ngIf="order.status !== 'cancel' && order.status !== 'delivered'">
+            HỦY ĐƠN HÀNG
+          </button>
+        </div>
       </div>
     </div>
   </div>
