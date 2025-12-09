@@ -9,7 +9,7 @@ export const momoPayment = async (req, res) => {
     const accessKey = "F8BBA842ECF85";
     const secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
 
-    const redirectUrl = "http://localhost:4200/home";
+    const redirectUrl = "http://localhost:4200/success?orderId=${orderId}&paymentMethod=momo";
     const ipnUrl = "http://localhost:3001/api/payment/momo/ipn";
 
     const requestId = `${orderId}_${Date.now()}`;
