@@ -78,8 +78,10 @@
 .dropdown-header,
 .dropdown-footer,
 .empty-cart {
-  padding: 10px 15px;
+  padding: 15px;
   border-bottom: 1px solid #eee;
+  background-color: #f9f9f9;
+  font-style: italic;
 }
 
 .dropdown-header h4 {
@@ -596,22 +598,36 @@
   color: white;
   border-color: #007bff;
 }
+
+.empty-status{
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin: 20px 0;
+}
+
 .tab-header {
   display: flex;
-  gap: 10px;
-  margin-bottom: 15px;
+  gap: 8px;
+  margin-bottom: 12px;
+  margin-top: 12px;
+ justify-content: space-between;
+}
+
+.tab-header button:hover {
+  background-color: #a2ff00;
+  color: black;
 }
 
 .tab-header button {
   padding: 6px 14px;
-  border: 1px solid #ccc;
+  border: 2px solid #002d3a;
   background: #f2f2f2;
   cursor: pointer;
-  border-radius: 5px;
+   font-weight: bold;
 }
 
 .tab-header button.active {
-  background: #007bff;
-  color: white;
-  border-color: #006fe6;
+  background: #a2ff00;
+  color: black; 
 }
