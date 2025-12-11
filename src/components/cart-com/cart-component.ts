@@ -33,7 +33,7 @@ interface Order {
   status: 'pending' | 'shipping' | 'delivered' | 'cancel';
   ownerEmail: string;
   userEmail: string;
-  userId?: string;      
+  userId?: string;
   items: OrderItem[];
   customerPhone: string;
   customerName: string;
@@ -55,6 +55,7 @@ interface OrderHistoryGrouped {
   imports: [CommonModule, RouterLink, CheckoutModalComponent],
 })
 export class CartComponent implements OnInit {
+
   public readonly vm$: Observable<CartViewModel>;
   public isCheckoutModalVisible = false;
   public isLoginRequestVisible = false;
@@ -69,8 +70,36 @@ export class CartComponent implements OnInit {
     delivered: [],
     cancel: [],
   };
+  public orderTabs = [
+    { key: 'all', label: 'Tất cả' },
+    { key: 'pending', label: 'Đang chờ xác nhận' },
+    { key: 'shipping', label: 'Đang vận chuyển' },
+    { key: 'delivered', label: 'Đã giao' },
+    { key: 'cancel', label: 'Đã hủy' }
+  ];
+  
+  public activeTab: string = 'all';
+  public filteredOrders() {
+    if (this.activeTab === 'all') return this.allOrders;
+    return this.allOrders.filter(o => o.status === this.activeTab);
+  }
+currentSellerTab: string = 'all';
+setSellerTab(tab: string) {
+  this.currentSellerTab = tab;
+}
+getSellerOrdersByStatus(status: string) {
+  if (status === 'all') return this.sellerOrders;
+  return this.sellerOrders.filter(o => o.status === status);
+}
+
+  public allOrders: Order[] = [];
 
   public sellerOrders: Order[] = [];
+
+  public sellerOrdersPending: Order[] = [];
+  public sellerOrdersShipping: Order[] = [];
+  public sellerOrdersDelivered: Order[] = [];
+  public sellerOrdersCancel: Order[] = [];
   private timer: any;
 
   constructor(
@@ -124,84 +153,108 @@ export class CartComponent implements OnInit {
       this.isLoginRequestVisible = true; // Hiện modal yêu cầu login
     } else {
       // Nếu là User thật (hoặc không có key isGuest) -> Cho phép thanh toán
-      this.isCheckoutModalVisible = true; 
+      this.isCheckoutModalVisible = true;
     }
   }
   goToLogin() {
     this.isLoginRequestVisible = false;
     // Sửa đường dẫn '/login' thành đường dẫn thực tế của trang đăng nhập bên bạn
-    this.router.navigate(['/login']); 
-}
+    this.router.navigate(['/login']);
+  }
 
   // ===================
   // Buyer - load orders theo userId
-  private async loadOrderHistoryForUser(userId: string) {
-    try {
-      const ordersRef = collection(this.firestore, 'orders');
-      const q = query(ordersRef, where('userId', '==', userId));
-      const snapshot = await getDocs(q);
-
-      const allOrders: Order[] = snapshot.docs.map(doc => ({
-        ...doc.data(),
-        docId: doc.id,
-      } as Order));
-
-      this.orderHistory.pending = allOrders.filter(o => o.status === 'pending');
-      this.orderHistory.shipping = allOrders.filter(o => o.status === 'shipping');
-      this.orderHistory.delivered = allOrders.filter(o => o.status === 'delivered');
-      this.orderHistory.cancel = allOrders.filter(o => o.status === 'cancel');
-
-      this.cdr.detectChanges();
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
   // ===================
-  // Seller - load orders theo email trực tiếp từ auth
-  private async getUserEmailById(userId: string): Promise<string | null> {
+  private async loadOrderHistoryForUser(userId: string) {
   try {
-    const userRef = doc(this.firestore, 'users', userId);
-    const snap = await getDoc(userRef);
-
-    if (snap.exists()) {
-      return snap.data()['email'] || null;
-    }
-    return null;
-  } catch (error) {
-    console.error('Cannot get user email', error);
-    return null;
-  }
-}
-  private async loadSellerOrders() {
-  if (!this.currentUser?.email) return;
-
-  try {
-    const sellerEmail = this.currentUser.email.toLowerCase();
     const ordersRef = collection(this.firestore, 'orders');
-    const snapshotOrders = await getDocs(ordersRef);
+    const q = query(ordersRef, where('userId', '==', userId));
+    const snapshot = await getDocs(q);
 
-    // Tạo danh sách orders ban đầu
-    const rawOrders = snapshotOrders.docs
-      .map(doc => ({ ...doc.data(), docId: doc.id } as Order))
-      .filter(order =>
-        order.items.some(item => item.ownerEmail?.toLowerCase() === sellerEmail)
-      );
+    let allOrders: Order[] = snapshot.docs.map(doc => ({
+      ...doc.data(),
+      docId: doc.id,
+    } as Order));
 
-    // Truy ngược userEmail từ userId
-    for (let order of rawOrders) {
-      if (order.userId) {
-        order.userEmail = await this.getUserEmailById(order.userId) ?? 'N/A';
-      }
-    }
+    // Sort newest first
+    allOrders = allOrders.sort((a, b) => {
+      if (!a.createdAt || !b.createdAt) return 0;
+      return b.createdAt.toMillis() - a.createdAt.toMillis();
+    });
 
-    this.sellerOrders = rawOrders;
+    // LƯU LẠI — QUAN TRỌNG
+    this.allOrders = allOrders;
+
+    // Group theo status để dùng phần cũ
+    this.orderHistory.pending = allOrders.filter(o => o.status === 'pending');
+    this.orderHistory.shipping = allOrders.filter(o => o.status === 'shipping');
+    this.orderHistory.delivered = allOrders.filter(o => o.status === 'delivered');
+    this.orderHistory.cancel = allOrders.filter(o => o.status === 'cancel');
+
     this.cdr.detectChanges();
   } catch (err) {
     console.error(err);
   }
 }
 
+  // ===================
+  // Seller - load orders theo email trực tiếp từ auth
+  // ===================
+  private async getUserEmailById(userId: string): Promise<string | null> {
+    try {
+      const userRef = doc(this.firestore, 'users', userId);
+      const snap = await getDoc(userRef);
+
+      if (snap.exists()) {
+        return snap.data()['email'] || null;
+      }
+      return null;
+    } catch (error) {
+      console.error('Cannot get user email', error);
+      return null;
+    }
+  }
+
+  private async loadSellerOrders() {
+    if (!this.currentUser?.email) return;
+
+    try {
+      const sellerEmail = this.currentUser.email.toLowerCase();
+      const ordersRef = collection(this.firestore, 'orders');
+      const snapshotOrders = await getDocs(ordersRef);
+
+      // ===== INITIAL FILTER BY OWNER EMAIL =====
+      let rawOrders: Order[] = snapshotOrders.docs
+        .map(doc => ({ ...doc.data(), docId: doc.id } as Order))
+        .filter(order =>
+          order.items.some(item => item.ownerEmail?.toLowerCase() === sellerEmail)
+        );
+
+      // ===== SORT NEWEST FIRST =====
+      rawOrders = rawOrders.sort((a, b) => {
+        if (!a.createdAt || !b.createdAt) return 0;
+        return b.createdAt.toMillis() - a.createdAt.toMillis();
+      });
+      this.allOrders = rawOrders;
+      this.sellerOrders = rawOrders;
+      // ===== GET BUYER EMAIL FROM USERID =====
+      for (let order of rawOrders) {
+        if (order.userId) {
+          order.userEmail = await this.getUserEmailById(order.userId) ?? 'N/A';
+        }
+      }
+
+      // ===== FILTER BY STATUS =====
+      this.sellerOrdersPending = rawOrders.filter(o => o.status === 'pending');
+      this.sellerOrdersShipping = rawOrders.filter(o => o.status === 'shipping');
+      this.sellerOrdersDelivered = rawOrders.filter(o => o.status === 'delivered');
+      this.sellerOrdersCancel = rawOrders.filter(o => o.status === 'cancel');
+
+      this.cdr.detectChanges();
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
 
   public openSellerOrders() {
@@ -234,9 +287,9 @@ export class CartComponent implements OnInit {
       order.status === 'pending'
         ? 'shipping'
         : order.status === 'shipping'
-        ? 'delivered'
-        : order.status;
-      this.cdr.detectChanges();
+          ? 'delivered'
+          : order.status;
+    this.cdr.detectChanges();
     if (order.status === next) return;
 
     await updateDoc(doc(this.firestore, 'orders', order.docId!), { status: next });
