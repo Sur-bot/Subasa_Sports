@@ -83,45 +83,34 @@
   </div>
 
   <!-- Buyer Order History Popup -->
-  <div class="order-history-popup" *ngIf="isOrderHistoryVisible">
-    <div class="popup-header">
-      <h3>Đơn hàng đã mua</h3>
-      <button (click)="closeOrderHistory()">×</button>
-    </div>
-    <div class="popup-body">
-      <ng-container *ngFor="let status of orderStatuses">
-        <ng-container *ngIf="getOrdersByStatus(status).length > 0">
-          <h4 *ngIf="status==='pending'">Đang chờ (Pending)</h4>
-          <h4 *ngIf="status==='shipping'">Đang giao (Shipping)</h4>
-          <h4 *ngIf="status==='delivered'">Đã giao (Delivered)</h4>
-          <h4 *ngIf="status==='cancel'">Đã hủy (Cancel)</h4>
-
-          <div *ngFor="let order of getOrdersByStatus(status)" class="order-item">
-            <p><strong>Mã đơn:</strong> {{ order.orderId }}</p>
-            <p><strong>Ngày:</strong> {{ order.createdAt.toDate() | date:'short' }}</p>
-            <p><strong>Tổng tiền:</strong> {{ order.totalPrice | number:'1.0-0' }}₫</p>
-            <p><strong>Trạng thái:</strong> {{ order.status }}</p>
-            <div *ngFor="let item of order.items" class="order-product">
-              <img [src]="item.imageUrl" alt="{{ item.name }}" class="thumb">
-              <span>{{ item.name }} x {{ item.quantity }}</span>
-              <span>{{ item.price | number:'1.0-0' }}₫</span>
-            </div>
-            <hr>
-          </div>
-        </ng-container>
-      </ng-container>
-    </div>
+<div class="order-history-popup" *ngIf="isOrderHistoryVisible">
+  <div class="popup-header">
+    <h3>Đơn hàng đã mua</h3>
+    <button (click)="closeOrderHistory()">×</button>
   </div>
 
-  <!-- Seller Order Management Popup -->
-  <div class="order-history-popup" *ngIf="isSellerPopupVisible">
-    <div class="popup-header">
-      <h3>QUẢN LÝ ĐƠN HÀNG</h3>
-      <button (click)="closeSellerOrders()">×</button>
-    </div>
-    <div class="popup-body">
-      <div *ngIf="sellerOrders.length === 0" class="empty-status">
-        Chưa có đơn hàng nào.
+  <!-- FILTER TABS -->
+  <div class="order-tabs">
+    <button
+      *ngFor="let tab of orderTabs"
+      (click)="activeTab = tab.key"
+      [class.active]="activeTab === tab.key">
+      {{ tab.label }}
+    </button>
+  </div>
+
+  <!-- ORDER LIST -->
+  <div class="popup-body">
+    <div *ngFor="let order of filteredOrders()" class="order-item">
+      <p><strong>Mã đơn:</strong> {{ order.orderId }}</p>
+      <p><strong>Ngày:</strong> {{ order.createdAt.toDate() | date:'short' }}</p>
+      <p><strong>Tổng tiền:</strong> {{ order.totalPrice | number:'1.0-0' }}₫</p>
+      <p><strong>Trạng thái:</strong> {{ order.status }}</p>
+
+      <div *ngFor="let item of order.items" class="order-product">
+        <img [src]="item.imageUrl" alt="{{ item.name }}" class="thumb">
+        <span>{{ item.name }} x {{ item.quantity }}</span>
+        <span>{{ item.price | number:'1.0-0' }}₫</span>
       </div>
 
       <div *ngFor="let order of sellerOrders" class="order-item">
@@ -161,5 +150,72 @@
       </div>
     </div>
   </div>
+</div>
+
+
+ <!-- Seller Order Management Popup -->
+<div class="order-history-popup" *ngIf="isSellerPopupVisible">
+
+  <div class="popup-header">
+    <h3>QUẢN LÝ ĐƠN HÀNG</h3>
+    <button (click)="closeSellerOrders()">×</button>
+  </div>
+
+  <!-- TAB HEADER -->
+  <div class="tab-header">
+    <button [class.active]="currentSellerTab === 'all'" (click)="setSellerTab('all')">Tất cả</button>
+    <button [class.active]="currentSellerTab === 'pending'" (click)="setSellerTab('pending')">Đang chờ</button>
+    <button [class.active]="currentSellerTab === 'shipping'" (click)="setSellerTab('shipping')">Đang vận chuyển</button>
+    <button [class.active]="currentSellerTab === 'delivered'" (click)="setSellerTab('delivered')">Đã giao</button>
+    <button [class.active]="currentSellerTab === 'cancel'" (click)="setSellerTab('cancel')">Đã hủy</button>
+  </div>
+
+  <div class="popup-body">
+    <div *ngIf="getSellerOrdersByStatus(currentSellerTab).length === 0" class="empty-status">
+      Không có đơn hàng nào.
+    </div>
+
+    <div *ngFor="let order of getSellerOrdersByStatus(currentSellerTab)" class="order-item">
+
+      <p><strong>Mã đơn:</strong> {{ order.orderId }}</p>
+      <p><strong>Tài khoản đặt hàng:</strong> {{ order.userEmail }}</p>
+      <p><strong>Người nhận:</strong> {{ order.customerName }}</p>
+      <p><strong>Địa chỉ:</strong> {{ order.customerAddress }}</p>
+      <p><strong>Số điện thoại:</strong> {{ order.customerPhone }}</p>
+      <p><strong>Ngày:</strong> {{ order.createdAt.toDate() | date:'short' }}</p>
+      <p><strong>Trạng thái:</strong> {{ order.status }}</p>
+
+      <div *ngFor="let item of order.items" class="order-product">
+        <img [src]="item.imageUrl" alt="{{ item.name }}" class="thumb">
+        <span>{{ item.name }} x {{ item.quantity }}</span>
+        <span>{{ item.price | number:'1.0-0' }}₫</span>
+      </div>
+
+      <!-- ACTION BUTTONS -->
+      <div class="order-actions">
+        <button *ngIf="order.status==='pending'" class="status-btn" (click)="updateOrderStatus(order)">
+          XÁC NHẬN GỬI HÀNG
+        </button>
+
+        <button *ngIf="order.status==='shipping'" class="status-btn" (click)="updateOrderStatus(order)">
+          ĐÃ GIAO THÀNH CÔNG
+        </button>
+
+        <button *ngIf="order.status==='delivered' || order.status==='cancel'" class="status-btn-disable" disabled>
+          {{ order.status === 'delivered' ? 'ĐÃ GIAO' : 'ĐÃ HỦY' }}
+        </button>
+      </div>
+
+      <div>
+        <button class="btn-cancel-order" (click)="cancelOrder(order)"
+          *ngIf="order.status !== 'cancel' && order.status !== 'delivered'">
+          HỦY ĐƠN HÀNG
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 </ng-container>

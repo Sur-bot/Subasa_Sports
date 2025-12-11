@@ -1,0 +1,22 @@
+<div class="success-container">
+
+  <!-- LOADING -->
+  <div *ngIf="isProcessing" class="loading-box">
+    <div class="spinner"></div>
+    <p>Đang xử lý đơn hàng của bạn...</p>
+  </div>
+
+  <!-- THÀNH CÔNG -->
+  <div *ngIf="isSuccess" class="done-box">
+    <h1>🎉 Đặt hàng thành công!</h1>
+    <p>Cảm ơn bạn đã mua hàng tại cửa hàng của chúng tôi.</p>
+    <p>Đang chuyển về trang chủ...</p>
+  </div>
+
+  <!-- LỖI -->
+  <div *ngIf="errorMessage" class="error-box">
+    <h2>⚠️ Lỗi</h2>
+    <p>{{ errorMessage }}</p>
+  </div>
+
+</div>

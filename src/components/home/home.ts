@@ -19,8 +19,7 @@ import { ProductOptionsModalComponent } from '../product-options-modal/product-o
 import { AdminSellerRequestsComponent } from '../request-seller-com/admin-seller-requests';
 import { BrandSliderComponent } from '../brand-com/brand-component';
 import { CartService } from '../servives/cart.service';
-import { CheckoutModalService } from '../servives/checkout-modal.service';
-import { CheckoutModalComponent } from '../checkout-modal/checkout-modal.component';
+
 
 const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
 
@@ -41,7 +40,6 @@ const ADMIN_UID = "ucqeK6JbQMViknAiaXDya5iufeE3";
     FormsModule,
     BrandSliderComponent,
     CommonModule,
-    CheckoutModalComponent
   ],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
@@ -63,7 +61,6 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private cartService: CartService,
-    private checkoutService: CheckoutModalService
   ) {
     this.userService.role$.subscribe(r => this.role = r);
   }
@@ -91,57 +88,6 @@ export class HomeComponent implements OnInit {
       });
     });
 
-    // --- Handle redirect from Stripe/MoMo/VNPay ---
-    this.ngZone.run(async () => {
-      const modal = this.checkoutService.modalInstance;
-      if (!modal) return;
-
-      // Kiểm tra localStorage payment_done
-      const paymentDone = localStorage.getItem('payment_done');
-      const paymentMethod = localStorage.getItem('payment_method');
-      const paymentSession = localStorage.getItem('payment_session_id');
-
-      if (paymentDone === 'true' && paymentMethod) {
-        modal.showModal = true; // mở modal
-        switch (paymentMethod) {
-          case 'stripe':
-            if (paymentSession) await modal.checkStripePayment(paymentSession);
-            break;
-          case 'momo':
-          case 'vnpay':
-            await modal.handlePaymentSuccess();
-            break;
-        }
-
-        // Clear cart và flags
-        this.cartService.clearCart();
-        localStorage.removeItem('payment_done');
-        localStorage.removeItem('payment_method');
-        localStorage.removeItem('payment_session_id');
-        localStorage.removeItem('stripeCart');
-        localStorage.removeItem('stripeCustomer');
-
-        this.router.navigate([], { queryParams: {} });
-        return;
-      }
-
-      // fallback nếu query params trực tiếp
-      const query = this.route.snapshot.queryParams;
-      const sessionId = query['session_id'];
-      const resultCode = query['resultCode'];
-      const orderId = query['orderId'];
-
-      if (sessionId || (resultCode === '0' && orderId)) {
-        modal.showModal = true;
-        if (sessionId) {
-          await modal.checkStripePayment(sessionId);
-        } else if (resultCode === '0' && orderId) {
-          await modal.handlePaymentSuccess();
-        }
-        this.cartService.clearCart();
-        this.router.navigate([], { queryParams: {} });
-      }
-    });
   }
 
   handleProductOptionSelected(product: Product) {

@@ -183,6 +183,7 @@ export class FloatingMenuComponent {
 
     snap.forEach(docSnap => {
       const data: any = docSnap.data();
+      if (data.status !== 'delivered') return;
       const items: any[] = data.items || [];
       const createdAt = data.createdAt?.toDate?.() || new Date();
 
