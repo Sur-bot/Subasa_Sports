@@ -113,7 +113,41 @@
         <span>{{ item.price | number:'1.0-0' }}₫</span>
       </div>
 
-      <hr>
+      <div *ngFor="let order of sellerOrders" class="order-item">
+        <p><strong>Mã đơn:</strong> {{ order.orderId }}</p>
+        <p><strong>Tài khoản đặt hàng:</strong> {{ order.userEmail }}</p>
+        <p><strong>Người nhận:</strong> {{ order.customerName }}</p>
+        <p><strong>Địa chỉ:</strong> {{ order.customerAddress }}</p>
+        <p><strong>Số điện thoại:</strong> {{ order.customerPhone }}</p>
+        <p><strong>Ngày:</strong> {{ order.createdAt.toDate() | date:'short' }}</p>
+        <p><strong>Trạng thái:</strong> {{ order.status }}</p>
+
+        <div *ngFor="let item of order.items" class="order-product">
+          <img [src]="item.imageUrl" alt="{{ item.name }}" class="thumb">
+          <span>{{ item.name }} x {{ item.quantity }}</span>
+          <span>{{ item.price | number:'1.0-0' }}₫</span>
+        </div>
+
+        <!-- Nút cập nhật trạng thái theo trạng thái hiện tại -->
+        <div class="order-actions">
+          <button *ngIf="order.status==='pending'" class="status-btn" (click)="updateOrderStatus(order)">
+            XÁC NHẬN GỬI HÀNG
+          </button>
+
+          <button *ngIf="order.status==='shipping'" class="status-btn" (click)="updateOrderStatus(order)">
+            ĐÃ GIAO THÀNH CÔNG
+          </button>
+
+          <button *ngIf="order.status==='delivered' || order.status==='cancel'" class="status-btn-disable" disabled>
+            {{ order.status === 'delivered' ? 'ĐÃ GIAO' : 'ĐÃ HỦY' }}
+          </button>
+        </div>
+        <div class="order-actions">
+          <button class="btn-cancel-order" (click)="cancelOrder(order)" *ngIf="order.status !== 'cancel' && order.status !== 'delivered'">
+            HỦY ĐƠN HÀNG
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -129,11 +163,11 @@
 
   <!-- TAB HEADER -->
   <div class="tab-header">
-    <button [class.active]="currentSellerTab === 'all'" (click)="setSellerTab('all')">Tất cả</button>
-    <button [class.active]="currentSellerTab === 'pending'" (click)="setSellerTab('pending')">Đang chờ</button>
-    <button [class.active]="currentSellerTab === 'shipping'" (click)="setSellerTab('shipping')">Đang vận chuyển</button>
-    <button [class.active]="currentSellerTab === 'delivered'" (click)="setSellerTab('delivered')">Đã giao</button>
-    <button [class.active]="currentSellerTab === 'cancel'" (click)="setSellerTab('cancel')">Đã hủy</button>
+    <button [class.active]="currentSellerTab === 'all'" (click)="setSellerTab('all')">TẤT CẢ</button>
+    <button [class.active]="currentSellerTab === 'pending'" (click)="setSellerTab('pending')">ĐANG CHỜ</button>
+    <button [class.active]="currentSellerTab === 'shipping'" (click)="setSellerTab('shipping')">ĐANG VẬN CHUYỂN</button>
+    <button [class.active]="currentSellerTab === 'delivered'" (click)="setSellerTab('delivered')">ĐÃ GIAO</button>
+    <button [class.active]="currentSellerTab === 'cancel'" (click)="setSellerTab('cancel')">ĐÃ HỦY</button>
   </div>
 
   <div class="popup-body">
