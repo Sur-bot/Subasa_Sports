@@ -37,7 +37,7 @@
   <ul *ngIf="!loadingProducts && myProducts.length > 0">
     <li *ngFor="let p of myProducts">
       <i class="fas fa-box"></i>
-      {{ p.productName }} - {{ p.price | currency:'VND' }}
+      {{ p.productName }} - {{ p.price | number:'1.0-0' }} ₫
       <button (click)="selectProductForEdit(p)">Chỉnh sửa</button>
     </li>
   </ul>
@@ -62,7 +62,7 @@
   <ul *ngIf="!loadingProducts && myProducts.length > 0">
     <li *ngFor="let p of myProducts">
       <i class="fas fa-box"></i>
-      {{ p.productName }} - {{ p.price | currency:'VND' }}
+      {{ p.productName }} - {{ p.price | number:'1.0-0' }} ₫
       <button class="danger" (click)="deleteProduct(p)">Xóa</button>
     </li>
   </ul>
@@ -104,13 +104,13 @@
       <td>{{ r.date }}</td>
       <td>{{ r.productName }}</td>
       <td>{{ r.quantity }}</td>
-      <td>{{ r.price | currency:'VND' }}</td>
-      <td>{{ r.amount | currency:'VND' }}</td>
+      <td>{{ r.price | number:'1.0-0' }} ₫</td>
+      <td>{{ r.amount | number:'1.0-0' }} ₫</td>
     </tr>
   </table>
 
   <div class="revenue-total">
-    Tổng doanh thu: {{ totalRevenue | currency:'VND' }}
+    Tổng doanh thu: {{ totalRevenue | number:'1.0-0' }} ₫
   </div>
   <!-- Mode view -->
 <div class="view-mode">
