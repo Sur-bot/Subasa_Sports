@@ -43,7 +43,7 @@
             </div>
 
             <div class="item-price-section">
-              <p class="item-price">{{ (item.product.salePrice * item.quantity) | currency:'VND' }}</p>
+              <p class="item-price">{{ (item.product.salePrice * item.quantity) | number:'1.0-0' }} ₫</p>
               <button class="btn-remove-modal" (click)="cartService.removeFromCart(item.uniqueId)">Xóa</button>
             </div>
 
@@ -96,7 +96,7 @@
         <div class="summary-details">
           <div class="summary-row">
             <span>Tạm tính</span>
-            <span>{{ totalSelectedPrice | currency:'VND' }}</span>
+            <span>{{ totalSelectedPrice | number:'1.0-0' }} ₫</span>
           </div>
 
           <div class="summary-row">
@@ -106,7 +106,7 @@
 
           <div class="summary-row total">
             <span>Tổng cộng</span>
-            <span class="total-price">{{ totalSelectedPrice | currency:'VND' }}</span>
+            <span class="total-price">{{ totalSelectedPrice | number:'1.0-0' }} ₫</span>
           </div>
         </div>
 

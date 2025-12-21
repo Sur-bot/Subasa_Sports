@@ -54,7 +54,7 @@
     <div *ngIf="activeTab==='product'">
       <ul *ngIf="!selectedProduct && products.length > 0">
         <li *ngFor="let prod of products" (click)="selectProduct(prod)">
-          📦 {{ prod.productName }} - {{ prod.brand }} - {{ prod.price | number }}
+          📦 {{ prod.productName }} - {{ prod.brand }} - {{ prod.price | number }} ₫
         </li>
       </ul>
       <p *ngIf="!selectedProduct && products.length === 0">Không có sản phẩm pending.</p>
@@ -63,7 +63,7 @@
         <p><b>Người đăng:</b> {{ selectedProduct.ownerEmail }}</p>
         <p><b>Tên:</b> {{ selectedProduct.productName }}</p>
         <p><b>Mô tả:</b> {{ selectedProduct.description }}</p>
-        <p><b>Giá:</b> {{ selectedProduct.price | number }}đ</p>
+        <p><b>Giá:</b> {{ selectedProduct.price | number }} ₫</p>
         <p><b>Size:</b> {{ selectedProduct.size }}</p>
         <p><b>Số lượng:</b> {{ selectedProduct.quantity }}</p>
         <p><b>Thương hiệu:</b> {{ selectedProduct.brand }}</p>
