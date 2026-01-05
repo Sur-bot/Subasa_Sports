@@ -69,6 +69,10 @@ function generateInvoicePDF(orderId, customerName, items, total, address, phone)
 
     items.forEach((i) => {
       const lineTotal = i.quantity * i.product.salePrice;
+      const nameHeight = doc.heightOfString(
+      i.product.productName,
+      { width: 220 }
+      );
 
       doc.text(i.product.productName, leftPadding, y, { width: 220 });
       doc.text(i.quantity.toString(), 300, y, { width: 40, align: "right" });
@@ -81,18 +85,18 @@ function generateInvoicePDF(orderId, customerName, items, total, address, phone)
         align: "right",
       });
 
-      y += 22;
+      y += nameHeight + 10;
     });
 
     // Line dưới bảng
-    doc.moveTo(leftPadding, y + 5).lineTo(555, y + 5).stroke();
+    doc.moveTo(leftPadding, y + 5).lineTo(700, y + 5).stroke();
 
     doc.moveDown(2);
 
     /* ===========================
         TỔNG TIỀN
     ============================ */
-    doc.fontSize(14).text(`Tổng cộng: ${total.toLocaleString()}đ`, {
+    doc.fontSize(14).text(`Tổng cộng: ${total.toLocaleString()}đ`, 40, doc.y, {
       align: "right",
     });
 
