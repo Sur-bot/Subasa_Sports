@@ -44,12 +44,8 @@
     flex-direction: column;
     flex-shrink: 0;
     flex-grow: 0; 
-    justify-content: space-between; 
-    
-    /* Đặt lớp phủ màu xanh đậm bán trong suốt */
+    justify-content: center; 
     background-color: rgba(12, 51, 75, 0.75); 
-    
-    /* Đảm bảo nó nằm trên background-image-wrapper */
     position: relative;
     z-index: 2;
 }
@@ -61,20 +57,16 @@
 }
 
 .title {
-    color: #48a66d; 
-    font-size: 30px;
+    color: #143f25; 
+    font-size: 25px;
     font-weight: 900;
+    font-family: 'Times New Roman', Times, serif;
     margin-bottom: 5px;
-    
-    /* Thêm gạch chân dưới tiêu đề (như trong mẫu) */
     padding-bottom: 5px;
-    border-bottom: 3px solid #92d050; 
-    
+    border-bottom: 3px solid #427907; 
     transition: color 0.3s ease, transform 0.3s ease; 
-    animation: pulse-color 2s infinite alternate;
+    animation: pulse-color 1s infinite alternate;
 }
-
-
 
 .title-link:hover .title { /* Sửa để hover vào link tác động lên title */
     color: #ffaa00; 
@@ -113,7 +105,8 @@
 .navigation-controls {
     display: flex;
     gap: 10px;
-}
+    justify-content: center;
+}   
 
 .nav-arrow {
     background: rgba(255, 255, 255, 0.2);

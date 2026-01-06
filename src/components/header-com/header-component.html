@@ -32,7 +32,6 @@
                 <span></span>
                 <span></span>
               </div>
-              <span class="title">Menu</span>
             </div>
             <a href="#" clas="logo-wrapper" title="Subasa_Sport">
               <img
@@ -279,7 +278,7 @@
   </div>
 </div>
 
-<aside class="sidebar" [class.show]="isOpen">
+<!-- <aside class="sidebar" [class.show]="isOpen">
   <div class="sb-container">
     <div class="sb-title">
       <p class="title-text">DANH MỤC</p>
@@ -382,39 +381,59 @@
             <li>Bình nước</li>
           </ul>
         </li>
-      </ul>
-    </div>
-    
-    <div class="info-tab">
-      <ul class="sub-links">
-        <li class="sub-tab">Về Sudes Sport</li>
-        <li class="sub-tab" (click)="toggleCategory('#')">
-          Chính sách mua hàng
-          <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
-          <ul class="sub-menu" *ngIf="openCategory === '#'">
-            <li>Chính sách mua hàng</li>
-            <li>chính sách vận chuyển</li>
-          </ul>
+
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('accessories')">
+            <img
+              class="img-phukien"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              alt="Phụ Kiện"
+              data-was-processed="true"
+            />
+            Xăng đan & Dép
+            <span class="arrow" [class.open]="openCategory === 'accessories'">&#9662;</span>
+          </div>
         </li>
-        <li class="sub-tab">
-          Hướng dẫn mua hàng
-          <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
-          <ul class="sub-menu" *ngIf="openCategory === '#'">
-            <li>Hướng dẫn mua hàng</li>
-            <li>hướng dẫn chuyển khoản</li>
-          </ul>
-        </li>
-        <li class="sub-tab">
-          Tin tức
-          <span class="arrow" [class.open]="openCategory === '#'">&#9662;</span>
-          <ul class="sub-menu" *ngIf="openCategory === '#'">
+
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('accessories')">
+            <img
+              class="img-phukien"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              alt="Phụ Kiện"
+              data-was-processed="true"
+            />
+            Giày Sneakers
+            <span class="arrow" [class.open]="openCategory === 'accessories'">&#9662;</span>
+          </div>
+          <ul class="sub-menu" *ngIf="openCategory === 'accessories'">
             <li>Balo</li>
             <li>Găng tay</li>
             <li>Bình nước</li>
           </ul>
         </li>
-        <li class="sub-tab">Liên hệ chúng tôi</li>
+
+        <li class="list">
+          <div class="cat-title" (click)="toggleCategory('accessories')">
+            <img
+              class="img-phukien"
+              src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              data-src="//bizweb.dktcdn.net/thumb/small/100/490/431/collections/fitness-tracker.png?v=1693643743327"
+              alt="Phụ Kiện"
+              data-was-processed="true"
+            />
+            Giày Sneakers
+            <span class="arrow" [class.open]="openCategory === 'accessories'">&#9662;</span>
+          </div>
+          <ul class="sub-menu" *ngIf="openCategory === 'accessories'">
+            <li>Balo</li>
+            <li>Găng tay</li>
+            <li>Bình nước</li>
+          </ul>
+        </li>
       </ul>
     </div>
   </div>
-</aside>
+</aside> -->

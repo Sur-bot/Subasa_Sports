@@ -14,7 +14,6 @@
     'Segoe UI Symbol', 'Noto Color Emoji';
   z-index: 600; /* đảm bảo đứng trên các thành phần khác */
 }
-/* Thêm vào cuối file css */
 
 .history-item {
   display: inline-flex !important; /* Để chữ và nút X nằm ngang */
@@ -133,7 +132,7 @@
   margin-right: 20px;
   margin-top: 10px;
 }
-
+  
 /* --- Logo & Menu --- */
 .header-logo {
   display: flex;

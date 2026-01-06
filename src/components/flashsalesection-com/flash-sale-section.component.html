@@ -1,36 +1,22 @@
 <section class="flash-sale-section">
-   <div class="background-image-wrapper"> </div>
+  <div class="background-image-wrapper"></div>
   <div class="sidebar-countdown">
-    
     <h2 class="title">BÃO DEAL GIẢM GIÁ</h2>
-    
-     <h3 class="subtitle">Chớp lấy cơ hội!!!!!!!</h3>
-   
-    
     <div class="controls-wrapper">
-        <div class="navigation-controls">
-            <button class="nav-arrow left-arrow" (click)="scrollLeft()" >&lt;</button>
-            <button class="nav-arrow right-arrow" (click)="scrollRight()" >&gt;</button>
-        </div>
-
-        
+      <div class="navigation-controls">
+        <button class="nav-arrow left-arrow" (click)="scrollLeft()">&lt;</button>
+        <button class="nav-arrow right-arrow" (click)="scrollRight()">&gt;</button>
+      </div>
     </div>
-
   </div>
-
   <div class="products-carousel-container" #productsContainer (scroll)="checkScrollStatus()">
     <div class="products-carousel">
       @for (product of flashSaleProducts$ | async; track product.id) {
-        <app-product-card 
-          [product]="product"
-           (optionSelected)="onProductCardOptionSelected(product)">
-        </app-product-card>
+      <app-product-card [product]="product" (optionSelected)="onProductCardOptionSelected(product)">
+      </app-product-card>
       } @empty {
-        <p class="loading-message">Đang tải sản phẩm giảm giá...</p>
+      <p class="loading-message">Đang tải sản phẩm giảm giá...</p>
       }
     </div>
   </div>
-
-
-  
 </section>
