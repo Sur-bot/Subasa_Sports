@@ -2,7 +2,7 @@ import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Firestore, collection, addDoc, doc, getDoc, updateDoc } from '@angular/fire/firestore';
 import { CartService } from '../../servives/cart.service';
-import { isPlatformBrowser,CommonModule } from '@angular/common';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 
 
 @Component({
@@ -31,10 +31,16 @@ export class SuccessComponent implements OnInit {
     private firestore: Firestore,
     private cartService: CartService,
     @Inject(PLATFORM_ID) private platformId: any
-  ) {}
+  ) { }
 
   async ngOnInit() {
     if (!isPlatformBrowser(this.platformId)) return;
+    const resultCode = this.route.snapshot.queryParamMap.get("resultCode");
+
+    if (resultCode === "1006") {
+      window.location.href = "/";
+      return;
+    }
 
     this.generatedOrderId = this.route.snapshot.queryParamMap.get("orderId") || "";
     const paymentMethod = this.route.snapshot.queryParamMap.get("paymentMethod") || "unknown";
